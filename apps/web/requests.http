@@ -1,0 +1,9 @@
+
+### Registers a new user
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "test@mikeslab.it",
+    "password": "password123"
+}
