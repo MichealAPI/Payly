@@ -78,7 +78,6 @@
 /* Mobile styles */
 @media (max-width: 768px) {
     .input-wrapper {
-        width: 80%;
         margin: 0 auto;
     }
 }

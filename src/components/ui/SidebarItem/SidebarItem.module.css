@@ -1,0 +1,27 @@
+.sidebarItem  {
+    transition: scale 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.sidebarItem.active {
+    cursor: pointer;
+}
+
+.sidebarItem.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.sidebarItem.disabled .icon svg {
+    opacity: 0.5;
+}
+
+.sidebarItem.active .icon svg {
+    color: white;
+}
+
+.sidebarItem:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    scale: 1.1;
+    transition: scale 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}

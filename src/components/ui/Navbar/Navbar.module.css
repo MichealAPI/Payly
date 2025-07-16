@@ -1,0 +1,82 @@
+.navbar {
+    height: 64px;
+    background-color: #121214;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    top: 0;
+    padding: 0 20px;
+}
+
+.navbar .title p {
+    font-size: 18px;
+    color: white;
+    font-family: 'Phantom Sans', sans-serif;
+    font-weight: bold;   
+}
+
+.navbar .actionWrapper {
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.navbar .actionWrapper .action p {
+    color: white;
+    font-family: 'Phantom Sans', sans-serif;
+    transition: color 0.2s ease-in-out, font-weight 0.1s ease-in-out;
+    padding: 5px;
+}
+
+.navbar .actionWrapper .action:hover p {
+    color: #9f74fc;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out, font-weight 0.1s ease-in-out;
+}
+
+.navbar .actionWrapper .action.active {
+    transition: border-bottom 0.1s ease-in-out;
+    border-bottom: #6F2FF7 3px solid;
+}
+
+.navbar .actionWrapper .action.active p {
+    color: #9f74fc;
+    font-weight: bold;
+}
+
+
+.navbar .profile .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 5px;
+    background-color: #6F2FF7; /* Placeholder for profile icon */
+}
+
+.navbar .notification svg {
+    color: white;
+    transition: color 0.1s ease-in-out;
+}
+
+.navbar .notification:hover svg {
+    color: #cbb4ff;
+    cursor: pointer;
+    transition: color 0.1s ease-in-out;
+}
+
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .navbar {
+        justify-content: space-between;
+    }
+
+    .navbar .title p {
+        margin-left: 0;
+    }
+
+    .navbar .profile .icon {
+        border-radius: 50%;
+    }
+}

@@ -110,7 +110,7 @@ export const Group = ({ title, members, entryId, description, icon }) => {
                     </div>
 
                     <Button
-                        text=""
+                        text="Ciao"
                         size="minimal"
                         textVisibility={false}
                         iconVisibility={true}

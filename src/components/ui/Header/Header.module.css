@@ -1,0 +1,67 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    width: 1000px;
+}
+
+.header .content {
+    display: flex;
+    flex-direction: column;
+}
+
+.header .title h1 {
+    font-family: 'Phantom Sans', sans-serif;
+    font-weight: bold;
+    font-size: 48px;
+    margin: 0;
+    color: white;
+}
+
+.header .description p {
+    font-family: 'Phantom Sans', sans-serif;
+    font-weight: lighter;
+    font-size: 24px;
+    margin: 0;
+    color: white;
+    opacity: .7;
+}
+
+.header .members {
+    display: flex;
+    align-items: center;
+}
+
+.header .members .icon {
+    width: 25px;
+    height: 25px;
+    color: white;
+}
+
+.header .members .count p {
+    font-family: 'Phantom Sans', sans-serif;
+    font-weight: bold;
+    font-size: 30px;
+    margin: 0;
+    color: white;
+}
+
+.header .settings {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.header .settings .icon {
+    width: 25px;
+    height: 25px;
+    color: white;
+    transition: color 0.1s ease;
+}
+
+.header .settings .icon:hover {
+    color: #9f74fc;
+    transition: color 0.1s ease;
+}
+
