@@ -110,9 +110,7 @@ export const Group = ({ title, members, entryId, description, icon }) => {
                     </div>
 
                     <Button
-                        text="Ciao"
                         size="minimal"
-                        textVisibility={false}
                         iconVisibility={true}
                         icon={<ArrowRightIcon className="w-6" />}
                         onClick={handleNavigate}

@@ -1,7 +1,7 @@
 .header {
     display: flex;
     justify-content: space-between;
-    width: 1000px;
+    width: 100%;
 }
 
 .header .content {
@@ -9,7 +9,7 @@
     flex-direction: column;
 }
 
-.header .title h1 {
+.header .content .title h1 {
     font-family: 'Phantom Sans', sans-serif;
     font-weight: bold;
     font-size: 48px;
@@ -17,7 +17,7 @@
     color: white;
 }
 
-.header .description p {
+.header .content .description p {
     font-family: 'Phantom Sans', sans-serif;
     font-weight: lighter;
     font-size: 24px;
@@ -26,12 +26,12 @@
     opacity: .7;
 }
 
-.header .members {
+.header .content .members {
     display: flex;
     align-items: center;
 }
 
-.header .members .icon {
+.header .content .members .icon {
     width: 25px;
     height: 25px;
     color: white;
@@ -65,3 +65,28 @@
     transition: color 0.1s ease;
 }
 
+.header .content .title .icon p {
+    display: none;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .header {
+        justify-content: center;
+        width: fit-content;
+    }
+
+    .header .content .title h1 {
+        text-align: center;
+    }
+
+    .header .content .description p {
+        display: none;
+    }
+
+    .header .content .title .icon p {
+        display: block;
+        font-size: 50px;
+        text-align: center;
+    }
+}

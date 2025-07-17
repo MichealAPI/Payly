@@ -8,7 +8,10 @@ import { BeakerIcon, EnvelopeIcon, KeyIcon } from '@heroicons/react/24/outline'
 import Sidebar from './components/ui/Sidebar/Sidebar.jsx';
 import Navbar from './components/ui/Navbar/Navbar.jsx';
 import Wrapper from './components/ui/Wrapper/Wrapper.jsx';
+import Warning from './components/ui/Warning/Warning.jsx';
 import Header from './components/ui/Header/Header.jsx';
+import Movement from './components/ui/Movement/Movement.jsx';
+import Participant from './components/ui/Participant/Participant.jsx';
 
 function App() {
 
@@ -34,7 +37,23 @@ function App() {
           <Routes>
             <Route path="/" element={
               <div className="App flex justify-center items-center min-h-100">
-                <div className="flex flex-col">
+                <div className="flex flex-col w-full justify-center">
+                  <div className="m-4">
+                    <Warning
+                      message="This is a warning message!"
+                      icon="⚠️">
+                    </Warning>
+                  </div>
+
+                  <div className="m-4">
+                    <Participant
+                      participantId="1"
+                      participantName="John Doe"
+                      src="https://placehold.co/32x32/orange/white"
+                      netBalance={1000}
+                      currency="USD"
+                    />
+                  </div>
 
                   <div className="m-4">
                       <Group
@@ -51,7 +70,25 @@ function App() {
                       title="Welcome to My Application"
                       description="This is a sample subtitle for the application."
                       membersCount={3}
-                      icon={<BeakerIcon className="w-8 h-8 text-blue-500" />}
+                      icon="🌟"
+                    />
+                  </div>
+
+                  <div className="m-4">
+                    <Movement
+                      type="deposit"
+                      amount={1000}
+                      title="Salary"
+                      description="Monthly salary deposit"
+                      commentsAmount={5}
+                      movementId="1"
+                      owner="John Doe"
+                      members={[
+                        { name: 'John Doe', src: "https://placehold.co/32x32/orange/white" },
+                        { name: 'Jane Smith', src: "https://placehold.co/32x32/blue/white"},
+                        { name: 'Alice Johnson', src: "https://placehold.co/32x32/green/white" },
+                        { name: 'Bob Brown', src: "https://placehold.co/32x32/red/white" }
+                      ]}
                     />
                   </div>
 

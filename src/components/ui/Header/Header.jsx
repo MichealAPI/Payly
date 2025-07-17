@@ -8,10 +8,13 @@ import { PencilIcon, ArchiveBoxXMarkIcon, TrashIcon, Square2StackIcon } from '@h
 
 const Header = ({title, membersCount, description, icon}) => {
     return (
-        <Card className="border-b-[#6928F3] border-solid border-b-2">
+        <Card className="md:border-b-[#6928F3] md:border-solid md:border-b-2" bgHiddenSm={true}>
             <div className={styles.header}>
                 <div className={styles.content}>
                     <div className={styles.title}>
+                        <div className={styles.icon}>
+                            <p>{icon}</p>
+                        </div>
                         <h1>{title}</h1>
                     </div>
 
@@ -30,7 +33,7 @@ const Header = ({title, membersCount, description, icon}) => {
 
                 <div className={styles.settings}>
                     <Menu>
-                        <MenuButton className="inline-flex items-center gap-2 rounded-md p-1 text-sm/6 font-semibold text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-purple-400/20">
+                        <MenuButton className="inline-flex items-center gap-2 rp-1 text-sm/6 font-semibold text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:text-purple-400/20 cursor-pointer">
                             <Cog6ToothIcon className={styles.icon} />
                         </MenuButton>
 

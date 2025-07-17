@@ -10,7 +10,6 @@
     overflow: hidden;
     transition: scale 100ms ease;
     cursor: pointer;
-    display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;

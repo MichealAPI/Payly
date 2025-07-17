@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './Button.module.css';
 
-const Button = ({ text, onClick, size = 'medium', style = 'fill', textVisibility = true, iconVisibility = false, icon}) => {
+const Button = ({ text, className, onClick, size = 'medium', style = 'fill', textVisibility = true, iconVisibility = false, icon}) => {
     return (
         <button
             type={'button'}
-            className={`button ${styles.btn} ${styles[size]} ${styles[style]} flex items-center justify-between gap-2`}
+            className={`flex ${className} button ${styles.btn} ${styles[size]} ${styles[style]} items-center justify-between gap-2`}
             onClick={onClick}
         >
             {textVisibility && size != 'minimal' && <span className="text">{text}</span>}
