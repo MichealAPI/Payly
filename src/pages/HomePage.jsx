@@ -4,8 +4,12 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import HomeNavbar from '../components/ui/HomeNavbar/HomeNavbar';
 import heroImage from '../assets/hero-image.png';
 import logo from '../assets/logo.png';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
+
+    const navigate = useNavigate();
+
     return (
         <div className="flex flex-col min-h-[100vh] bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] bg-[length:30px_30px]">
 
@@ -33,7 +37,7 @@ const HomePage = () => {
                             text="Sign Up"
                             size="medium"
                             textVisibility={true}
-                            onClick={() => alert('Sign Up clicked!')}
+                            onClick={() => navigate('/register')}
                             style="fill"
                             className="w-full sm:w-auto"
                         /> 
