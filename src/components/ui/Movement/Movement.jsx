@@ -9,19 +9,19 @@ const Movement = ({ className, type, owner, amount, title, description, comments
     const amountSign = type === 'deposit' ? '+' : '-';
 
     return (
-        <Card className={`${className} relative md:p-8 w-full cursor-pointer md:cursor-default transition-transform hover:scale-101 md:hover:scale-100`}>
+        <Card className={`${className} relative md:p-8 w-[90%] cursor-pointer md:cursor-default transition-transform hover:scale-101 md:hover:scale-none`}>
             <div className="flex justify-between md:h-[120px]">
 
                 {/* Text content */}
                 <div className="flex flex-col h-full justify-between">
                     <div>
-                        <h2 className="text-white text-2xl md:text-3xl font-bold">{title}</h2>
-                        <h3 className={`${type === 'deposit' ? 'text-[#97FFCB]' : 'text-[#F88]'} text-sm md:text-xl font-bold md:font-semibold`}>
+                        <h2 className="text-white text-xl md:text-2xl font-bold">{title}</h2>
+                        <h3 className={`${type === 'deposit' ? 'text-[#97FFCB]' : 'text-[#F88]'} text-xs md:text-sm font-bold md:font-semibold`}>
                             {type.toUpperCase()}
                         </h3>
                     </div>
 
-                    <p className="text-white opacity-60 text-base md:text-lg hidden md:block">
+                    <p className="text-white opacity-60 text-base md:text-lg hidden md:block truncate w-30">
                         {description || 'No description provided.'}
                     </p>
                     
@@ -32,7 +32,7 @@ const Movement = ({ className, type, owner, amount, title, description, comments
 
                 {/* Amount, comments and edit button */}
                 <div className="flex flex-col justify-between h-full items-end">
-                    <h3 className={`${type === 'deposit' ? 'text-[#97FFCB]' : 'text-[#F88]'} text-2xl md:text-4xl font-bold`}>
+                    <h3 className={`${type === 'deposit' ? 'text-[#97FFCB]' : 'text-[#F88]'} text-xl md:text-2xl font-bold text-nowrap`}>
                         {amountSign}
                         {amount.toLocaleString('en-US', {
                             style: 'currency',
@@ -100,7 +100,8 @@ Movement.propTypes = {
     members: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
         src: PropTypes.string.isRequired
-    }))
+    })),
+    date: PropTypes.string
 };
 
 export default Movement;

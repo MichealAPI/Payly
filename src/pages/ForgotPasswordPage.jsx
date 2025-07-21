@@ -6,7 +6,7 @@ import { useState } from "react";
 import { ArrowRightIcon, EnvelopeIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 
-const ForgotPage = () => {
+const ForgotPasswordPage = () => {
 
     const navigate = useNavigate();
 
@@ -63,4 +63,4 @@ const ForgotPage = () => {
 };
 
 
-export default ForgotPage;
+export default ForgotPasswordPage;

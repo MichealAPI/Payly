@@ -1,8 +1,8 @@
 import styles from './Wrapper.module.css';
 
-const Wrapper = ({ children }) => {
+const Wrapper = ({ className, children }) => {
     return (
-        <div className={styles.wrapper}>
+        <div className={`${className} ${styles.wrapper}`}>
             {children}
         </div>
     );

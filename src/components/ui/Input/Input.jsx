@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styles from './Input.module.css';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid'
 
-const Input = ({ type, placeholder, value, onChange, label, className, icon }) => {
+const Input = ({ type, placeholder, value, onChange, label, rightLabel, className, icon }) => {
     const [currentType, setCurrentType] = useState(type);
 
     const togglePasswordVisibility = () => {
@@ -12,9 +12,10 @@ const Input = ({ type, placeholder, value, onChange, label, className, icon }) =
 
 
     return (
-        <div className={`${styles['input-wrapper']}`}>
+        <div className={`${className} ${styles['input-wrapper']}`}>
             <div className={styles['input-header']}>
-                <p className="phantom-regular">{label}</p>
+                {label && <p className="phantom-regular">{label}</p>}
+                {rightLabel}
             </div>
             <div className={styles['input-container']}>
                 {icon && <div className={styles.icon}>{icon}</div>}
@@ -52,6 +53,7 @@ Input.propTypes = {
     placeholder: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func,
+    rightLabel: PropTypes.element,
     className: PropTypes.string,
 };
 

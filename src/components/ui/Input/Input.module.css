@@ -7,7 +7,6 @@
     flex-direction: column;
     width: 100%;
 
-    margin-top: 20px;
 }
 
 .input-wrapper .input-header p {
@@ -15,6 +14,12 @@
     font-family: 'Phantom Sans', sans-serif;
     color: white;
     margin: 0 0 4px;
+}
+
+.input-wrapper .input-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .input-wrapper .input-container .input input,

@@ -2,7 +2,8 @@ import React from 'react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Bars3Icon, ChatBubbleLeftRightIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
 import Button from '../Button/Button';
-import logo from '../../../assets/logo.png';
+import Logo from '../Logo/Logo';
+import { useNavigate } from 'react-router-dom';
 
 const navLinks = [
     { name: 'Discord', href: '#', icon: ChatBubbleLeftRightIcon, target: '_blank'},
@@ -10,20 +11,20 @@ const navLinks = [
 ];
 
 const HomeNavbar = () => {
+
+    const navigate = useNavigate();
+
     return (
         <nav className="flex justify-between items-center p-4 md:bg-transparent bg-gray-500/10 w-full">
             {/* Logo and Desktop Title */}
-            <div className="flex gap-3 justify-center items-center">
-                <img src={logo} alt="Payly Logo" className="w-8 hidden md:block h-auto" />
-                <h3 className="font-bold text-white text-xl hidden md:block">Payly</h3>
-            </div>
+            <Logo sideText={true} onClickHomepageNavigate={true} />
 
             {/* Desktop Links */}
             <div className="gap-3 hidden md:flex text-white font-bold items-center">
                 {navLinks.map((link) => (
                     <a key={link.name} href={link.href} target={link.target} className="hover:text-[#9f74fc] transition-colors">{link.name}</a>
                 ))}
-                <a href="#" className='hover:text-[#9f74fc] transition-colors'>Log-in</a>
+                <a onClick={() => navigate("/login")} className='cursor-pointer hover:text-[#9f74fc] transition-colors'>Sign-in</a>
             </div>
 
             {/* Mobile Menu and Sign-in Button */}

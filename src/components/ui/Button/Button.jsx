@@ -6,11 +6,11 @@ const Button = ({ text, className, onClick, size = 'medium', style = 'fill', tex
     return (
         <button
             type={'button'}
-            className={`flex ${className} button ${styles.btn} ${styles[size]} ${styles[style]} items-center justify-between gap-2`}
+            className={`flex ${className} ${styles.btn} ${styles[size]} ${styles[style]} items-center justify-between gap-2`}
             onClick={onClick}
         >
             {textVisibility && size != 'minimal' && <span className="text">{text}</span>}
-            {iconVisibility && icon && <span className="icon">{icon}</span>}
+            {iconVisibility && icon && <span>{icon}</span>}
         </button>
     );
 };

@@ -7,7 +7,7 @@ const Card = ({ children, className, bgHiddenSm }) => {
     const responsiveClasses = "md:bg-[#121214] md:shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)]";
 
     return (
-        <div className={`rounded-[18px] p-5 w-auto md:w-fit ${bgHiddenSm ? responsiveClasses : baseClasses} ${className}`}>
+        <div className={`${className} rounded-[18px] p-5 ${bgHiddenSm ? responsiveClasses : baseClasses}`}>
             {children}
         </div>
     );
