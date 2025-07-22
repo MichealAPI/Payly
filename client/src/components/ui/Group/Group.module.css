@@ -1,7 +1,7 @@
 .group {
     display: flex;
     justify-content: space-between;
-    width: 380px;
+    width: 100%;
 }
 
 .group .actionWrapper {
@@ -57,7 +57,7 @@
     font-weight: normal;
     font-size: 18px;
     color: white;
-    width: 300px;
+    width: 15vw;
 }
 
 .group .infoWrapper .description p {

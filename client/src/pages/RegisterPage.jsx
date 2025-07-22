@@ -5,6 +5,7 @@ import Logo from "../components/ui/Logo/Logo";
 import { useState } from "react";
 import { ArrowRightIcon, EnvelopeIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const RegisterPage = () => {
 
@@ -13,6 +14,53 @@ const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleRegister = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
+        if (!checkPasswordMatch(password, confirmPassword)) {
+            setError("Passwords do not match!");
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }), // todo add name and other fields if needed
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Registration failed')
+            }
+
+            navigate('/login');
+        } catch (err) {
+            console.error("Registration error:", err);
+            setError(err.message || 'An error occurred during registration');
+        } finally {
+            setIsLoading(false);
+
+            if (error) {
+                toast.error(error, {
+                    position: 'bottom-center',
+                });
+            } else {
+                toast.success('Registration successful! Please log in.', {
+                    position: 'bottom-center',
+                });
+            }
+        }
+    }
 
     return (
 
@@ -29,7 +77,7 @@ const RegisterPage = () => {
                         <p className="text-2xl text-white m-0">Time to make it easy.</p>
                     </div>
 
-                    <form className="flex flex-col gap-4 mt-8 w-sm" onSubmit={(e) => e.preventDefault()}>
+                    <form className="flex flex-col gap-4 mt-8 w-sm" onSubmit={handleRegister}>
                         <Input
                             type="email"
                             label="Email"
@@ -64,16 +112,9 @@ const RegisterPage = () => {
                             textVisibility={true}
                             iconVisibility={true}
                             icon={<ArrowRightIcon className="w-6" />}
-                            onClick={() => {
-                                if (!checkPasswordMatch(password, confirmPassword)) {
-                                    alert("Passwords do not match!");
-                                    return;
-                                }
-                                // Proceed with registration logic
-                                console.log("Registration successful with email:", email);
-                            }} /* Todo: implement registration logic */
                             style="fill"
                             type="submit"
+                            disabled={isLoading}
                         />
                     </form>
 

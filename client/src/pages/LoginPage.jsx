@@ -5,6 +5,7 @@ import Logo from "../components/ui/Logo/Logo";
 import { useState } from "react";
 import { ArrowRightIcon, EnvelopeIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const LoginPage = () => {
 
@@ -12,9 +13,46 @@ const LoginPage = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json;
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Login failed');
+            }
+
+            console.log("Login successful:", data);
+            navigate('/groups')
+        } catch (err) {
+            console.error("Login error:", err);
+            setError(err.message || 'An error occurred during login');
+        } finally {
+            if (error) {
+                toast.error(error, {
+                    position: 'bottom-center',
+                });
+            } else {
+                toast.success('Login successful!', {
+                    position: 'bottom-center',
+                });
+            }
+        }
+    };
 
     return (
-
         <div className="flex flex-col min-h-[100vh] bg-[#1A1A1E]">
             <HomeNavbar />
 
@@ -28,7 +66,7 @@ const LoginPage = () => {
                         <p className="text-2xl text-white m-0">Sign in to continue</p>
                     </div>
 
-                    <form className="flex flex-col gap-4 mt-8 w-sm" onSubmit={(e) => e.preventDefault()}>
+                    <form className="flex flex-col gap-4 mt-8 w-sm" onSubmit={handleLogin}>
                         <Input
                             type="email"
                             label="Email"
