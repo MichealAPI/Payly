@@ -26,6 +26,7 @@ export default function GroupModal({
   const [description, setDescription] = useState(defDescription);
   const [icon, setIcon] = useState(defIcon);
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Update state if default props change (for editing)
   useEffect(() => {
@@ -42,6 +43,8 @@ export default function GroupModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setIsLoading(true);
 
     const url = isEditMode ? `/api/groups/${groupId}` : "/api/groups/";
     const method = isEditMode ? "PUT" : "POST";
@@ -67,6 +70,7 @@ export default function GroupModal({
       });
 
       if (onComplete) {
+        setIsLoading(false);
         onComplete(data.group);
       }
 
@@ -205,11 +209,12 @@ export default function GroupModal({
                       required
                     />
                   </div>
-                  <div className="mt-6 flex justify-end space-x-4">
+                  <div className="mt-6 flex justify-between space-x-4">
                     <Button
                       text="Cancel"
                       style="outline"
                       onClick={closeModal}
+                      disabled={isLoading}
                     />
 
                     <Button
@@ -217,6 +222,7 @@ export default function GroupModal({
                       iconVisibility={true}
                       icon={submitButtonIcon}
                       type="submit"
+                      disabled={isLoading}
                     />
                   </div>
                 </form>

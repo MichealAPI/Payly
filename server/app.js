@@ -7,6 +7,7 @@ import { connectDB } from './config/database.js';
 
 import authRoutes from './routes/authRoutes.js';
 import groupRoutes from './routes/groupRoutes.js';
+
 import { createRequire } from 'module';// Import createRequire to use require in ESM which is needed for dotenvx
 
 // Initialize database connection

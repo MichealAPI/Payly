@@ -1,5 +1,5 @@
 import Group from "../models/Group.js";
-import User from "../models/User.js";
+import User from '../models/User.js';
 import fetchMemberNames from "../utils/groupUtils.js";
 import mongoose from 'mongoose';
 
@@ -37,34 +37,6 @@ export const createGroup = async (req, res) => {
 
     // end stopwatch and log execution time
     console.timeEnd('createGroup');
-};
-
-export const getGroups = async (req, res) => {
-    // start stopwatch to measure execution time
-    console.time('getGroups');
-
-    const userId = req.user.id;
-    try {
-        const user = await User.findById(userId).populate({
-            path: 'groups',
-            populate: {
-                path: 'members',
-                select: 'email' // Only select the email field from members
-            }
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        res.status(200).json(user.groups);
-    } catch (error) {
-        console.error('Error fetching groups:', error);
-        res.status(500).json({ message: 'Server error while fetching groups' });
-    }
-
-    // end stopwatch and log execution time
-    console.timeEnd('getGroups');
 };
 
 export const updateGroup = async (req, res) => {
@@ -190,5 +162,48 @@ export const getUserArchivedGroups = async (req, res) => {
     } catch (error) {
         console.error('Error fetching archived groups:', error);
         res.status(500).json({ message: 'Server error while fetching archived groups' });
+    }
+};
+
+export const updateGroupOrder = async (req, res) => {
+    const { orderedGroupIds } = req.body;
+    const userId = req.user.id; // Standardize to req.user.id
+
+    if (!orderedGroupIds || !Array.isArray(orderedGroupIds)) {
+        return res.status(400).json({ message: 'Invalid group order data provided.' });
+    }
+
+    try {
+        // Find the user and update their 'groups' array to the new order.
+        await User.findByIdAndUpdate(userId, { $set: { groups: orderedGroupIds } });
+        res.status(200).json({ message: 'Group order updated successfully.' });
+    } catch (error) {
+        console.error('Error updating group order:', error);
+        res.status(500).json({ message: 'Failed to update group order.' });
+    }
+};
+
+// Modify your existing list/fetch groups controller
+export const getGroups = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).populate({ // Standardize to req.user.id
+            path: 'groups',
+            model: 'Group',
+            populate: {
+                path: 'members',
+                model: 'User',
+                select: 'name email'
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // The 'groups' array is already sorted as per the user's document
+        res.json(user.groups);
+    } catch (error) {
+        console.error('Failed to fetch groups:', error);
+        res.status(500).json({ message: 'Failed to fetch groups' });
     }
 };

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import Spinner from '../components/ui/Spinner/Spinner'; // Import the Spinner component
 
 const AuthContext = createContext(null);
 
@@ -24,9 +25,18 @@ export const AuthProvider = ({ children }) => {
         checkUserSession();
     }, []);
 
+    if (loading) {
+        // Show the spinner while loading
+        return (
+            <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center">
+                <Spinner />
+            </div>
+        );
+    }
+
     return (
         <AuthContext.Provider value={{ user, setUser, loading }}>
-            {!loading && children}
+            {children}
         </AuthContext.Provider>
     );
 };

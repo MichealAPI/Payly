@@ -13,8 +13,26 @@ import Observer from "../utils/observer.js";
 import Spinner from "../components/ui/Spinner/Spinner.jsx";
 import LoadingCard from "../components/ui/LoadingCard/LoadingCard.jsx";
 
+import { restrictToParentElement } from "@dnd-kit/modifiers";
+
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
+import SortableGroup from "../components/ui/Group/SortableGroup.jsx";
+
 const GroupSelectorPage = () => {
   const [allGroups, setAllGroups] = useState([]);
+  const [activeGroup, setActiveGroup] = useState(null); // New state for the active group
   const [archivedGroups, setArchivedGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeAction, setActiveAction] = useState("showall");
@@ -22,6 +40,60 @@ const GroupSelectorPage = () => {
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
   const [spinnerVisible, setSpinnerVisible] = useState(false);
   const menuRef = useRef(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      // Require the mouse to move by 10 pixels before activating
+      // Allows for clicking buttons inside the card without triggering a drag
+      activationConstraint: {
+        distance: 10,
+      },
+    })
+  );
+
+  const handleDragStart = (event) => {
+    const { active } = event;
+    const draggedGroup = allGroups.find((g) => g._id === active.id);
+    setActiveGroup(draggedGroup); // Set the active group being dragged
+  };
+
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+
+    setActiveGroup(null); // Clear the active group after drag ends
+
+    if (active && over && active.id !== over.id) {
+      const oldIndex = allGroups.findIndex((g) => g._id === active.id);
+      const newIndex = allGroups.findIndex((g) => g._id === over.id);
+
+      const newAllGroups = arrayMove(allGroups, oldIndex, newIndex);
+
+      // Optimistically update the UI
+      setAllGroups(newAllGroups);
+
+      // Persist the new order to the database
+      try {
+        const orderedGroupIds = newAllGroups.map((g) => g._id);
+        const response = await fetch("/api/groups/order", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ orderedGroupIds }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to save the new group order.");
+        }
+
+      } catch (error) {
+        console.error(error);
+        toast.error("Could not save new order. Reverting.");
+        // If the API call fails, revert the state to the original order
+        setAllGroups(allGroups);
+      }
+    }
+  };
 
   const isGroupsListEmpty = () => (
     allGroups.length === 0 && archivedGroups.length === 0
@@ -71,7 +143,9 @@ const GroupSelectorPage = () => {
           setSpinnerVisible(false);
           break;
         case "groupUnarchived":
-          setArchivedGroups((prev) => prev.filter((g) => g._id !== data.payload._id));
+          setArchivedGroups((prev) =>
+            prev.filter((g) => g._id !== data.payload._id)
+          );
           setSpinnerVisible(false);
           break;
         case "groupDeleted":
@@ -126,28 +200,21 @@ const GroupSelectorPage = () => {
 
   const filteredGroups = useMemo(() => {
     const archivedIds = new Set(archivedGroups.map((g) => g._id));
+    let groupsToShow = [];
+
     switch (activeAction) {
       case "archived":
-        // Find the full group object in allGroups for each archived ID
-        return allGroups.filter((group) => archivedIds.has(group._id));
+        groupsToShow = allGroups.filter((group) => archivedIds.has(group._id));
+        break;
       case "running":
-        return allGroups.filter((group) => !archivedIds.has(group._id));
+        groupsToShow = allGroups.filter((group) => !archivedIds.has(group._id));
+        break;
       case "showall":
       default:
-        // Create a sorted copy for the "showall" view.
-        return [...allGroups].sort((a, b) => {
-          const isAArchived = archivedIds.has(a._id);
-          const isBArchived = archivedIds.has(b._id);
-
-          // Running groups come before archived groups.
-          if (!isAArchived && isBArchived) return -1;
-          if (isAArchived && !isBArchived) return 1;
-
-          // For groups with the same status, sort by most recent
-          // Assumes a 'createdAt' field exists on the group object
-          return new Date(b.createdAt) - new Date(a.createdAt);
-        });
+        groupsToShow = [...allGroups];
+        break;
     }
+    return groupsToShow;
   }, [activeAction, allGroups, archivedGroups]);
 
   const handlePrimaryButtonClick = () => {
@@ -189,29 +256,60 @@ const GroupSelectorPage = () => {
             </>
           ) : filteredGroups.length > 0 ? (
             <>
-              <div className="grid p-10 items-center grid-cols-1 0 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-25 w-full">
-                {filteredGroups.map((group) => (
-                  <Group
-                    className="hover:-translate-y-[2px] transition-all duration-300 hover:shadow-[0px_0px_20px_2px_rgba(198,172,255,0.35)]"
-                    key={group._id}
-                    icon={group.icon}
-                    title={group.name}
-                    members={group.members}
-                    entryId={group._id}
-                    description={group.description}
-                    observer={observer.current}
-                    isArchived={archivedGroups.some((g) => g._id === group._id)}
-                  />
-                ))}
-              </div>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                modifiers={[restrictToParentElement]}
+                onDragStart={handleDragStart} // Add drag start handler
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={filteredGroups.map((g) => g._id)}
+                  disabled={isCreatorOpen || allGroups.length < 2}
+                  strategy={rectSortingStrategy}
+                >
+                  <div className="grid p-10 items-center grid-cols-1 0 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-25 w-full">
+                    {filteredGroups.map((group) => (
+                      <SortableGroup
+                        key={group._id}
+                        id={group._id}
+                        group={group}
+                        observer={observer.current}
+                        isArchived={archivedGroups.some(
+                          (g) => g._id === group._id
+                        )}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+
+                <DragOverlay className="cursor-pointer">
+                  {activeGroup ? (
+                    <Group
+                      className="shadow-lg transform scale-105 transition-transform duration-100"
+                      icon={activeGroup.icon}
+                      title={activeGroup.name}
+                      members={activeGroup.members}
+                      entryId={activeGroup._id}
+                      description={activeGroup.description}
+                    />
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
             </>
           ) : (
             <div className="flex justify-center items-center flex-col mt-30">
-              <img src="https://res.cloudinary.com/dzeah7jtd/image/upload/v1753263941/undraw_stars_5pgw_zapchg.svg" alt="No groups found" className="w-1/3 mb-5 animate-translate select-none pointer-events-none" />
+              <img
+                src="https://res.cloudinary.com/dzeah7jtd/image/upload/v1753263941/undraw_stars_5pgw_zapchg.svg"
+                alt="No groups found"
+                className="w-1/3 mb-5 animate-translate select-none pointer-events-none"
+              />
               {activeAction === "archived" ? (
                 <p className="text-white text-lg">No archived groups found.</p>
               ) : (
-                <p className="text-white text-xl">No groups found, click on the '<b>+</b>' button to create one!</p>
+                <p className="text-white text-xl">
+                  No groups found, click on the "<b>+</b>" button to create one!
+                </p>
               )}
             </div>
           )}
@@ -229,7 +327,11 @@ const GroupSelectorPage = () => {
         className="group fixed z-50 bottom-10 right-10 flex flex-col items-end gap-4"
       >
         {/* Secondary Action Buttons */}
-        <div className={`flex flex-col-reverse items-center gap-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 ${isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none md:pointer-events-auto"}`}>
+        <div
+          className={`flex flex-col-reverse items-center gap-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 ${
+            isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none md:pointer-events-auto"
+          }`}
+        >
           {/* Join Group Button */}
           <div className="group/join flex justify-between w-full items-center">
             <p className="whitespace-nowrap text-[#BD9EFF] mr-5 text-sm font-bold opacity-0 group-hover/join:opacity-100 transition-all duration-200 transform translate-x-[20px] group-hover/join:translate-x-0">
@@ -261,10 +363,15 @@ const GroupSelectorPage = () => {
 
         {/* Main Trigger Button */}
         <div className="flex">
-
-          {isGroupsListEmpty() || (allGroups.length === 0 && (activeAction === "showall" || activeAction === "running")) && (
-            <img src="https://res.cloudinary.com/dzeah7jtd/image/upload/v1753265161/drawn_arrow_zxhhdw.png" alt="No groups" className="w-10 h-10 absolute right-15 bottom-5 animate-translate select-none pointer-events-none" />
-          )}
+          {isGroupsListEmpty() ||
+            (allGroups.length === 0 &&
+              (activeAction === "showall" || activeAction === "running")) && (
+              <img
+                src="https://res.cloudinary.com/dzeah7jtd/image/upload/v1753265161/drawn_arrow_zxhhdw.png"
+                alt="No groups"
+                className="w-10 h-10 absolute right-15 bottom-5 animate-translate select-none pointer-events-none"
+              />
+            )}
 
           <Button
             size="minimal"
