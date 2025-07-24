@@ -1,6 +1,5 @@
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 export const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -24,17 +23,12 @@ export const loginUser = async (req, res) => {
         return res.status(401).json({message: 'Invalid email or password'});
     }
 
-    const token = jwt.sign({
-        id: user._id,
-    }, process.env.JWT_SECRET, {
-        expiresIn: '7d',
-    });
+    if (user) {
+        req.session.user = {
+            id: user._id,
+            email: user.email,
+        }
+    }
 
-    res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Lax'
-    });
-
-    res.json({message: 'Login successful', user: {id: user._id, name: user.name}});
+    res.json({message: 'Login successful', user: req.session.user});
 }

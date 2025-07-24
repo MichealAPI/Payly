@@ -3,6 +3,7 @@ import {
   DialogPanel,
   DialogTitle,
   Transition,
+  TransitionChild,
 } from "@headlessui/react";
 import { Fragment } from "react";
 import Button from "../Button/Button";
@@ -21,7 +22,7 @@ const ConfirmModal = ({ title, message, isOpen, setIsOpen, onConfirm, onCancel }
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={() => closeModal(true)}>
         {/* The backdrop, rendered as a fixed sibling to the panel container */}
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -31,11 +32,11 @@ const ConfirmModal = ({ title, message, isOpen, setIsOpen, onConfirm, onCancel }
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-black/30" />
-        </Transition.Child>
+        </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -67,8 +68,8 @@ const ConfirmModal = ({ title, message, isOpen, setIsOpen, onConfirm, onCancel }
                       iconVisibility={true}
                       icon={<CheckIcon className="w-6" />}
                       onClick={() => {
-                        if (onConfirm) onConfirm();
                         closeModal();
+                        if (onConfirm) onConfirm();
                       }}
                     />
                     
@@ -83,7 +84,7 @@ const ConfirmModal = ({ title, message, isOpen, setIsOpen, onConfirm, onCancel }
                   </div>
                 </div>
               </DialogPanel>
-            </Transition.Child>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

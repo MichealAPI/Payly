@@ -3,63 +3,88 @@ import {
   DialogPanel,
   DialogTitle,
   Transition,
+  TransitionChild,
 } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import Button from "../Button/Button";
-import { PlusIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, ChevronDownIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import EmojiPicker from "emoji-picker-react";
 import { toast } from "react-hot-toast";
 
-export default function NewGroupModal({ isOpen, setIsOpen, onGroupCreated }) {
-  const [groupName, setGroupName] = useState("");
-  const [description, setDescription] = useState("");
-  const [icon, setIcon] = useState("👥"); // Default icon, can be changed later
+export default function GroupModal({
+  isOpen,
+  setIsOpen,
+  onComplete,
+  setSpinnerVisible,
+  defGroupName = "",
+  defDescription = "",
+  defIcon = "👥",
+  isEditMode = false,
+  groupId = null,
+}) {
+  const [groupName, setGroupName] = useState(defGroupName);
+  const [description, setDescription] = useState(defDescription);
+  const [icon, setIcon] = useState(defIcon);
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
-  const [error, setError] = useState("");
+
+  // Update state if default props change (for editing)
+  useEffect(() => {
+    setGroupName(defGroupName);
+    setDescription(defDescription);
+    setIcon(defIcon);
+  }, [defGroupName, defDescription, defIcon, isOpen]);
+
 
   function closeModal() {
     setIsOpen(false);
+    setEmojiPickerVisible(false); // Close emoji picker on modal close
   }
 
-  const handleGroupCreation = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically handle the form submission,
-    // like sending the data to an API.
+
+    const url = isEditMode ? `/api/groups/${groupId}` : "/api/groups/";
+    const method = isEditMode ? "PUT" : "POST";
 
     try {
-      const response = await fetch("/api/groups/", {
-        method: "POST",
+      if (setSpinnerVisible) setSpinnerVisible(true);
+      const response = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ name: groupName, description, icon }),
       });
 
-      console.log(JSON.stringify(response.body));
-
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to create group");
+        throw new Error(data.message || `Failed to ${isEditMode ? 'update' : 'create'} group`);
       }
 
-      toast.success(`Group '${groupName}' created successfully!`);
-
-      if (onGroupCreated) {
-        onGroupCreated();
-      }
-
-      // Reset form fields and close the modal on success
-      setIcon("👥");
-      setGroupName("");
-      setDescription("");
-      closeModal();
-    } catch (err) {
-      console.error("Group creation error:", err);
-      setError(err.message || "An error occurred during group creation");
-      toast.error(error, {
+      toast.success(`Group '${groupName}' ${isEditMode ? 'updated' : 'created'} successfully!`, {
         position: "bottom-center",
       });
+
+      if (onComplete) {
+        onComplete(data.group);
+      }
+
+      // Reset form fields and close the modal on success only if not in edit mode
+      if (!isEditMode) {
+        setIcon("👥");
+        setGroupName("");
+        setDescription("");
+      }
+      closeModal();
+    } catch (err) {
+      console.error("Group submission error:", err);
+      const errorMessage = err.message || `An error occurred during group ${isEditMode ? 'update' : 'creation'}`;
+      toast.error(errorMessage, {
+        position: "bottom-center",
+      });
+    } finally {
+      if (setSpinnerVisible) setSpinnerVisible(false);
     }
   };
 
@@ -67,11 +92,15 @@ export default function NewGroupModal({ isOpen, setIsOpen, onGroupCreated }) {
     setEmojiPickerVisible(!emojiPickerVisible);
   }
 
+  const modalTitle = isEditMode ? "Edit Group" : "Create a New Group";
+  const submitButtonText = isEditMode ? "Save Changes" : "Create Group";
+  const submitButtonIcon = isEditMode ? <PencilSquareIcon className="w-6" /> : <PlusIcon className="w-6" />;
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={closeModal}>
         {/* The backdrop, rendered as a fixed sibling to the panel container */}
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -81,11 +110,11 @@ export default function NewGroupModal({ isOpen, setIsOpen, onGroupCreated }) {
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-black/30" />
-        </Transition.Child>
+        </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -99,10 +128,10 @@ export default function NewGroupModal({ isOpen, setIsOpen, onGroupCreated }) {
                   as="h3"
                   className="text-lg leading-6 text-white font-bold"
                 >
-                  Create a New Group
+                  {modalTitle}
                 </DialogTitle>
 
-                <form onSubmit={handleGroupCreation}>
+                <form onSubmit={handleSubmit}>
                   <div className="mt-4">
                     <label
                       htmlFor="icon"
@@ -184,15 +213,15 @@ export default function NewGroupModal({ isOpen, setIsOpen, onGroupCreated }) {
                     />
 
                     <Button
-                      text="Create Group"
+                      text={submitButtonText}
                       iconVisibility={true}
-                      icon={<PlusIcon className="w-6" />}
+                      icon={submitButtonIcon}
                       type="submit"
                     />
                   </div>
                 </form>
               </DialogPanel>
-            </Transition.Child>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

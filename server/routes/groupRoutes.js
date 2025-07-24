@@ -12,6 +12,7 @@ router.get('/list', getGroups);
 router.put('/:id', updateGroup);
 router.delete('/:id', deleteGroup);
 router.post('/:id/archive', archiveGroup)
+router.post('/:id/unarchive', archiveGroup);
 router.get('/archived', getUserArchivedGroups);
 
 export default router;

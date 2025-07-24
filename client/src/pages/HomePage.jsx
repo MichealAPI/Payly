@@ -12,7 +12,6 @@ const HomePage = () => {
 
     return (
         <div className="flex flex-col min-h-[100vh] bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] bg-[length:30px_30px]">
-
             <HomeNavbar />
 
             <main className="flex flex-1 justify-center md:justify-between items-center md:p-20 p-5">

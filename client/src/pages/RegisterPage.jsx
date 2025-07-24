@@ -77,7 +77,7 @@ const RegisterPage = () => {
                         <p className="text-2xl text-white m-0">Time to make it easy.</p>
                     </div>
 
-                    <form className="flex flex-col gap-4 mt-8 w-sm" onSubmit={handleRegister}>
+                    <form className="flex flex-col gap-4 mt-8 w-xs md:w-sm" onSubmit={handleRegister}>
                         <Input
                             type="email"
                             label="Email"

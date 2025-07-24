@@ -40,6 +40,10 @@
     font-family: 'Phantom Sans', sans-serif;
     font-weight: bold;
     font-size: 24px;
+    max-width: 15vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: white;
     margin: 0;
 
@@ -57,7 +61,7 @@
     font-weight: normal;
     font-size: 18px;
     color: white;
-    width: 15vw;
+    width: 10vw;
 }
 
 .group .infoWrapper .description p {

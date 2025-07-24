@@ -1,8 +1,8 @@
 import toast from "react-hot-toast";
 
-async function handleArchive(error, setError, groupId) {
+async function handleArchive(error, setError, groupId, isArchived) {
   try {
-    const response = await fetch(`/api/groups/${groupId}/archive`, {
+    const response = await fetch(`/api/groups/${groupId}/${isArchived ? "unarchive" : "archive"}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -10,28 +10,24 @@ async function handleArchive(error, setError, groupId) {
     });
 
     if (!response.ok) {
-      console.error("Failed to archive group");
-      return;
+      console.error("Failed to update group");
+      toast.error("Failed to update group.", { position: "bottom-center" });
+      return false;
     }
 
-    console.log("Group archived successfully");
+    toast.success("Group updated successfully!", {
+      position: "bottom-center",
+    });
+    return true;
   } catch (err) {
     console.error("Archive error:", err);
     setError(err.message || "An error occurred while archiving the group");
-  } finally {
-    if (error) {
-      toast.error(error, {
-        position: "bottom-center",
-      });
-    } else {
-      toast.success("Group archived successfully!", {
-        position: "bottom-center",
-      });
-    }
+    toast.error(error || "An error occurred.", { position: "bottom-center" });
+    return false;
   }
 }
 
-async function handleDelete(groupId, onComplete) {
+async function handleDelete(error, setError, groupId) {
   try {
     const response = await fetch(`/api/groups/${groupId}`, {
       method: "DELETE",
@@ -42,13 +38,17 @@ async function handleDelete(groupId, onComplete) {
       throw new Error(errorData.message || "Failed to delete group");
     }
 
-    toast.success("Group deleted successfully!");
-    if (onComplete) {
-      onComplete(); // This will call fetchGroups
-    }
+    toast.success("Group deleted successfully!", {
+      position: "bottom-center",
+    });
+    return true;
   } catch (err) {
     console.error("Delete error:", err);
-    toast.error(err.message || "An error occurred while deleting the group");
+    setError(err.message || "An error occurred while deleting the group");
+    toast.error(err.message, {
+      position: "bottom-center",
+    });
+    return false;
   }
 }
 

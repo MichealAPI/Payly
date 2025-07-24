@@ -17,7 +17,7 @@ const HomeNavbar = () => {
     return (
         <nav className="flex justify-between items-center p-4 md:bg-transparent bg-gray-500/10 w-full">
             {/* Logo and Desktop Title */}
-            <Logo sideText={true} onClickHomepageNavigate={true} />
+            <Logo sideText={true} className='hidden md:block' onClickHomepageNavigate={true} />
 
             {/* Desktop Links */}
             <div className="gap-3 hidden md:flex text-white font-bold items-center">

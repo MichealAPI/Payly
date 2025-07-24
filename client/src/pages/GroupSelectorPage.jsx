@@ -7,9 +7,11 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import Button from "../components/ui/Button/Button.jsx";
 import { PlusIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 
-import NewGroupModal from "../components/ui/NewGroupModal/NewGroupModal.jsx";
+import GroupModal from "../components/ui/GroupModal/GroupModal.jsx";
 import { toast } from "react-hot-toast";
 import Observer from "../utils/observer.js";
+import Spinner from "../components/ui/Spinner/Spinner.jsx";
+import LoadingCard from "../components/ui/LoadingCard/LoadingCard.jsx";
 
 const GroupSelectorPage = () => {
   const [allGroups, setAllGroups] = useState([]);
@@ -18,57 +20,95 @@ const GroupSelectorPage = () => {
   const [activeAction, setActiveAction] = useState("showall");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
+  const [spinnerVisible, setSpinnerVisible] = useState(false);
   const menuRef = useRef(null);
 
-  const observer = useRef(new Observer());
-  observer.current.subscribe((data) => {
-    switch (data) {
-        case "groupArchived":
-            fetchArchivedGroups();
-            break;
-    }
-  })
+  const isGroupsListEmpty = () => (
+    allGroups.length === 0 && archivedGroups.length === 0
+  );
 
   const fetchArchivedGroups = async () => {
     try {
-        const response = await fetch("/api/groups/archived");
-        if (!response.ok) {
-            throw new Error("Failed to fetch archived groups");
-        }
-        const data = await response.json();
-        setArchivedGroups(data);
-    } catch (error) {
-        console.error("Failed to fetch archived groups:", error);
-        toast.error("Could not load archived groups.");
-    }
-};
-
-
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      // Fetch all groups and archived groups in parallel
-      const groupsResponse = await fetch("/api/groups/list");
-
-      if (!groupsResponse.ok) {
-        throw new Error("Network response was not ok");
+      setSpinnerVisible(true);
+      const response = await fetch("/api/groups/archived");
+      if (!response.ok) {
+        throw new Error("Failed to fetch archived groups");
       }
+      const data = await response.json();
+      setArchivedGroups(data);
+    } catch (error) {
+      console.error("Failed to fetch archived groups:", error);
+      toast.error("Could not load archived groups.");
+    } finally {
+      setSpinnerVisible(false);
+    }
+  };
 
-      const groupsData = await groupsResponse.json();
-
-      setAllGroups(groupsData);
-      await fetchArchivedGroups();
+  const fetchGroups = async () => {
+    try {
+      const response = await fetch("/api/groups/list");
+      if (!response.ok) {
+        throw new Error("Failed to fetch groups");
+      }
+      const data = await response.json();
+      setAllGroups(data);
     } catch (error) {
       console.error("Failed to fetch groups:", error);
-      toast.error("Could not load your groups.");
+      toast.error("Could not load groups.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Handling Group card Actions
+  const observer = useRef(new Observer());
+
   useEffect(() => {
+    const handleObserver = (data) => {
+      switch (data.type) {
+        case "groupArchived":
+          setArchivedGroups((prev) => [...prev, data.payload]);
+          setSpinnerVisible(false);
+          break;
+        case "groupUnarchived":
+          setArchivedGroups((prev) => prev.filter((g) => g._id !== data.payload._id));
+          setSpinnerVisible(false);
+          break;
+        case "groupDeleted":
+          setAllGroups((prev) => prev.filter((g) => g._id !== data.payload.groupId));
+          setLoading(false);
+          break;
+        case "deletingGroup":
+          setLoading(true);
+          break;
+        case "groupUpdated":
+          // Replace the re-fetch with a direct state update
+          setAllGroups((prev) =>
+            prev.map((g) => (g._id === data.payload._id ? data.payload : g))
+          );
+          break;
+        case "unarchivingGroup":
+        case "archivingGroup":
+          setSpinnerVisible(true);
+          break;
+        case "groupCreated":
+          setAllGroups((prev) => [data.payload, ...prev]);
+          setLoading(false);
+          break;
+      }
+    };
+
+    observer.current.subscribe(handleObserver);
+
+    async function fetchData() {
+      await fetchGroups();
+      await fetchArchivedGroups();
+    }
     fetchData();
+
+    return () => {
+      observer.current.unsubscribe(handleObserver);
+    };
   }, []);
 
   // Effect to handle clicks outside the menu to close it on mobile
@@ -94,7 +134,19 @@ const GroupSelectorPage = () => {
         return allGroups.filter((group) => !archivedIds.has(group._id));
       case "showall":
       default:
-        return allGroups;
+        // Create a sorted copy for the "showall" view.
+        return [...allGroups].sort((a, b) => {
+          const isAArchived = archivedIds.has(a._id);
+          const isBArchived = archivedIds.has(b._id);
+
+          // Running groups come before archived groups.
+          if (!isAArchived && isBArchived) return -1;
+          if (isAArchived && !isBArchived) return 1;
+
+          // For groups with the same status, sort by most recent
+          // Assumes a 'createdAt' field exists on the group object
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
     }
   }, [activeAction, allGroups, archivedGroups]);
 
@@ -120,30 +172,55 @@ const GroupSelectorPage = () => {
           actionsDropdown={true}
           onActionClick={setActiveAction}
         />
-
-        <div className="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="w-full">
           {loading ? (
-            <p className="text-white">Loading groups...</p>
+            <>
+              {/* Desktop loading cards */}
+              <div className="hidden md:flex flex-col md:flex-row md:flex-wrap gap-10 justify-center items-center p-10">
+                {Array.from({ length: 12 }, (_, index) => (
+                  <LoadingCard key={index} />
+                ))}
+              </div>
+
+              {/* Mobile loading spinner */}
+              <div className="md:hidden absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center">
+                <Spinner />
+              </div>
+            </>
           ) : filteredGroups.length > 0 ? (
-            filteredGroups.map((group) => (
-              <Group
-                className="hover:-translate-y-[2px] transition-all duration-300 hover:shadow-[0px_0px_20px_2px_rgba(198,172,255,0.35)]"
-                key={group._id}
-                icon={group.icon}
-                title={group.name}
-                members={group.members}
-                entryId={group._id}
-                description={group.description}
-                onActionComplete={fetchData}
-                observer={observer.current}
-              />
-            ))
+            <>
+              <div className="grid p-10 items-center grid-cols-1 0 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-25 w-full">
+                {filteredGroups.map((group) => (
+                  <Group
+                    className="hover:-translate-y-[2px] transition-all duration-300 hover:shadow-[0px_0px_20px_2px_rgba(198,172,255,0.35)]"
+                    key={group._id}
+                    icon={group.icon}
+                    title={group.name}
+                    members={group.members}
+                    entryId={group._id}
+                    description={group.description}
+                    observer={observer.current}
+                    isArchived={archivedGroups.some((g) => g._id === group._id)}
+                  />
+                ))}
+              </div>
+            </>
           ) : (
-            <p className="text-white col-span-full text-center">
-              No groups found for this filter.
-            </p>
+            <div className="flex justify-center items-center flex-col mt-30">
+              <img src="https://res.cloudinary.com/dzeah7jtd/image/upload/v1753263941/undraw_stars_5pgw_zapchg.svg" alt="No groups found" className="w-1/3 mb-5 animate-translate select-none pointer-events-none" />
+              {activeAction === "archived" ? (
+                <p className="text-white text-lg">No archived groups found.</p>
+              ) : (
+                <p className="text-white text-xl">No groups found, click on the '<b>+</b>' button to create one!</p>
+              )}
+            </div>
           )}
         </div>
+        {spinnerVisible && (
+          <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black/30">
+            <Spinner />
+          </div>
+        )}
       </Wrapper>
 
       {/* Floating Action Button Speed Dial */}
@@ -152,15 +229,7 @@ const GroupSelectorPage = () => {
         className="group fixed z-50 bottom-10 right-10 flex flex-col items-end gap-4"
       >
         {/* Secondary Action Buttons */}
-        <div
-          className={`flex flex-col-reverse items-center gap-4 transition-all duration-300 
-          md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0
-          ${
-            isMenuOpen
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-2 pointer-events-none md:pointer-events-auto"
-          }`}
-        >
+        <div className={`flex flex-col-reverse items-center gap-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 ${isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none md:pointer-events-auto"}`}>
           {/* Join Group Button */}
           <div className="group/join flex justify-between w-full items-center">
             <p className="whitespace-nowrap text-[#BD9EFF] mr-5 text-sm font-bold opacity-0 group-hover/join:opacity-100 transition-all duration-200 transform translate-x-[20px] group-hover/join:translate-x-0">
@@ -191,28 +260,38 @@ const GroupSelectorPage = () => {
         </div>
 
         {/* Main Trigger Button */}
-        <Button
-          size="minimal"
-          iconVisibility={true}
-          onClick={handlePrimaryButtonClick}
-          icon={
-            <PlusIcon
-              className={`w-6 transition-transform duration-300 md:group-hover:rotate-45 ${
-                isMenuOpen ? "rotate-45" : ""
-              }`}
-            />
-          }
-          className="relative z-10"
-        />
+        <div className="flex">
 
-        <NewGroupModal
+          {isGroupsListEmpty() || (allGroups.length === 0 && (activeAction === "showall" || activeAction === "running")) && (
+            <img src="https://res.cloudinary.com/dzeah7jtd/image/upload/v1753265161/drawn_arrow_zxhhdw.png" alt="No groups" className="w-10 h-10 absolute right-15 bottom-5 animate-translate select-none pointer-events-none" />
+          )}
+
+          <Button
+            size="minimal"
+            iconVisibility={true}
+            onClick={handlePrimaryButtonClick}
+            icon={
+              <PlusIcon
+                className={`w-6 transition-transform duration-300 md:group-hover:rotate-45 ${
+                  isMenuOpen ? "rotate-45" : ""
+                }`}
+              />
+            }
+            className="relative z-10"
+          />
+        </div>
+
+        <GroupModal
           isOpen={isCreatorOpen}
           setIsOpen={setIsCreatorOpen}
-          onGroupCreated={fetchData}
+          onComplete={(newGroup) =>
+            observer.current.notify({ type: "groupCreated", payload: newGroup })
+          }
+          setSpinnerVisible={setLoading}
         />
       </div>
     </>
   );
-}
+};
 
 export default GroupSelectorPage;
