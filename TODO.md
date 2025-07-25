@@ -45,6 +45,8 @@
 # Other things I could be adding
 - **Archived label**: Show labels on Archived Group Cards
 
+# User preferences
+- Preferred default currency
 
 # Important, to be fixed as soon as possible
 - No animation when confirming deletion in the group cardview
@@ -52,3 +54,4 @@
 - Group creation modal buttons need justify-between
 - IMPORTANT: prevent http attacks 
 - Request rate limit for creation and other important features
+- Group count header inside the GroupSelector

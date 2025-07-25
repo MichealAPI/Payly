@@ -3,7 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Group from "./Group";
 
-const SortableGroup = ({ id, group, observer, isArchived }) => {
+const SortableGroup = ({ id, group, observer, isArchived, className }) => {
   const {
     attributes,
     listeners,
@@ -16,14 +16,20 @@ const SortableGroup = ({ id, group, observer, isArchived }) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    zIndex: isDragging ? 10 : 'auto',
-    opacity: isDragging ? 0 : 1,
   };
 
   return (
-    <div ref={setNodeRef} className="h-full cursor-pointer" style={style} {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef}
+      className={`h-full ${className} ${
+        isDragging ? "opacity-10 z-auto" : "opacity-100 z-10"
+      } transition-transform transform`}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
       <Group
-        className="hover:-translate-y-[2px] transition-all duration-300 hover:shadow-[0px_0px_20px_2px_rgba(198,172,255,0.35)]"
+        className={`hover:-translate-y-[2px] transition-all duration-300 hover:shadow-[0px_0px_20px_2px_rgba(198,172,255,0.35)]`}
         key={group._id}
         icon={group.icon}
         title={group.name}

@@ -1,5 +1,6 @@
 import express from 'express';
-import { createGroup, getGroups, updateGroup, deleteGroup, archiveGroup, getUserArchivedGroups, updateGroupOrder } from '../controllers/groupController.js';
+import { createGroup, getGroups, updateGroup, deleteGroup, archiveGroup, getUserArchivedGroups, updateGroupOrder, getGroupDetails } from '../controllers/groupController.js';
+import { createMovement } from '../controllers/movementController.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -12,8 +13,12 @@ router.get('/archived', getUserArchivedGroups);
 router.put('/order', updateGroupOrder);
 router.post('/', createGroup);
 router.put('/:id', updateGroup);
+router.get('/:id', getGroupDetails);
 router.delete('/:id', deleteGroup);
 router.post('/:id/archive', archiveGroup);
 router.post('/:id/unarchive', archiveGroup);
+
+// Movement routes
+router.post('/:id/movements', createMovement);
 
 export default router;

@@ -1,6 +1,10 @@
 import app from './app.js';
 import { connectDB } from './config/database.js';
 
+import "./models/User.js";
+import "./models/Group.js";
+import "./models/Movement.js";
+
 const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {

@@ -74,7 +74,7 @@ export const Group = ({
   };
 
   const handleNavigate = () => {
-    navigate(`/group/${entryId}`);
+    navigate(`/overview/${entryId}`);
   };
 
   // Stop propagation to prevent parent onClick if it existed
@@ -109,7 +109,7 @@ export const Group = ({
         onComplete={handleEditComplete}
       />
 
-      <Card className={`${className} w-full h-full`} onClick={handleNavigate}>
+      <Card className={`${className} w-full md:h-55`} onClick={handleNavigate}>
         <div className="flex w-full items-center h-full gap-4 md:items-start ">
           <div className="flex flex-row items-center gap-4 flex-1 min-w-0 h-full md:flex-col md:items-start md:gap-9">
             <div className="flex md:flex-col items-center md:items-stretch">
@@ -146,7 +146,7 @@ export const Group = ({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col h-full justify-center md:justify-between">
+            <div className="flex flex-col justify-center md:justify-between">
               <div
                 className="hidden items-center justify-center md:flex"
                 onClick={handleSettingsClick}

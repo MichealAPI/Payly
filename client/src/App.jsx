@@ -39,8 +39,8 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        <Route 
-          path='/overview' 
+        <Route
+          path='/overview/:groupId' 
           element={
             <ProtectedRoute>
               <OverviewPage />

@@ -5,7 +5,7 @@ import Group from "../components/ui/Group/Group";
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import Button from "../components/ui/Button/Button.jsx";
-import { PlusIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import {ChevronUpIcon, PlusIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 
 import GroupModal from "../components/ui/GroupModal/GroupModal.jsx";
 import { toast } from "react-hot-toast";
@@ -19,6 +19,7 @@ import {
   DndContext,
   closestCenter,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragOverlay,
@@ -47,6 +48,13 @@ const GroupSelectorPage = () => {
       // Allows for clicking buttons inside the card without triggering a drag
       activationConstraint: {
         distance: 10,
+      },
+    }),
+    useSensor(TouchSensor, {
+      // Press and hold for 250ms with 5px tolerance to start dragging
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
       },
     })
   );
@@ -239,7 +247,7 @@ const GroupSelectorPage = () => {
           actionsDropdown={true}
           onActionClick={setActiveAction}
         />
-        <div className="w-full">
+        <div className="w-full flex flex-grow">
           {loading ? (
             <>
               {/* Desktop loading cards */}
@@ -268,13 +276,14 @@ const GroupSelectorPage = () => {
                   disabled={isCreatorOpen || allGroups.length < 2}
                   strategy={rectSortingStrategy}
                 >
-                  <div className="grid p-10 items-center grid-cols-1 0 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-25 w-full">
+                  <div className="grid p-10 items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-25 h-full w-full">
                     {filteredGroups.map((group) => (
                       <SortableGroup
                         key={group._id}
                         id={group._id}
                         group={group}
                         observer={observer.current}
+                        className={`${allGroups.length < 2 ? "" : "cursor-pointer"} touch-action-none`}
                         isArchived={archivedGroups.some(
                           (g) => g._id === group._id
                         )}
@@ -298,17 +307,17 @@ const GroupSelectorPage = () => {
               </DndContext>
             </>
           ) : (
-            <div className="flex justify-center items-center flex-col mt-30">
+            <div className="flex justify-center flex-grow items-center flex-col">
               <img
                 src="https://res.cloudinary.com/dzeah7jtd/image/upload/v1753263941/undraw_stars_5pgw_zapchg.svg"
                 alt="No groups found"
                 className="w-1/3 mb-5 animate-translate select-none pointer-events-none"
               />
               {activeAction === "archived" ? (
-                <p className="text-white text-lg">No archived groups found.</p>
+                <p className="text-white text-lg md:text-2xl">No archived groups found.</p>
               ) : (
-                <p className="text-white text-xl">
-                  No groups found, click on the "<b>+</b>" button to create one!
+                <p className="text-white md:text-2xl text-lg text-center">
+                  No groups found, click on the "<b>+</b>" button<br/> in the bottom-right menu to create one!
                 </p>
               )}
             </div>
@@ -363,23 +372,21 @@ const GroupSelectorPage = () => {
 
         {/* Main Trigger Button */}
         <div className="flex">
-          {isGroupsListEmpty() ||
-            (allGroups.length === 0 &&
-              (activeAction === "showall" || activeAction === "running")) && (
+          {isGroupsListEmpty() && (activeAction === "showall" || activeAction === "running") &&
               <img
                 src="https://res.cloudinary.com/dzeah7jtd/image/upload/v1753265161/drawn_arrow_zxhhdw.png"
                 alt="No groups"
                 className="w-10 h-10 absolute right-15 bottom-5 animate-translate select-none pointer-events-none"
               />
-            )}
+            }
 
           <Button
             size="minimal"
             iconVisibility={true}
             onClick={handlePrimaryButtonClick}
             icon={
-              <PlusIcon
-                className={`w-6 transition-transform duration-300 md:group-hover:rotate-45 ${
+              <ChevronUpIcon
+                className={`w-6 transition-transform duration-400 md:group-hover:rotate-180 ${
                   isMenuOpen ? "rotate-45" : ""
                 }`}
               />
