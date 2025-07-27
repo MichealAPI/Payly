@@ -4,9 +4,11 @@ import Card from '../Card/Card';
 import Button from '../Button/Button.jsx';
 import { ChatBubbleOvalLeftIcon, PencilIcon } from '@heroicons/react/24/outline';
 
-const Movement = ({ className, type, owner, amount, title, description, commentsAmount, movementId, members }) => {
+const Movement = ({ className, type, owner, amount, title, description, commentsAmount, movementId, members, onEdit }) => {
 
     const amountSign = type === 'deposit' ? '+' : '-';
+
+    console.log(`Rendering Movement: ${title}, Type: ${type}, Amount: ${amount}`);
 
     return (
         <Card className={`${className} relative md:p-8 w-[90%] cursor-pointer md:cursor-default transition-transform hover:scale-101 md:hover:scale-none`}>
@@ -56,7 +58,7 @@ const Movement = ({ className, type, owner, amount, title, description, comments
                             textVisibility={false}
                             iconVisibility={true}
                             icon={<PencilIcon className="w-6" />}
-                            onClick={() => console.log(`Edit movement ${movementId}`)}
+                            onClick={(e) => { e.stopPropagation(); onEdit(); }}
                             style="fill"
                         />
                     </div>
@@ -101,7 +103,8 @@ Movement.propTypes = {
         name: PropTypes.string.isRequired,
         src: PropTypes.string.isRequired
     })),
-    date: PropTypes.string
+    date: PropTypes.string,
+    onEdit: PropTypes.func,
 };
 
 export default Movement;

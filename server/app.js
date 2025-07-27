@@ -1,12 +1,11 @@
 import express from 'express';
 import session from 'express-session';
-import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import { connectDB } from './config/database.js';
 
 import authRoutes from './routes/authRoutes.js';
 import groupRoutes from './routes/groupRoutes.js';
+import expenseRoutes from './routes/expenseRoutes.js';
 
 import { createRequire } from 'module';// Import createRequire to use require in ESM which is needed for dotenvx
 
@@ -35,5 +34,6 @@ app.use(cookieParser());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupRoutes);
+app.use('/api/expenses', expenseRoutes);
 
 export default app;

@@ -8,7 +8,7 @@ const groupSchema = new mongoose.Schema({
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   completed: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
-  movements: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movement' }],
+  expenses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Expense' }],
 });
 
 export default mongoose.model('Group', groupSchema);

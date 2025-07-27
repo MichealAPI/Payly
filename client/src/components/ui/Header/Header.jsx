@@ -13,13 +13,13 @@ import {
 const Header = ({ title, membersCount, description, icon }) => {
   return (
     <Card
-      className="md:border-b-[#6928F3] w-full md:border-solid md:border-b-2"
+      className="mt-4 md:mt-0 md:border-b-[#6928F3] w-full md:border-solid md:border-b-2"
       bgHiddenSm={true}
     >
-      <div className={styles.header}>
-        <div className={styles.content}>
-          <div className={styles.title}>
-            <div className={styles.icon}>
+      <div className={`${styles.header} !w-full`}>
+        <div className={`${styles.content} !w-full`}>
+          <div className={`${styles.title}`}>
+            <div className={`${styles.icon}`}>
               <p>{icon}</p>
             </div>
             <h1>{title}</h1>

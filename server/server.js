@@ -3,7 +3,7 @@ import { connectDB } from './config/database.js';
 
 import "./models/User.js";
 import "./models/Group.js";
-import "./models/Movement.js";
+import "./models/Expense.js";
 
 const PORT = process.env.PORT || 5000;
 

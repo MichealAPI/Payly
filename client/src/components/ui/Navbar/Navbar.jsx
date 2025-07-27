@@ -22,7 +22,7 @@ const Navbar = ({title, actions, activeAction, onActionClick, actionsDropdown}) 
                 </p>
 
 
-                {actionsDropdown && <div className="md:hidden w-full flex justify-center z-40">
+                {actionsDropdown && <div className="md:hidden w-full flex justify-center z-20">
                     <Menu>
                         <MenuButton className="inline-flex group items-center gap-2 rounded-md bg-transparent px-4 py-2 text-sm/6 font-semibold text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-700 data-open:bg-gray-700">
                             {getActiveActionLabel()}
@@ -32,7 +32,7 @@ const Navbar = ({title, actions, activeAction, onActionClick, actionsDropdown}) 
                         <MenuItems
                         transition
                         anchor="bottom"
-                        className="w-52 origin-top-right rounded-xl border border-purple-400/30 bg-[#121214] p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+                        className="w-fit z-50 origin-top-right rounded-xl border border-purple-400/30 bg-[#121214] p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
                         >
                             {actions && actions.map((action) => (
                                 <MenuItem key={action.id}>
