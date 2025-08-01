@@ -20,7 +20,7 @@ const ConfirmModal = ({ title, message, isOpen, setIsOpen, onConfirm, onCancel }
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={() => closeModal(true)}>
+      <Dialog as="div" className="relative z-999" onClose={() => closeModal(true)}>
         {/* The backdrop, rendered as a fixed sibling to the panel container */}
         <TransitionChild
           as={Fragment}

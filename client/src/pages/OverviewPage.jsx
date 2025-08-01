@@ -11,7 +11,7 @@ import { useParams } from "react-router-dom";
 import Sidebar from "../components/ui/Sidebar/Sidebar";
 import Navbar from "../components/ui/Navbar/Navbar";
 import Wrapper from "../components/ui/Wrapper/Wrapper";
-import Movement from "../components/ui/Movement/Movement";
+import Expense from "../components/ui/Expense/Expense";
 import Button from "../components/ui/Button/Button";
 import Warning from "../components/ui/Warning/Warning";
 import Header from "../components/ui/Header/Header";
@@ -19,40 +19,82 @@ import Input from "../components/ui/Input/Input";
 import Card from "../components/ui/Card/Card";
 import Participant from "../components/ui/Participant/Participant";
 import toast from "react-hot-toast";
-import MovementModal from "../components/ui/MovementModal/MovementModal";
+import ExpenseModal from "../components/ui/ExpenseModal/ExpenseModal";
+import Observer from "../utils/Observer";
 
 const OverviewContent = ({
   onShowParticipants,
-  movements,
-  setIsMovementModalOpen,
+  expenses,
+  setExpenses,
+  setExpenseModalOpen,
   loading,
-  onEditMovement,
+  onEditExpense,
+  balances, // Receive balances as a prop
 }) => {
-  console.log("Movements:", movements);
-  console.log(movements && movements.length > 0);
+  console.log("Expenses:", expenses);
+  console.log(expenses && expenses.length > 0);
 
-  const mappedMovements =
-    movements && movements.length > 0 ? (
-      movements.map((item) => (
-        <Movement
-          key={item._id}
-          type={item.type}
-          amount={item.amount}
-          title={item.title}
-          description={item.description}
-          commentsAmount={item.commentsAmount}
-          movementId={item._id}
-          className={"w-full md:w-[90%]"}
-          owner={item.createdBy.name || item.createdBy.email} // Assuming createdBy has name or email
-          members={item.members} // Assuming members is an array of participant objects
-          onEdit={() => onEditMovement(item)}
-        />
-      ))
-    ) : (
-      <p className="text-white text-center opacity-70">
-        No movements yet. Be the first to add one!
-      </p>
+  const observer = new Observer();
+
+  observer.subscribe((data) => {
+    switch (data.type) {
+      case "expenseDeleted":
+        toast.success("Expense deleted successfully!", {
+          position: "bottom-center",
+        });
+
+        setExpenses(
+          expenses.filter((exp) => exp._id !== data.payload.expenseId)
+        );
+        break;
+    }
+  });
+
+  const mapExpenses = () => {
+    return (
+      <AnimatePresence>
+        {expenses && expenses.length > 0 ? (
+          expenses.map((item) => (
+            <motion.div
+              key={item._id}
+              layout
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, transition: { duration: 0.15 } }}
+            >
+              <Expense
+                type={item.type}
+                amount={item.amount}
+                title={item.title}
+                description={item.description}
+                expenseId={item._id}
+                className={"w-full md:w-[90%]"}
+                owner={item.createdBy.name || item.createdBy.email}
+                members={item.members}
+                onEdit={() => onEditExpense(item)}
+                observer={observer}
+                currency={item.currency}
+              />
+            </motion.div>
+          ))
+        ) : (
+          <p className="text-white text-center opacity-70">
+            No expenses yet. Be the first to add one!
+          </p>
+        )}
+      </AnimatePresence>
     );
+  };
+
+  const userTotalExpenses = expenses.reduce((sum, exp) => {
+    const paidByUser = exp.paidBy && exp.paidBy._id === balances.userId;
+    return sum + (paidByUser ? exp.amount : 0);
+  }, 0);
+  const totalGroupExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+
+
+  console.log('User Total Expenses:', userTotalExpenses);
+  console.log('Total Group Expenses:', totalGroupExpenses);
 
   return (
     <>
@@ -64,14 +106,14 @@ const OverviewContent = ({
         transition={{ duration: 0.1 }}
         className="flex w-full justify-between flex-col md:flex-row"
       >
-        {/* Left Column: Movements */}
+        {/* Left Column: Expenses */}
         <div className="flex flex-col gap-10 flex-1">
           {/* Search Bar with Sorting */}
           <div className="flex gap-4">
             <div className="w-full md:w-2/3 lg:w-1/2">
               <Input
                 type="text"
-                placeholder="Search movements..."
+                placeholder="Search expenses..."
                 icon={<MagnifyingGlassIcon className="w-6" />}
               />
             </div>
@@ -81,7 +123,7 @@ const OverviewContent = ({
               textVisibility={false}
               iconVisibility={true}
               icon={<BarsArrowDownIcon className="w-6" />}
-              onClick={() => console.log("Sort movements")}
+              onClick={() => console.log("Sort expenses")}
               className={"flex-shrink-0"}
               style="fill"
             />
@@ -90,10 +132,10 @@ const OverviewContent = ({
           <div className="flex flex-col gap-9 w-full">
             {loading ? (
               <p className="text-white text-center opacity-70">
-                Loading movements...
+                Loading expenses...
               </p>
             ) : (
-              mappedMovements
+              mapExpenses()
             )}
           </div>
         </div>
@@ -101,13 +143,15 @@ const OverviewContent = ({
         {/* Right Column: Actions & Summaries */}
         <div className="flex flex-col md:gap-10 order-first mb-4 md:mb-0 md:order-last">
           <Button
-            text="Add Movement"
+            text="Add Expense"
             size="full"
             className="hidden md:flex"
             icon={<PlusIcon className="w-6" />}
-            onClick={() => setIsMovementModalOpen(true)}
+            onClick={() => setExpenseModalOpen(true)}
             style="fill"
           />
+
+          
 
           <Warning message="This is a warning message!" icon="⚠️" />
 
@@ -120,14 +164,22 @@ const OverviewContent = ({
                 <div className="flex flex-col text-white text-lg">
                   <p>You owe:</p>
                   <p>You're owed:</p>
-                  <p>Your Expenses:</p>
+                  <p>Your Total Expenses:</p>
                   <p>Total Expenses:</p>
                 </div>
                 <div className="flex flex-col text-lg text-right">
-                  <p className="text-red-300 font-bold">$100.00</p>
-                  <p className="text-green-300 font-bold">$200.00</p>
-                  <p className="text-white font-bold">$50.00</p>
-                  <p className="text-white font-bold">$250.00</p>
+                  <p className="text-red-300 font-bold">
+                    ${balances ? balances.totalUserOwes.toFixed(2) : "0.00"}
+                  </p>
+                  <p className="text-green-300 font-bold">
+                    ${balances ? balances.totalOwedToUser.toFixed(2) : "0.00"}
+                  </p>
+                  <p className="text-white font-bold">
+                    ${userTotalExpenses.toFixed(2)}
+                  </p>
+                  <p className="text-white font-bold">
+                    ${totalGroupExpenses.toFixed(2)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -217,52 +269,39 @@ const OverviewPage = () => {
   const { groupId } = useParams();
   const [loading, setLoading] = useState(true);
   const [groupData, setGroupData] = useState(null);
-  const [movements, setMovements] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [participants, setParticipants] = useState([]);
-  const [isMovementModalOpen, setIsMovementModalOpen] = useState(false);
-  const [editingMovement, setEditingMovement] = useState(null);
+  const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
+  const [balances, setBalances] = useState(null);
 
-  const handleEditMovement = (movement) => {
-    setEditingMovement(movement);
-    setIsMovementModalOpen(true);
+  const handleEditExpense = (expense) => {
+    console.log("Editing expense:", expense);
+    setEditingExpense(expense);
+    setExpenseModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setIsMovementModalOpen(false);
-    setEditingMovement(null);
+    setExpenseModalOpen(false);
+    setEditingExpense(null);
   };
 
   document.documentElement.classList.add("overflow-y-scroll");
 
   useEffect(() => {
-    if (!groupId) {
-      console.error("Group ID is required to fetch data.");
-      toast.error("Group ID is invalid or missing", {
-        position: "bottom-center",
-      });
-      return;
-    }
+    if (!groupId) return;
 
     const fetchGroupDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/groups/${groupId}`);
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch group data");
-        }
-
-        const data = await response.json();
-
+        const res = await fetch(`/api/groups/${groupId}`);
+        if (!res.ok) throw new Error(res.statusText);
+        const data = await res.json();
         setGroupData(data);
-        console.log("Group data:", data);
-        setMovements(data.expenses || []);
+        setExpenses(data.expenses || []);
         setParticipants(data.members || []);
-
-        console.log("Group data loaded successfully.");
-      } catch (error) {
-        console.error("Error fetching group data:", error);
-        toast.error("Failed to load group data", { position: "bottom-center" });
+      } catch (err) {
+        toast.error("Failed to load group", { position: 'bottom-center' });
       } finally {
         setLoading(false);
       }
@@ -270,6 +309,25 @@ const OverviewPage = () => {
 
     fetchGroupDetails();
   }, [groupId]);
+
+  useEffect(() => {
+
+    if (!groupId || loading) return;
+
+    const fetchBalances = async () => {
+      try {
+        const res = await fetch(`/api/groups/${groupId}/balances`);
+        if (!res.ok) throw new Error(res.statusText);
+        setBalances(await res.json());
+      } catch (err) {
+        toast.error("Failed to load balances", { position: 'bottom-center' });
+      }
+    };
+
+    fetchBalances();
+  }, [groupId, loading]);  
+
+  console.log(balances);
 
   return (
     <>
@@ -303,10 +361,13 @@ const OverviewPage = () => {
               {activeAction === "overview" ? (
                 <OverviewContent
                   onShowParticipants={() => setActiveAction("participants")}
-                  movements={movements}
-                  setIsMovementModalOpen={setIsMovementModalOpen}
+                  expenses={expenses}
+                  setExpenses={setExpenses}
+                  setExpenseModalOpen={setExpenseModalOpen}
                   loading={loading}
-                  onEditMovement={handleEditMovement}
+                  onEditExpense={handleEditExpense}
+                  groupId={groupId}
+                  balances={balances}
                 />
               ) : (
                 <ParticipantsContent participants={participants} />
@@ -314,35 +375,34 @@ const OverviewPage = () => {
             </AnimatePresence>
           </div>
         </div>
-
       </Wrapper>
 
-
-        <MovementModal
-          isOpen={isMovementModalOpen}
-          defParticipants={participants}
-          groupId={groupId}
-          setIsOpen={handleCloseModal}
-          movementToEdit={editingMovement}
-          onComplete={(newMovement) => {
-            if (editingMovement) {
-              // Update existing movement
-              setMovements((prev) =>
-                prev.map((m) => (m._id === newMovement._id ? newMovement : m))
-              );
-            } else {
-              // Add new movement
-              setMovements((prev) => [...prev, newMovement]);
-            }
-          }}
-        />
+      <ExpenseModal
+        isOpen={isExpenseModalOpen}
+        defParticipants={participants}
+        groupId={groupId}
+        setIsOpen={handleCloseModal}
+        expenseToEdit={editingExpense}
+        onComplete={(newExpense) => {
+          console.log("New Expense:", newExpense);
+          if (editingExpense) {
+            // Update existing expense
+            setExpenses((prev) =>
+              prev.map((m) => (m._id === newExpense._id ? newExpense : m))
+            );
+          } else {
+            // Add new expense
+            setExpenses((prev) => [...prev, newExpense]);
+          }
+        }}
+      />
 
       {/* Floating Action Button for mobile */}
       <div className="flex fixed md:hidden bottom-4 right-4">
         <Button
           size="minimal"
           iconVisibility={true}
-          onClick={() => setIsMovementModalOpen(true)}
+          onClick={() => setExpenseModalOpen(true)}
           style="fill"
           icon={<PlusIcon className="w-6" />}
           className="relative z-50" // Explicitly set bottom-right position

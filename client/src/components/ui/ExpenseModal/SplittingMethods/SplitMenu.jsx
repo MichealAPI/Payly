@@ -3,8 +3,9 @@ import SplitField from "./SplitField";
 function ParticipantEntry({
   participant,
   currencySymbol,
-  isFixed = true,
+  splitMethod,
   onValueChange,
+  expenseToEdit = null,
 }) {
   // The participant object from props is the source of truth.
   // Call onValueChange to update the parent's state.
@@ -17,25 +18,33 @@ function ParticipantEntry({
     <SplitField
       isEnabled={participant.isEnabled ?? true}
       setIsEnabled={(newIsEnabled) => handleValueChange("isEnabled", newIsEnabled)}
-      amount={participant.amount ?? 0.0}
+      amount={participant.splitAmount ?? 0.0}
       setAmount={(newAmount) => handleValueChange("splitAmount", newAmount)}
       participantName={participant.email}
+      participantId={participant._id}
       currencySymbol={currencySymbol}
-      isFixed={isFixed}
+      splitMethod={splitMethod}
+      expenseToEdit={expenseToEdit}
     />
   );
 }
 
 export default function SplitMenu({
   participants,
+  expenseToEdit = null,
   setParticipants,
   currencySymbol = "",
-  isFixed = true,
+  splitMethod,
 }) {
+
+  function firstCapitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
   return (
     <>
       <p className="mb-2 text-sm font-medium text-white">
-        {isFixed ? "Fixed Split" : "Percentage Split"}
+        {firstCapitalize(splitMethod)} Split
       </p>
 
       {participants.length === 0 && (
@@ -50,8 +59,9 @@ export default function SplitMenu({
             <ParticipantEntry
               key={participant._id}
               currencySymbol={currencySymbol}
+              expenseToEdit={expenseToEdit}
               participant={participant}
-              isFixed={isFixed}
+              splitMethod={splitMethod}
               onValueChange={(updatedParticipant) => {
                 setParticipants((prev) =>
                   prev.map((p) =>

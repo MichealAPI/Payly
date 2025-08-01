@@ -1,6 +1,7 @@
 import Group from "../models/Group.js";
 import User from '../models/User.js';
 import mongoose from 'mongoose';
+import { calculateBalances } from '../utils/calculateBalance.js';
 
 export const createGroup = async (req, res) => {
     // start stopwatch to measure execution time
@@ -227,5 +228,25 @@ export const getGroups = async (req, res) => {
     } catch (error) {
         console.error('Failed to fetch groups:', error);
         res.status(500).json({ message: 'Failed to fetch groups' });
+    }
+};
+
+
+export const getBalances = async (req, res) => {
+    const { id } = req.params; // TODO: group ID, to be name-refactored
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Invalid groupId provided.' });
+    }
+
+    // Current user
+    const userId = req.user.id;
+
+    try {
+        const balances = await calculateBalances(id, userId);
+        res.status(200).json(balances);
+    } catch (error) {
+        console.error('Error calculating balances:', error);
+        res.status(500).json({ message: 'Server error while calculating balances' });
     }
 };

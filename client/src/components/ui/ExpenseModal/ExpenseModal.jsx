@@ -6,193 +6,85 @@ import {
   TransitionChild,
   Field,
   Label,
-  Description,
   Input,
 } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useCallback } from "react";
 import Button from "../Button/Button";
-import {
-  PlusIcon,
-  ChevronDownIcon,
-  PencilSquareIcon,
-} from "@heroicons/react/24/outline";
+import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import EmojiPicker from "emoji-picker-react";
-import { toast } from "react-hot-toast";
 import CurrencySelector from "../CurrencySelector/CurrencySelector";
 import SplitMethodSelector from "./SplittingMethods/SplitMethodSelector";
 import SplitMenu from "./SplittingMethods/SplitMenu";
-import { useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { clsx } from "clsx";
 import SelectorButton from "../SelectorButton/SelectorButton";
+import DatePicker from "../DatePicker/DatePicker";
+import PaidBySelector from "./PaidBySelector";
+import { useExpenseForm } from "./expenseModalUtil";
 
-export default function MovementModal({
+export default function ExpenseModal({
   isOpen,
   setIsOpen,
   onComplete,
-  movementToEdit,
+  expenseToEdit,
   defParticipants = [],
   setSpinnerVisible,
   groupId,
 }) {
-  const isEditMode = !!movementToEdit;
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [currency, setCurrency] = useState(null);
-  const [type, setType] = useState("expense");
-  const [participants, setParticipants] = useState([]);
-  const [splitMethod, setSplitMethod] = useState("equal");
-  const [isLoading, setIsLoading] = useState(false);
-  const [amount, setAmount] = useState(0);
-
-  useEffect(() => {
-    if (isEditMode && movementToEdit) {
-      setTitle(movementToEdit.title);
-      setDescription(movementToEdit.description || "");
-      setType(movementToEdit.type);
-      setAmount(movementToEdit.amount);
-      setSplitMethod(movementToEdit.splitMethod);
-      // Note: CurrencySelector needs to be adapted to handle currency string
-      // For now, we assume it can handle it or we set it manually.
-      // setCurrency({ name: movementToEdit.currency, ... });
-      setParticipants(movementToEdit.participants.map(p => ({...p.user, splitAmount: p.splitAmount, isEnabled: p.isEnabled})));
-    } else {
-      setTitle("");
-      setDescription("");
-      setType("expense");
-      setAmount(0);
-      setSplitMethod("equal");
-      setCurrency(null);
-      setParticipants(defParticipants);
-    }
-  }, [isOpen, movementToEdit, defParticipants, isEditMode]);
-
-
-  useEffect(() => {
-    if (!isEditMode) {
-        setParticipants(defParticipants);
-    }
-  }, [defParticipants, splitMethod, isEditMode]);
-
-  console.log("Default participants in MovementModal:", defParticipants);
-  console.log("Participants in MovementModal:", participants);
-
-  function closeModal() {
+  const closeModal = useCallback(() => {
     setIsOpen(false);
-  }
+  }, [setIsOpen]);
 
-  const checkFields = () => {
-    if (!title || !currency || !participants.length) {
-      toast.error("Please fill in all fields", {
-        position: "bottom-center",
-      });
-      return false;
-    }
+  const {
+    isEditMode,
+    title,
+    setTitle,
+    description,
+    setDescription,
+    currency,
+    setCurrency,
+    type,
+    setType,
+    participants,
+    setParticipants,
+    splitMethod,
+    setSplitMethod,
+    isLoading,
+    amount,
+    setAmount,
+    date,
+    setDate,
+    paidBy,
+    setPaidBy,
+    handleSubmit,
+  } = useExpenseForm({
+    expenseToEdit,
+    defParticipants,
+    groupId,
+    onComplete,
+    setSpinnerVisible,
+    closeModal,
+  });
 
-    if (amount === 0) {
-      toast.error("Amount must be greater than 0", {
-        position: "bottom-center",
-      });
-      return false;
-    }
+  const { modalTitle, submitButtonText, submitButtonIcon } = useMemo(() => {
+    const title = isEditMode ? "Edit Expense" : "Add Expense";
+    const buttonText = isEditMode ? "Save Changes" : "Add";
+    const icon = isEditMode ? (
+      <PencilSquareIcon className="w-6" />
+    ) : (
+      <PlusIcon className="w-6" />
+    );
+    return {
+      modalTitle: title,
+      submitButtonText: buttonText,
+      submitButtonIcon: icon,
+    };
+  }, [isEditMode]);
 
-    return true;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!checkFields()) return;
-
-    setIsLoading(true);
-
-    const url = isEditMode ? `/api/expenses/${groupId}/${movementToEdit._id}` : `/api/expenses/${groupId}`;
-    const method = isEditMode ? "PUT" : "POST";
-
-        try {
-      if (setSpinnerVisible) setSpinnerVisible(true);
-
-      const payload = {
-        title: title,
-        description: description,
-        type: type,
-        participants: participants.map(p => ({
-          user: p._id,
-          splitAmount: p.splitAmount || 0,
-          isEnabled: p.isEnabled ?? true,
-        })),
-        splitMethod: splitMethod,
-        currency: currency.name,
-        amount: amount !== null ? amount : 0,
-      };
-
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message ||
-            `Failed to ${isEditMode ? "update" : "create"} expense`
-        );
-      }
-
-      toast.success(
-        `Expense '${title}' ${
-          isEditMode ? "updated" : "created"
-        } successfully!`,
-        {
-          position: "bottom-center",
-        }
-      );
-
-      if (onComplete) {
-        setIsLoading(false);
-        onComplete(data.movement);
-      }
-
-      // Reset form fields and close the modal on success only if not in edit mode
-      if (!isEditMode) {
-        setTitle("");
-        setAmount(0);
-        setCurrency(null);
-        setType("expense");
-        setParticipants([]);
-        setSplitMethod("equal");
-        setDescription("");
-      }
-
-      closeModal();
-    } catch (err) {
-      console.error("Expense submission error:", err);
-      const errorMessage =
-        err.message ||
-        `An error occurred during expense ${isEditMode ? "update" : "creation"}`;
-      toast.error(errorMessage, {
-        position: "bottom-center",
-      });
-    } finally {
-      if (setSpinnerVisible) setSpinnerVisible(false);
-    }
-  };
-
-  const modalTitle = isEditMode ? "Edit Expense" : "Add Expense";
-  const submitButtonText = isEditMode ? "Save Changes" : "Add";
-  const submitButtonIcon = isEditMode ? (
-    <PencilSquareIcon className="w-6" />
-  ) : (
-    <PlusIcon className="w-6" />
-  );
+  console.log(participants)
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Dialog as="div" className="relative z-999" onClose={closeModal}>
         {/* The backdrop, rendered as a fixed sibling to the panel container */}
         <TransitionChild
           as={Fragment}
@@ -279,7 +171,9 @@ export default function MovementModal({
                             max="1000000"
                             step="0.1"
                             required
-                            onChange={(e) => setAmount(parseFloat(e.target.value))}
+                            onChange={(e) =>
+                              setAmount(parseFloat(e.target.value))
+                            }
                           />
                         </div>
                       </Field>
@@ -295,12 +189,41 @@ export default function MovementModal({
                     </div>
                   </div>
 
+                  <div className="mt-4 flex">
+                    <div className="flex flex-col flex-1/2 justify-center ">
+                      <label
+                        htmlFor="paidby"
+                        className="block text-sm font-medium text-white"
+                      >
+                        Paid by
+                      </label>
+                      <PaidBySelector
+                        participants={participants}
+                        paidBy={paidBy}
+                        setPaidBy={setPaidBy}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-4 w-full">
+                    <div className="flex w-full flex-col flex-1/2">
+                      <label
+                        htmlFor="date"
+                        className="block text-sm font-medium text-white"
+                      >
+                        Paid on
+                      </label>
+                      <DatePicker date={date} setDate={setDate} />
+                    </div>
+                  </div>
+
                   <div className="mt-4">
                     <label
                       htmlFor="description"
                       className="block text-sm font-medium text-white"
                     >
-                      Description <span className="text-white/60">(optional)</span>
+                      Description{" "}
+                      <span className="text-white/60">(optional)</span>
                     </label>
                     <textarea
                       id="description"
@@ -323,25 +246,13 @@ export default function MovementModal({
                   </div>
 
                   <div className="mt-4 text-white">
-                    <AnimatePresence>
-                      {(splitMethod === "fixed" ||
-                        splitMethod === "percentage") && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.95, maxHeight: 0 }}
-                          animate={{ opacity: 1, scale: 1, maxHeight: 500 }}
-                          exit={{ opacity: 0, scale: 0.95, maxHeight: 0 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <SplitMenu
-                            currencySymbol={currency?.symbol || ""}
-                            isFixed={splitMethod === "fixed"}
-                            isPercentage={splitMethod === "percentage"}
-                            participants={participants}
-                            setParticipants={setParticipants}
-                          />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <SplitMenu
+                      currencySymbol={currency?.symbol || ""}
+                      splitMethod={splitMethod}
+                      participants={participants}
+                      setParticipants={setParticipants}
+                      expenseToEdit={isEditMode ? expenseToEdit : null}
+                    />
                   </div>
 
                   {/* Action buttons */}

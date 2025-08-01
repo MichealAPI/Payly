@@ -15,8 +15,8 @@ const expenseSchema = new mongoose.Schema({
       isEnabled: { type: Boolean, default: true },
     }
   ],
-  commentsAmount: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now },
+  date: { type: Date, default: Date.now },
+  paidBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
 });
 
 export default mongoose.model('Expense', expenseSchema);

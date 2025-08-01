@@ -1,11 +1,12 @@
 import Group from "../models/Group.js";
 import Expense from "../models/Expense.js";
+import { calculateBalances } from '../utils/calculateBalance.js';
 
 export const createExpense = async (req, res) => {
 
     const { groupId } = req.params;
 
-    const { title, description, amount, type, participants, splitMethod, currency } = req.body;
+    const { title, description, amount, type, participants, splitMethod, date, paidBy, currency } = req.body;
     const userId = req.user.id; // Get the authenticated user's ID from the request
 
     try {
@@ -24,7 +25,9 @@ export const createExpense = async (req, res) => {
             participants: participants,
             splitMethod: splitMethod,
             createdBy: userId,
-            currency: currency
+            currency: currency,
+            date: date,
+            paidBy: paidBy
         });
 
         await newExpense.save();
@@ -35,7 +38,7 @@ export const createExpense = async (req, res) => {
 
         const populatedExpense = await Expense.findById(newExpense._id).populate('createdBy', 'name email');
 
-        res.status(201).json({ message: 'Expense created successfully', movement: populatedExpense });
+        res.status(201).json({ message: 'Expense created successfully', expense: populatedExpense });
     } catch (error) {
         console.error('Error creating expense:', error);
         res.status(500).json({ message: 'Server error while creating expense' });
@@ -76,9 +79,31 @@ export const updateExpense = async (req, res) => {
             return res.status(404).json({ message: 'Expense not found after update' });
         }
 
-        res.status(200).json({ message: 'Expense updated successfully', movement: updatedExpense });
+        res.status(200).json({ message: 'Expense updated successfully', expense: updatedExpense });
     } catch (error) {
         console.error('Error updating expense:', error);
         res.status(500).json({ message: 'Server error while updating expense' });
+    }
+};
+
+export const deleteExpense = async (req, res) => {
+    const { expenseId } = req.params;
+    const userId = req.user.id;
+
+    try {
+        const expense = await Expense.findById(expenseId);
+        if (!expense) {
+            return res.status(404).json({ message: 'Expense not found' });
+        }
+
+        // Optional: Check if the user is the creator of the expense
+        if (expense.createdBy.toString() !== userId) {
+            return res.status(403).json({ message: 'User not authorized to delete this expense' });
+        }
+        await Expense.findByIdAndDelete(expenseId);
+        res.status(200).json({ message: 'Expense deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting expense:', error);
+        res.status(500).json({ message: 'Server error while deleting expense' });
     }
 };
