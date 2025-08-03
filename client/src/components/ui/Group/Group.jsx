@@ -33,7 +33,7 @@ function formatMembers(members) {
   }
 
   if (members.length === 2) {
-    return `${members[0].email} and ${members[1]}`;
+    return `${members[0].email} and ${members[1].email}`;
   }
 
   if (members.length > 2) {

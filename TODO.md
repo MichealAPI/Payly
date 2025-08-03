@@ -55,3 +55,7 @@
 - IMPORTANT: prevent http attacks 
 - Request rate limit for creation and other important features
 - Group count header inside the GroupSelector
+
+
+- Refactor since members qualifies as the whole set of members in the group and participants only to the expense's  
+- Use a listbox instead of paid by selector to also add profile pictures besides the name

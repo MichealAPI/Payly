@@ -158,13 +158,39 @@ export const getGroupDetails = async (req, res) => {
     try {
         const group = await Group.findById(id)
             .populate('members', 'name owner email')
-            .populate('expenses')
+            .populate({
+                path: 'expenses',
+                populate: [
+                    { path: 'paidBy', model: 'User', select: 'email' },
+                    { path: 'participants.user', model: 'User', select: 'email' }
+                ]
+            });
 
         if (!group) {
             return res.status(404).json({ message: 'Group not found' });
         }
 
-        res.status(200).json(group);
+        // remap each expense's paidBy & participants.user to { id, name }
+        const transformedExpenses = group.expenses.map(exp => {
+            const paidBy = exp.paidBy
+                ? { id: exp.paidBy._id, name: exp.paidBy.email }
+                : null;
+            const participants = exp.participants.map(p => ({
+                id: p.user._id,
+                name: p.user.email,
+                splitAmount: p.splitAmount, 
+                isEnabled: p.isEnabled,
+                ...(p.share != null && { share: p.share })
+            }));
+            const expObj = exp.toObject();
+            expObj.paidBy = paidBy;
+            expObj.participants = participants;
+            return expObj;
+        });
+
+        const groupObj = group.toObject();
+        groupObj.expenses = transformedExpenses;
+        res.status(200).json(groupObj);
     } catch (error) {
         console.error('Error fetching group details:', error);
         res.status(500).json({ message: 'Server error while fetching group details' });
@@ -244,6 +270,7 @@ export const getBalances = async (req, res) => {
 
     try {
         const balances = await calculateBalances(id, userId);
+        console.log("Calculated balances:", balances);
         res.status(200).json(balances);
     } catch (error) {
         console.error('Error calculating balances:', error);

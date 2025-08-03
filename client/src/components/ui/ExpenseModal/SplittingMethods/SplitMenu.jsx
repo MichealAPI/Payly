@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import SplitField from "./SplitField";
 
 function ParticipantEntry({
@@ -5,6 +6,7 @@ function ParticipantEntry({
   currencySymbol,
   splitMethod,
   onValueChange,
+  paidById,
   expenseToEdit = null,
 }) {
   // The participant object from props is the source of truth.
@@ -14,14 +16,16 @@ function ParticipantEntry({
     onValueChange({ ...participant, user: participant._id, [key]: value });
   };
 
+  console.log("ParticipantEntry rendered for:", participant.isEnabled);
   return (
     <SplitField
       isEnabled={participant.isEnabled ?? true}
       setIsEnabled={(newIsEnabled) => handleValueChange("isEnabled", newIsEnabled)}
       amount={participant.splitAmount ?? 0.0}
       setAmount={(newAmount) => handleValueChange("splitAmount", newAmount)}
-      participantName={participant.email}
+      participantName={participant.email || participant.name || "Unknown"}
       participantId={participant._id}
+      paidById={paidById}
       currencySymbol={currencySymbol}
       splitMethod={splitMethod}
       expenseToEdit={expenseToEdit}
@@ -35,11 +39,23 @@ export default function SplitMenu({
   setParticipants,
   currencySymbol = "",
   splitMethod,
+  paidById
 }) {
+  useEffect(() => {
+    // Reset split amounts when split method changes
+    setParticipants((prevParticipants) =>
+      prevParticipants.map((p) => ({
+        ...p,
+        splitAmount: 0,
+      }))
+    );
+  }, [splitMethod, setParticipants]);
 
   function firstCapitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
+
+  console.log("PaidbyId", paidById);
 
   return (
     <>
@@ -58,6 +74,7 @@ export default function SplitMenu({
           {participants.map((participant) => (
             <ParticipantEntry
               key={participant._id}
+              paidById={paidById}
               currencySymbol={currencySymbol}
               expenseToEdit={expenseToEdit}
               participant={participant}

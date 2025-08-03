@@ -26,7 +26,7 @@ export default function ExpenseModal({
   setIsOpen,
   onComplete,
   expenseToEdit,
-  defParticipants = [],
+  members,
   setSpinnerVisible,
   groupId,
 }) {
@@ -58,12 +58,16 @@ export default function ExpenseModal({
     handleSubmit,
   } = useExpenseForm({
     expenseToEdit,
-    defParticipants,
+    members: members,
     groupId,
     onComplete,
     setSpinnerVisible,
     closeModal,
   });
+
+  console.log("Participants in ExpenseModal:", participants);
+  console.log("Expense to edit in ExpenseModal:", expenseToEdit);
+  console.log("Members in ExpenseModal:", members);
 
   const { modalTitle, submitButtonText, submitButtonIcon } = useMemo(() => {
     const title = isEditMode ? "Edit Expense" : "Add Expense";
@@ -198,7 +202,7 @@ export default function ExpenseModal({
                         Paid by
                       </label>
                       <PaidBySelector
-                        participants={participants}
+                        participants={members}
                         paidBy={paidBy}
                         setPaidBy={setPaidBy}
                       />
@@ -252,6 +256,7 @@ export default function ExpenseModal({
                       participants={participants}
                       setParticipants={setParticipants}
                       expenseToEdit={isEditMode ? expenseToEdit : null}
+                      paidById={paidBy?._id || null}
                     />
                   </div>
 

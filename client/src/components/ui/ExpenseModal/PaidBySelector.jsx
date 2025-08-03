@@ -11,6 +11,8 @@ export default function PaidBySelector({
     const selectedParticipant = participants.find(
       (p) => p._id === e.target.value
     );
+
+    console.log("Selected participant:", selectedParticipant);
     setPaidBy(selectedParticipant || null);
   };
 
@@ -18,7 +20,7 @@ export default function PaidBySelector({
     <div className="relative mt-1">
       <Select
         required
-        value={paidBy || ""}
+        value={paidBy?._id}
         onChange={handleSelection}
         className={clsx(
           "block w-full appearance-none rounded-lg border-1 bg-black py-1.5 pr-8 pl-3 text-sm/6 text-white",

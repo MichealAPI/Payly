@@ -8,6 +8,7 @@ import Button from "../components/ui/Button/Button.jsx";
 import {ChevronUpIcon, PlusIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 
 import GroupModal from "../components/ui/GroupModal/GroupModal.jsx";
+import JoinGroupModal from "../components/ui/JoinGroupModal/JoinGroupModal.jsx";
 import { toast } from "react-hot-toast";
 import Observer from "../utils/observer.js";
 import Spinner from "../components/ui/Spinner/Spinner.jsx";
@@ -39,6 +40,8 @@ const GroupSelectorPage = () => {
   const [activeAction, setActiveAction] = useState("showall");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
+  const [isJoinerOpen, setIsJoinerOpen] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
   const [spinnerVisible, setSpinnerVisible] = useState(false);
   const menuRef = useRef(null);
 
@@ -100,6 +103,36 @@ const GroupSelectorPage = () => {
         // If the API call fails, revert the state to the original order
         setAllGroups(allGroups);
       }
+    }
+  };
+
+  const handleJoinGroup = async (inviteCode) => {
+    setIsJoining(true);
+    try {
+      const response = await fetch('/api/invites/accept', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ inviteCode }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to join group.');
+      }
+
+      // Check if the group is already in the list to avoid duplicates
+      if (!allGroups.some(g => g._id === data.group._id)) {
+        setAllGroups(prev => [data.group, ...prev]);
+      }
+      
+      toast.success(data.message);
+      setIsJoinerOpen(false);
+
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsJoining(false);
     }
   };
 
@@ -351,7 +384,7 @@ const GroupSelectorPage = () => {
               iconVisibility={true}
               icon={<UserPlusIcon className="w-6" />}
               className="relative z-10"
-              onClick={() => console.log("Join Group clicked")}
+              onClick={() => setIsJoinerOpen(true)}
             />
           </div>
 
@@ -402,6 +435,13 @@ const GroupSelectorPage = () => {
             observer.current.notify({ type: "groupCreated", payload: newGroup })
           }
           setSpinnerVisible={setLoading}
+        />
+
+        <JoinGroupModal
+          isOpen={isJoinerOpen}
+          onClose={() => setIsJoinerOpen(false)}
+          onJoin={handleJoinGroup}
+          isJoining={isJoining}
         />
       </div>
     </>

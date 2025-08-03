@@ -10,6 +10,7 @@ import {
   updateGroupOrder,
   getGroupDetails,
 } from "../controllers/groupController.js";
+import { createInvite } from "../controllers/inviteController.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -26,6 +27,7 @@ router.get("/:id", getGroupDetails);
 router.delete("/:id", deleteGroup);
 router.post("/:id/archive", archiveGroup);
 router.post("/:id/unarchive", archiveGroup);
+router.post("/:id/invites", createInvite); // Add this line
 router.get("/:id/balances", getBalances);
 
 export default router;

@@ -27,11 +27,11 @@ const deleteExpenseRequest = async (entryId) => {
 const Expense = ({
   className,
   type,
-  owner,
+  paidBy,
   amount,
   title,
   description,
-  members,
+  participants,
   currency,
   onEdit,
   expenseId,
@@ -99,6 +99,8 @@ const Expense = ({
     [onEdit]
   );
 
+  console.log("Paid by in Expense component:", paidBy);
+
   return (
     <>
       <ConfirmModal
@@ -128,12 +130,12 @@ const Expense = ({
               </h3>
             </div>
 
-            <p className="text-white opacity-60 text-base md:text-lg hidden md:block truncate w-30">
+            <p className="text-white opacity-70 text-base md:text-lg hidden md:block truncate w-30">
               {description || "No description provided."}
             </p>
 
-            <p className="text-white opacity-60 text-base md:text-lg block md:hidden">
-              {type === "deposit" ? "Transferred by" : "Paid by"} {owner}
+            <p className="text-white opacity-40 text-base sm:text-lg md:text-sm">
+              {type === "deposit" ? "Transferred by" : "Paid by"} {paidBy || "Unknown"}
             </p>
           </div>
 
@@ -210,23 +212,23 @@ const Expense = ({
         </div>
 
         {/* Member Avatars */}
-        {members && members.length > 0 && (
+        {participants && participants.length > 0 && (
           <div className="absolute -bottom-5 left-8 items-center hidden md:flex">
             <div className="flex -space-x-4">
-              {members.slice(0, 2).map((member, index) => (
+              {participants.slice(0, 2).map((participant, index) => (
                 <img
                   key={index}
                   className="inline-block h-10 w-10 rounded-full"
-                  src={member.src}
-                  alt={member.name}
+                  src={participant.src}
+                  alt={participant.name}
                 />
               ))}
-              {members.length > 2 && (
+              {participants.length > 2 && (
                 <a
                   className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-700 text-xs font-medium text-white hover:bg-gray-600"
                   href="#"
                 >
-                  +{members.length - 2}
+                  +{participants.length - 2}
                 </a>
               )}
             </div>

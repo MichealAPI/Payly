@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 
 export function useExpenseForm({
   expenseToEdit,
-  defParticipants = [],
+  members,
   groupId,
   onComplete,
   setSpinnerVisible,
@@ -14,7 +14,7 @@ export function useExpenseForm({
   const [description, setDescription] = useState("");
   const [currency, setCurrency] = useState(null);
   const [type, setType] = useState("expense");
-  const [participants, setParticipants] = useState(defParticipants);
+  const [participants, setParticipants] = useState([]);
   const [splitMethod, setSplitMethod] = useState("equal");
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState(0);
@@ -29,13 +29,19 @@ export function useExpenseForm({
     setParticipants([]);
     setSplitMethod("equal");
     setDescription("");
-    setDate(null);
+    setDate(new Date());
     setPaidBy(null);
   }, []);
 
   useEffect(() => {
+    const initialParticipants = members.map((member) => ({
+      ...member,
+      user: member._id,
+      splitAmount: 0,
+      isEnabled: true,
+    }));
+
     if (isEditMode && expenseToEdit) {
-        console.log("Editing expense:", expenseToEdit);
       setTitle(expenseToEdit.title);
       setDescription(expenseToEdit.description || "");
       setType(expenseToEdit.type);
@@ -45,30 +51,26 @@ export function useExpenseForm({
       setDate(new Date(expenseToEdit.date));
       setPaidBy(expenseToEdit.paidBy || null);
 
-      // Correctly map saved participant data to the state
-      const editedParticipants = defParticipants.map((defP) => {
-        const savedP = expenseToEdit.participants.find(
-          (p) => p.user === defP._id
-        );
-        if (savedP) {
-          return {
-            ...defP,
-            splitAmount: savedP.splitAmount,
-            isEnabled: savedP.isEnabled,
-          };
-        }
-        return { ...defP, splitAmount: 0, isEnabled: false };
+      const participantMap = new Map(
+        expenseToEdit.participants.map((p) => [p.id, p])
+      );
+
+      const editedParticipants = initialParticipants.map((member) => {
+        const savedParticipant = participantMap.get(member._id);
+        return savedParticipant
+          ? {
+              ...member,
+              splitAmount: savedParticipant.splitAmount,
+              isEnabled: savedParticipant.isEnabled,
+            }
+          : { ...member, isEnabled: false };
       });
       setParticipants(editedParticipants);
-
-      console.log("Paid by in useEffect:", expenseToEdit.paidBy);
     } else {
-        console.log("Resetting fields for new expense");
-      // When not in edit mode, use default participants
       resetFields();
-      setParticipants(defParticipants);
+      setParticipants(initialParticipants);
     }
-  }, [isEditMode, expenseToEdit, defParticipants, resetFields]);
+  }, [isEditMode, expenseToEdit, members, resetFields]);
 
   const checkFields = useCallback(() => {
     if (!title || !currency || !participants.length) {
@@ -172,7 +174,7 @@ export function useExpenseForm({
           return;
         }
         finalParticipants = participants.map((p) => ({
-          user: p._id,
+          user: p._id || p.user,
           splitAmount: p.isEnabled ? (p.splitAmount / 100) * amount : 0,
           isEnabled: p.isEnabled ?? true,
         }));

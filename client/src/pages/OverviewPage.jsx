@@ -7,7 +7,7 @@ import {
   EnvelopeIcon,
   ArrowTopRightOnSquareIcon,
 } from "@heroicons/react/24/outline";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import Sidebar from "../components/ui/Sidebar/Sidebar";
 import Navbar from "../components/ui/Navbar/Navbar";
 import Wrapper from "../components/ui/Wrapper/Wrapper";
@@ -20,7 +20,10 @@ import Card from "../components/ui/Card/Card";
 import Participant from "../components/ui/Participant/Participant";
 import toast from "react-hot-toast";
 import ExpenseModal from "../components/ui/ExpenseModal/ExpenseModal";
+import InviteModal from "../components/ui/InviteModal/InviteModal";
 import Observer from "../utils/Observer";
+import { useNavigate } from "react-router-dom";
+import { arraySwap } from "@dnd-kit/sortable";
 
 const OverviewContent = ({
   onShowParticipants,
@@ -50,6 +53,7 @@ const OverviewContent = ({
     }
   });
 
+
   const mapExpenses = () => {
     return (
       <AnimatePresence>
@@ -69,8 +73,8 @@ const OverviewContent = ({
                 description={item.description}
                 expenseId={item._id}
                 className={"w-full md:w-[90%]"}
-                owner={item.createdBy.name || item.createdBy.email}
-                members={item.members}
+                paidBy={item.paidBy.name || item.paidBy.email}
+                participants={item.participants}
                 onEdit={() => onEditExpense(item)}
                 observer={observer}
                 currency={item.currency}
@@ -86,14 +90,9 @@ const OverviewContent = ({
     );
   };
 
-  const userTotalExpenses = expenses.reduce((sum, exp) => {
-    const paidByUser = exp.paidBy && exp.paidBy._id === balances.userId;
-    return sum + (paidByUser ? exp.amount : 0);
-  }, 0);
   const totalGroupExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
 
-  console.log('User Total Expenses:', userTotalExpenses);
   console.log('Total Group Expenses:', totalGroupExpenses);
 
   return (
@@ -164,7 +163,6 @@ const OverviewContent = ({
                 <div className="flex flex-col text-white text-lg">
                   <p>You owe:</p>
                   <p>You're owed:</p>
-                  <p>Your Total Expenses:</p>
                   <p>Total Expenses:</p>
                 </div>
                 <div className="flex flex-col text-lg text-right">
@@ -173,9 +171,6 @@ const OverviewContent = ({
                   </p>
                   <p className="text-green-300 font-bold">
                     ${balances ? balances.totalOwedToUser.toFixed(2) : "0.00"}
-                  </p>
-                  <p className="text-white font-bold">
-                    ${userTotalExpenses.toFixed(2)}
                   </p>
                   <p className="text-white font-bold">
                     ${totalGroupExpenses.toFixed(2)}
@@ -216,7 +211,7 @@ const OverviewContent = ({
   );
 };
 
-const ParticipantsContent = ({ participants }) => (
+const ParticipantsContent = ({ participants, onInviteClick, balances }) => (
   <motion.div
     key="participants"
     initial={{ opacity: 0.2, x: 10 }}
@@ -238,7 +233,7 @@ const ParticipantsContent = ({ participants }) => (
         size="full"
         className="flex-1"
         icon={<EnvelopeIcon className="w-6" />}
-        onClick={() => alert("Invite clicked!")}
+        onClick={onInviteClick}
         style="fill"
       />
     </div>
@@ -251,7 +246,7 @@ const ParticipantsContent = ({ participants }) => (
             participantId={participant._id}
             participantName={participant.name || participant.email}
             src={`https://i.pravatar.cc/32?u=${participant._id}`}
-            netBalance={0} // This will be calculated later
+            netBalance={balances[participant._id] || 0}
             currency={"USD"} // This should come from group settings
           />
         ))
@@ -270,10 +265,40 @@ const OverviewPage = () => {
   const [loading, setLoading] = useState(true);
   const [groupData, setGroupData] = useState(null);
   const [expenses, setExpenses] = useState([]);
-  const [participants, setParticipants] = useState([]);
+  const [members, setMembers] = useState([]);
   const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
   const [balances, setBalances] = useState(null);
+  const [isInviteModalOpen, setInviteModalOpen] = useState(false);
+  const [inviteCode, setInviteCode] = useState(null);
+  const [isCreatingInvite, setIsCreatingInvite] = useState(false);
+  const navigate = useNavigate();
+
+  const handleCreateInvite = async () => {
+    if (isCreatingInvite) return;
+
+    setIsCreatingInvite(true);
+    setInviteCode(null); // Reset previous code
+    setInviteModalOpen(true); // Open modal immediately to show "Generating..."
+
+    try {
+      const res = await fetch(`/api/groups/${groupId}/invites`, {
+        method: 'POST',
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to create invite.');
+      }
+
+      setInviteCode(data.inviteCode);
+    } catch (err) {
+      toast.error(err.message, { position: 'bottom-center' });
+      setInviteModalOpen(false); // Close modal on error
+    } finally {
+      setIsCreatingInvite(false);
+    }
+  };
 
   const handleEditExpense = (expense) => {
     console.log("Editing expense:", expense);
@@ -299,9 +324,10 @@ const OverviewPage = () => {
         const data = await res.json();
         setGroupData(data);
         setExpenses(data.expenses || []);
-        setParticipants(data.members || []);
+        setMembers(data.members || []);
       } catch (err) {
         toast.error("Failed to load group", { position: 'bottom-center' });
+        navigate("/groups");
       } finally {
         setLoading(false);
       }
@@ -318,7 +344,12 @@ const OverviewPage = () => {
       try {
         const res = await fetch(`/api/groups/${groupId}/balances`);
         if (!res.ok) throw new Error(res.statusText);
-        setBalances(await res.json());
+        const data = await res.json();
+        setBalances(data);
+
+        console.log("R", data);
+
+        console.log("Balances:", data.balances);
       } catch (err) {
         toast.error("Failed to load balances", { position: 'bottom-center' });
       }
@@ -327,7 +358,7 @@ const OverviewPage = () => {
     fetchBalances();
   }, [groupId, loading]);  
 
-  console.log(balances);
+
 
   return (
     <>
@@ -348,7 +379,7 @@ const OverviewPage = () => {
           <Header
             title={groupData ? groupData.name : "Loading..."}
             description={groupData ? groupData.description : "Loading..."}
-            membersCount={participants ? participants.length : 0}
+            membersCount={members ? members.length : 0}
             className="w-full"
             icon={groupData ? groupData.icon : "..."}
           />
@@ -370,16 +401,26 @@ const OverviewPage = () => {
                   balances={balances}
                 />
               ) : (
-                <ParticipantsContent participants={participants} />
+                <ParticipantsContent
+                  participants={members}
+                  onInviteClick={handleCreateInvite}
+                  balances={balances.balances} // Use the simplified balances
+                />
               )}
             </AnimatePresence>
           </div>
         </div>
       </Wrapper>
 
+      <InviteModal
+        isOpen={isInviteModalOpen}
+        onClose={() => setInviteModalOpen(false)}
+        inviteCode={inviteCode}
+      />
+
       <ExpenseModal
         isOpen={isExpenseModalOpen}
-        defParticipants={participants}
+        members={members}
         groupId={groupId}
         setIsOpen={handleCloseModal}
         expenseToEdit={editingExpense}

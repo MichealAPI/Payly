@@ -1,6 +1,7 @@
 import Group from "../models/Group.js";
 import Expense from "../models/Expense.js";
 import { calculateBalances } from '../utils/calculateBalance.js';
+import { getAndTransformExpense } from '../utils/expenseUtils.js';
 
 export const createExpense = async (req, res) => {
 
@@ -36,9 +37,9 @@ export const createExpense = async (req, res) => {
         group.expenses.push(newExpense._id);
         await group.save();
 
-        const populatedExpense = await Expense.findById(newExpense._id).populate('createdBy', 'name email');
+        const expense = await getAndTransformExpense(newExpense._id);
 
-        res.status(201).json({ message: 'Expense created successfully', expense: populatedExpense });
+        res.status(201).json({ message: 'Expense created successfully', expense: expense });
     } catch (error) {
         console.error('Error creating expense:', error);
         res.status(500).json({ message: 'Server error while creating expense' });
@@ -47,7 +48,7 @@ export const createExpense = async (req, res) => {
 
 export const updateExpense = async (req, res) => {
     const { expenseId } = req.params;
-    const { title, description, amount, type, participants, splitMethod, currency } = req.body;
+    const { title, description, amount, type, participants, splitMethod, date, paidBy, currency } = req.body;
     const userId = req.user.id;
 
     try {
@@ -63,23 +64,26 @@ export const updateExpense = async (req, res) => {
         }
 
         const updatedExpenseData = {
-            title,
-            description,
-            amount,
-            type,
-            participants,
-            splitMethod,
-            currency
+            title: title,
+            amount: amount,
+            description: description,
+            type: type,
+            participants: participants,
+            splitMethod: splitMethod,
+            currency: currency,
+            date: date,
+            paidBy: paidBy.id || paidBy // Use the id from the paidBy object
         };
 
-        const updatedExpense = await Expense.findByIdAndUpdate(expenseId, updatedExpenseData, { new: true })
-            .populate('createdBy', 'name email');
+        const updatedExpense = await Expense.findByIdAndUpdate(expenseId, updatedExpenseData, { new: true });
 
         if (!updatedExpense) {
             return res.status(404).json({ message: 'Expense not found after update' });
         }
 
-        res.status(200).json({ message: 'Expense updated successfully', expense: updatedExpense });
+        const transformedExpense = await getAndTransformExpense(updatedExpense._id);
+
+        res.status(200).json({ message: 'Expense updated successfully', expense: transformedExpense });
     } catch (error) {
         console.error('Error updating expense:', error);
         res.status(500).json({ message: 'Server error while updating expense' });

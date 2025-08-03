@@ -14,7 +14,7 @@ export default function SplitField({
   participantId,
   currencySymbol,
   splitMethod,
-  expenseToEdit = null,
+  paidById,
 }) {
   const [displayValue, setDisplayValue] = useState("0");
   const isOverLimit = useRef(false);
@@ -90,6 +90,10 @@ export default function SplitField({
 
   console.log("Split type:", splitMethod);
 
+  if (paidById === participantId && !isEnabled) {
+    setIsEnabled(true);
+  }
+
   return (
     <Field
       className={`flex items-center gap-2 rounded-lg transition-colors duration-200 p-2 overflow-hidden ${
@@ -98,8 +102,22 @@ export default function SplitField({
     >
       <Checkbox
         checked={isEnabled}
-        onChange={setIsEnabled}
-        className="group size-6 rounded-md bg-white/10 p-1 ring-1 ring-white/15 ring-inset focus:not-data-focus:outline-none data-checked:bg-white data-focus:outline data-focus:outline-offset-2 data-focus:outline-white"
+        onChange={(val) => {
+          if (paidById === participantId && !val) {
+            toast.error(
+              "Cannot disable the participant who paid for the expense",
+              {
+                position: "bottom-center",
+              }
+            );
+            return;
+          }
+
+          setIsEnabled(val);
+        }}
+        disabled={paidById === participantId}
+        className={`group size-6 rounded-md bg-white/10 p-1 ring-1 ring-white/15 ring-inset focus:not-data-focus:outline-none data-checked:bg-white data-focus:outline data-focus:outline-offset-2 data-focus:outline-white
+          ${paidById === participantId ? "cursor-not-allowed opacity-30" : ""}`}
       >
         <CheckIcon className="hidden w-4 text-black group-data-checked:block stroke-3" />
       </Checkbox>
@@ -115,7 +133,7 @@ export default function SplitField({
         {isEnabled && splitMethod !== "equal" && (
           <motion.div
             key={splitMethod}
-            initial={{ opacity: .2, scale: 0.95, y: -0.5 }}
+            initial={{ opacity: 0.2, scale: 0.95, y: -0.5 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -0.5 }}
             transition={{ duration: 0.1, ease: "easeOut" }}
