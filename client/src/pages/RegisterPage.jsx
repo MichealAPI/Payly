@@ -3,135 +3,176 @@ import Input from "../components/ui/Input/Input";
 import Button from "../components/ui/Button/Button";
 import Logo from "../components/ui/Logo/Logo";
 import { useState } from "react";
-import { ArrowRightIcon, EnvelopeIcon, KeyIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowRightIcon,
+  EnvelopeIcon,
+  KeyIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setError('');
-
-        if (!checkPasswordMatch(password, confirmPassword)) {
-            setError("Passwords do not match!");
-            setIsLoading(false);
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }), // todo add name and other fields if needed
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Registration failed')
-            }
-
-            navigate('/login');
-        } catch (err) {
-            console.error("Registration error:", err);
-            setError(err.message || 'An error occurred during registration');
-        } finally {
-            setIsLoading(false);
-
-            if (error) {
-                toast.error(error, {
-                    position: 'bottom-center',
-                });
-            } else {
-                toast.success('Registration successful! Please log in.', {
-                    position: 'bottom-center',
-                });
-            }
-        }
+    if (!checkPasswordMatch(password, confirmPassword)) {
+      setError("Passwords do not match!");
+      setIsLoading(false);
+      return;
     }
 
-    return (
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password,
+        }),
+      });
 
-        <div className="flex flex-col min-h-[100vh] bg-[#1A1A1E]">
-            <HomeNavbar />
+      const data = await response.json();
 
-            <div className="flex flex-col flex-1 mt-8 items-center justify-between">
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed");
+      }
 
-                <div className="flex flex-col items-center">
-                    <Logo className="w-10 h-auto mb-2" onClickHomepageNavigate={false}/>
+      navigate("/login");
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError(err.message || "An error occurred during registration");
+    } finally {
+      setIsLoading(false);
 
-                    <div className="flex flex-col justify-center items-center text-center">
-                        <h1 className="text-4xl font-bold text-white m-0">Got Trips to Plan?</h1>
-                        <p className="text-2xl text-white m-0">Time to make it easy.</p>
-                    </div>
+      if (error) {
+        toast.error(error, {
+          position: "bottom-center",
+        });
+      } else {
+        toast.success("Registration successful! Please log in.", {
+          position: "bottom-center",
+        });
+      }
+    }
+  };
 
-                    <form className="flex flex-col gap-4 mt-8 w-xs md:w-sm" onSubmit={handleRegister}>
-                        <Input
-                            type="email"
-                            label="Email"
-                            placeholder="Enter your email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            icon={<EnvelopeIcon className="w-6"/>}
-                        />
-                        
-                        <Input
-                            type="password"
-                            label="Password"
-                            placeholder="Enter your password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            icon={<KeyIcon className="w-6"/>}
-                        />
+  return (
+    <div className="flex flex-col min-h-[100vh] bg-[#1A1A1E]">
+      <HomeNavbar />
 
-                        <Input
-                            type="password"
-                            label="Confirm Password"
-                            placeholder="Re-enter your password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            icon={<KeyIcon className="w-6"/>}
-                        />
-
-                        <Button 
-                            text="Sign up"
-                            size="full"
-                            className='mt-5'
-                            textVisibility={true}
-                            iconVisibility={true}
-                            icon={<ArrowRightIcon className="w-6" />}
-                            style="fill"
-                            type="submit"
-                            disabled={isLoading}
-                        />
-                    </form>
-
-                    <div className="flex mt-5">
-                        <p className="text-white text-lg">Already have an account?</p>
-                        <a onClick={() => navigate("/login")} className="text-[#9f74fc] text-lg font-bold cursor-pointer ml-2 hover:underline">Sign in</a>
-                    </div>
-                </div>
-
-                <p className="items-end text-sm opacity-70 mb-5 text-white">Made with ❤️ in Italy</p>
-            </div>
+      <div className="flex flex-col flex-1 mt-8 items-center justify-between">
+        <div className="flex flex-col items-center">
+          <Logo />
+          <h1 className="text-3xl font-bold text-white mt-4">
+            Create an Account
+          </h1>
+          <p className="text-white/60 mt-2">
+            Join Payly to start managing your group expenses.
+          </p>
         </div>
-    )
+
+        <form
+          onSubmit={handleRegister}
+          className="flex flex-col gap-4 w-full max-w-sm"
+        >
+          <div className="flex gap-4">
+            <Input
+              id="firstName"
+              type="text"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              icon={<UserIcon className="w-5" />}
+              required
+            />
+            <Input
+              id="lastName"
+              type="text"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              icon={<UserIcon className="w-5" />}
+              required
+            />
+          </div>
+          <Input
+            id="email"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            icon={<EnvelopeIcon className="w-5" />}
+            required
+          />
+          <Input
+            id="password"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            icon={<KeyIcon className="w-5" />}
+            required
+          />
+          <Input
+            id="confirmPassword"
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            icon={<KeyIcon className="w-5" />}
+            required
+          />
+
+          <Button
+            text="Sign up"
+            size="full"
+            className="mt-5"
+            textVisibility={true}
+            iconVisibility={true}
+            icon={<ArrowRightIcon className="w-6" />}
+            style="fill"
+            type="submit"
+            disabled={isLoading}
+          />
+        </form>
+
+        <div className="flex mt-5">
+          <p className="text-white text-lg">Already have an account?</p>
+          <a
+            onClick={() => navigate("/login")}
+            className="text-[#9f74fc] text-lg font-bold cursor-pointer ml-2 hover:underline"
+          >
+            Sign in
+          </a>
+        </div>
+      </div>
+
+      <p className="items-end text-sm opacity-70 mb-5 text-white">
+        Made with ❤️ in Italy
+      </p>
+    </div>
+  );
 };
 
 function checkPasswordMatch(password, confirmPassword) {
-    return password === confirmPassword;
+  return password === confirmPassword;
 }
 
 export default RegisterPage;

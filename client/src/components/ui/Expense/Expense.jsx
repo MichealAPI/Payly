@@ -1,14 +1,15 @@
 import React, { useState, useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
-import Card from "../Card/Card.jsx";
-import Button from "../Button/Button.jsx";
+import ConfirmModal from "../ConfirmModal/ConfirmModal";
+import Card from "../Card/Card";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import {
+  EllipsisHorizontalIcon,
   PencilIcon,
   TrashIcon,
-  EllipsisHorizontalIcon,
 } from "@heroicons/react/24/outline";
-import ConfirmModal from "../ConfirmModal/ConfirmModal.jsx";
+import Button from "../Button/Button";
+import ProfilePicture from "../ProfilePicture/ProfilePicture";
 
 const deleteExpenseRequest = async (entryId) => {
   const response = await fetch(`/api/expenses/${entryId}`, {
@@ -34,6 +35,7 @@ const Expense = ({
   participants,
   currency,
   onEdit,
+  onView,
   expenseId,
   observer,
 }) => {
@@ -64,62 +66,70 @@ const Expense = ({
   }, []);
 
   // The delete handler is memoized to prevent re-creating the function on each render
-  const handleDeleteClick = useCallback(() => {
-    handleConfirmModal(
-      "Delete Expense",
-      "Are you sure you want to delete this expense? This action <b>CANNOT</b> be undone.",
-      // The confirmation action is also an async function
-      async () => {
-        observer.notify({ type: "deletingExpense" });
-        try {
-          await deleteExpenseRequest(expenseId);
-          observer.notify({
-            type: "expenseDeleted",
-            payload: { expenseId: expenseId },
-          });
-        } catch (err) {
-          console.error("Error deleting expense:", err);
-          setError(
-            err.message || "An error occurred while deleting the expense"
-          );
-          observer.notify({
-            type: "expenseDeletionError",
-            payload: { error: err.message },
-          });
+  const handleDeleteClick = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      handleConfirmModal(
+        "Delete Expense",
+        "Are you sure you want to delete this expense? This action <b>CANNOT</b> be undone.",
+        // The confirmation action is also an async function
+        async () => {
+          observer.notify({ type: "deletingExpense" });
+          try {
+            await deleteExpenseRequest(expenseId);
+            observer.notify({
+              type: "expenseDeleted",
+              payload: { expenseId: expenseId },
+            });
+          } catch (err) {
+            console.error("Error deleting expense:", err);
+            setError(
+              err.message || "An error occurred while deleting the expense"
+            );
+            observer.notify({
+              type: "expenseDeletionError",
+              payload: { error: err.message },
+            });
+          }
         }
-      }
-    );
-  }, [handleConfirmModal, observer, expenseId]);
+      );
+    },
+    [handleConfirmModal, observer, expenseId]
+  );
 
   const handleEditClick = useCallback(
     (e) => {
+      e.preventDefault();
       e.stopPropagation();
       onEdit();
     },
     [onEdit]
   );
 
-  console.log("Paid by in Expense component:", paidBy);
-
   return (
     <>
       <ConfirmModal
-        title={confirmModalTitle}
-        message={confirmModalMessage}
         isOpen={isConfirmModalOpen}
         setIsOpen={setIsConfirmModalOpen}
+        title={confirmModalTitle}
+        message={confirmModalMessage}
         onConfirm={confirmAction}
+        onCancel={() => setIsConfirmModalOpen(false)}
+        error={error}
       />
 
       <Card
-        className={`${className} relative md:p-8 w-[90%] cursor-pointer md:cursor-default transition-transform hover:scale-101 md:hover:scale-none`}
+        onClick={onView}
+        className={`${className} relative md:p-10 w-full cursor-pointer transition-transform hover:scale-101`}
       >
-        <div className="flex justify-between md:h-[120px]">
+        <div className="flex justify-between">
           {/* Text content */}
-          <div className="flex flex-col h-full justify-between">
+          <div className="flex flex-col justify-between">
             <div>
               <h2 className="text-white text-xl md:text-2xl font-bold">
-                {title}
+                {title.slice(0, 30)}
               </h2>
               <h3
                 className={`${
@@ -130,17 +140,20 @@ const Expense = ({
               </h3>
             </div>
 
-            <p className="text-white opacity-70 text-base md:text-lg hidden md:block truncate w-30">
+            <p className="text-white opacity-70 text-base md:text-lg hidden md:block">
               {description || "No description provided."}
             </p>
 
             <p className="text-white opacity-40 text-base sm:text-lg md:text-sm">
-              {type === "deposit" ? "Transferred by" : "Paid by"} {paidBy || "Unknown"}
+              {type === "deposit" ? "Transferred by" : "Paid by"}{" "}
+              {paidBy.firstName && paidBy.lastName
+                ? `${paidBy.firstName} ${paidBy.lastName}`
+                : paidBy.email}
             </p>
           </div>
 
           {/* Amount, comments and edit button */}
-          <div className="flex flex-col justify-between h-full items-end">
+          <div className="flex flex-col justify-between items-end">
             <h3
               className={`${
                 type === "deposit" ? "text-[#97FFCB]" : "text-[#F88]"
@@ -153,7 +166,11 @@ const Expense = ({
             <div className="flex gap-4 md:order-last order-first">
               {/* Transform these buttons actions into Triple Ellipses dropdown menu for mobile devices*/}
               <Menu>
-                <MenuButton className="inline-flex md:hidden items-center gap-2 rounded-md text-sm/6 font-semibold cursor-pointer text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-purple-400/20">
+                <MenuButton
+                  as="div"
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex md:hidden items-center gap-2 rounded-md text-sm/6 font-semibold cursor-pointer text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-purple-400/20"
+                >
                   <EllipsisHorizontalIcon className="h-6 w-6 text-white" />
                 </MenuButton>
 
@@ -183,7 +200,7 @@ const Expense = ({
                 </MenuItems>
               </Menu>
               <Button
-                className="hidden md:flex bg-red-500 hover:bg-red-600"
+                className="hidden z-20 md:flex bg-red-500 hover:bg-red-600"
                 text=""
                 size="minimal"
                 bgColor="radial-gradient(50%_50.01%_at_50%_51.16%,#FF1A1A_14.9%,#FF4D4D_100%)"
@@ -198,7 +215,7 @@ const Expense = ({
               />
 
               <Button
-                className="hidden md:flex"
+                className="hidden z-20 md:flex"
                 text=""
                 size="minimal"
                 textVisibility={false}
@@ -216,11 +233,10 @@ const Expense = ({
           <div className="absolute -bottom-5 left-8 items-center hidden md:flex">
             <div className="flex -space-x-4">
               {participants.slice(0, 2).map((participant, index) => (
-                <img
+                <ProfilePicture
+                  className={`size-10 rounded-full bg-white`}
+                  profilePicture={participant.profilePicture}
                   key={index}
-                  className="inline-block h-10 w-10 rounded-full"
-                  src={participant.src}
-                  alt={participant.name}
                 />
               ))}
               {participants.length > 2 && (
@@ -256,6 +272,7 @@ Expense.propTypes = {
   ),
   date: PropTypes.string,
   onEdit: PropTypes.func,
+  onView: PropTypes.func,
   observer: PropTypes.object, // Added for completeness
 };
 

@@ -8,6 +8,7 @@ export function useExpenseForm({
   onComplete,
   setSpinnerVisible,
   closeModal,
+  currentUser,
 }) {
   const isEditMode = useMemo(() => !!expenseToEdit, [expenseToEdit]);
   const [title, setTitle] = useState("");
@@ -26,20 +27,23 @@ export function useExpenseForm({
     setAmount(0);
     setCurrency(null);
     setType("expense");
-    setParticipants([]);
     setSplitMethod("equal");
     setDescription("");
     setDate(new Date());
-    setPaidBy(null);
-  }, []);
+    setPaidBy(currentUser || null);
+  }, [currentUser]);
 
   useEffect(() => {
+
+    console.log("Members in useEffect:", members);
     const initialParticipants = members.map((member) => ({
       ...member,
       user: member._id,
       splitAmount: 0,
       isEnabled: true,
     }));
+
+    console.log("Initial participants:", initialParticipants);
 
     if (isEditMode && expenseToEdit) {
       setTitle(expenseToEdit.title);
@@ -50,6 +54,9 @@ export function useExpenseForm({
       setSplitMethod(expenseToEdit.splitMethod);
       setDate(new Date(expenseToEdit.date));
       setPaidBy(expenseToEdit.paidBy || null);
+
+      console.log("Editing....", expenseToEdit);
+      
 
       const participantMap = new Map(
         expenseToEdit.participants.map((p) => [p.id, p])
@@ -69,8 +76,11 @@ export function useExpenseForm({
     } else {
       resetFields();
       setParticipants(initialParticipants);
+      if (currentUser) {
+        setPaidBy(currentUser);
+      }
     }
-  }, [isEditMode, expenseToEdit, members, resetFields]);
+  }, [isEditMode, expenseToEdit, members, resetFields, currentUser]);
 
   const checkFields = useCallback(() => {
     if (!title || !currency || !participants.length) {

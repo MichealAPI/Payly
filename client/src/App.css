@@ -2,3 +2,15 @@ body {
   background-color: black;
   min-height: 100vh;
 }
+
+.content-with-sidebar {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+@media (max-width: 768px) {
+  .content-with-sidebar {
+    margin-left: 0;
+    width: 100%;
+  }
+}

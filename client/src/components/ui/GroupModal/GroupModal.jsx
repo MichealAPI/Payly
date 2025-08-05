@@ -8,7 +8,7 @@ import {
 import { Fragment, useState, useEffect } from "react";
 import Button from "../Button/Button";
 import { PlusIcon, ChevronDownIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import EmojiPicker from "emoji-picker-react";
+import { CustomEmojiPicker } from "../CustomEmojiPicker/CustomEmojiPicker";
 import { toast } from "react-hot-toast";
 
 export default function GroupModal({
@@ -97,12 +97,12 @@ export default function GroupModal({
   }
 
   const modalTitle = isEditMode ? "Edit Group" : "Create a New Group";
-  const submitButtonText = isEditMode ? "Save Changes" : "Create Group";
+  const submitButtonText = isEditMode ? "Save Changes" : "Create";
   const submitButtonIcon = isEditMode ? <PencilSquareIcon className="w-6" /> : <PlusIcon className="w-6" />;
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Dialog as="div" className="relative z-30" onClose={closeModal}>
         {/* The backdrop, rendered as a fixed sibling to the panel container */}
         <TransitionChild
           as={Fragment}
@@ -136,79 +136,82 @@ export default function GroupModal({
                 </DialogTitle>
 
                 <form onSubmit={handleSubmit}>
-                  <div className="mt-4">
-                    <label
-                      htmlFor="icon"
-                      className="block text-sm font-medium text-white"
-                    >
-                      Group Icon
-                    </label>
-                    <div className="flex items-center justify-center gap-3 mt-1">
-                      <p className="text-3xl">{icon || ""}</p>
-                      <Button
-                        iconVisibility={true}
-                        icon={
-                          <ChevronDownIcon
-                            className={`w-6 transition-transform duration-300 ${
-                              emojiPickerVisible ? "rotate-180" : ""
-                            }`}
-                          />
-                        }
+                  <div className="mt-4 flex items-start gap-4">
+                    {/* Icon Picker */}
+                    <div className="flex flex-col items-center">
+                      <label
+                        htmlFor="icon-button"
+                        className="block text-sm font-medium text-white mb-2"
+                      >
+                        Icon
+                      </label>
+                      <button
+                        id="icon-button"
+                        type="button"
                         onClick={togglePicker}
-                        size="minimal"
-                      />
+                        className="text-4xl p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                      >
+                        {icon}
+                      </button>
                     </div>
-                    <div
-                      className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                        emojiPickerVisible
-                          ? "max-h-[450px] opacity-100 mt-2"
-                          : "max-h-0 opacity-0"
-                      }`}
-                    >
-                      <EmojiPicker
-                        width="100%"
-                        onEmojiClick={(emojiData) => {
-                          setIcon(emojiData.emoji);
-                          togglePicker();
-                        }}
-                      />
+
+                    {/* Name and Description */}
+                    <div className={`flex-grow`}>
+                      <div>
+                        <label
+                          htmlFor="groupName"
+                          className="block text-sm font-medium text-white"
+                        >
+                          Group Name
+                        </label>
+                        <input
+                          type="text"
+                          id="groupName"
+                          value={groupName}
+                          onChange={(e) => setGroupName(e.target.value)}
+                          className="mt-1 block w-full rounded-md border-white/50 border-1 bg-transparent focus:border-white focus:ring-white text-white sm:text-sm p-2"
+                          placeholder="Enter group name"
+                          required
+                        />
+                      </div>
+                      <div className="mt-4">
+                        <label
+                          htmlFor="description"
+                          className="block text-sm font-medium text-white"
+                        >
+                          Description
+                        </label>
+                        <textarea
+                          id="description"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          rows={3}
+                          className="mt-1 block w-full rounded-md border-1 border-white/50 bg-transparent focus:border-white focus:ring-white text-white p-2 sm:text-sm"
+                          placeholder="Enter group description"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="mt-4">
-                    <label
-                      htmlFor="groupName"
-                      className="block text-sm font-medium text-white"
-                    >
-                      Group Name
-                    </label>
-                    <input
-                      type="text"
-                      id="groupName"
-                      value={groupName}
-                      onChange={(e) => setGroupName(e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-white text-white sm:text-sm p-2"
-                      placeholder="Enter group name"
-                      required
+                  {/* Emoji Picker */}
+                  <div
+                    className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                      emojiPickerVisible
+                        ? "max-h-[450px] opacity-100 mt-4"
+                        : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="flex w-full justify-center">
+                      <CustomEmojiPicker
+                      onSelect={(emoji) => {
+                        setIcon(emoji);
+                        togglePicker();
+                      }}
                     />
+                    </div>
                   </div>
-                  <div className="mt-4">
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium text-white"
-                    >
-                      Description
-                    </label>
-                    <textarea
-                      id="description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      rows={3}
-                      className="mt-1 block w-full rounded-md border border-white text-white p-2 sm:text-sm"
-                      placeholder="Enter group description"
-                      required
-                    />
-                  </div>
+
                   <div className="mt-6 flex justify-between space-x-4">
                     <Button
                       text="Cancel"

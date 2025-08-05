@@ -9,6 +9,7 @@ import {
   getUserArchivedGroups,
   updateGroupOrder,
   getGroupDetails,
+  kickUserFromGroup
 } from "../controllers/groupController.js";
 import { createInvite } from "../controllers/inviteController.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
@@ -27,7 +28,8 @@ router.get("/:id", getGroupDetails);
 router.delete("/:id", deleteGroup);
 router.post("/:id/archive", archiveGroup);
 router.post("/:id/unarchive", archiveGroup);
-router.post("/:id/invites", createInvite); // Add this line
+router.post("/:id/invites", createInvite); 
 router.get("/:id/balances", getBalances);
+router.post("/:id/:userId/kick", kickUserFromGroup);
 
 export default router;

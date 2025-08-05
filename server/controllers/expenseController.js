@@ -57,12 +57,7 @@ export const updateExpense = async (req, res) => {
         if (!expense) {
             return res.status(404).json({ message: 'Expense not found' });
         }
-
-        // Optional: Check if the user is the creator of the expense
-        if (expense.createdBy.toString() !== userId) {
-            return res.status(403).json({ message: 'User not authorized to update this expense' });
-        }
-
+        
         const updatedExpenseData = {
             title: title,
             amount: amount,
@@ -92,7 +87,6 @@ export const updateExpense = async (req, res) => {
 
 export const deleteExpense = async (req, res) => {
     const { expenseId } = req.params;
-    const userId = req.user.id;
 
     try {
         const expense = await Expense.findById(expenseId);
@@ -100,10 +94,6 @@ export const deleteExpense = async (req, res) => {
             return res.status(404).json({ message: 'Expense not found' });
         }
 
-        // Optional: Check if the user is the creator of the expense
-        if (expense.createdBy.toString() !== userId) {
-            return res.status(403).json({ message: 'User not authorized to delete this expense' });
-        }
         await Expense.findByIdAndDelete(expenseId);
         res.status(200).json({ message: 'Expense deleted successfully' });
     } catch (error) {

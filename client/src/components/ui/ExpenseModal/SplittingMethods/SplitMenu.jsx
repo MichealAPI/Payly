@@ -18,12 +18,19 @@ function ParticipantEntry({
 
   console.log("ParticipantEntry rendered for:", participant.isEnabled);
   return (
+    console.log(participant, "participant in SplitField"),
     <SplitField
       isEnabled={participant.isEnabled ?? true}
-      setIsEnabled={(newIsEnabled) => handleValueChange("isEnabled", newIsEnabled)}
+      setIsEnabled={(newIsEnabled) =>
+        handleValueChange("isEnabled", newIsEnabled)
+      }
       amount={participant.splitAmount ?? 0.0}
       setAmount={(newAmount) => handleValueChange("splitAmount", newAmount)}
-      participantName={participant.email || participant.name || "Unknown"}
+      participantName={
+        participant.firstName && participant.lastName
+          ? `${participant.firstName} ${participant.lastName}`
+          : participant.email
+      }
       participantId={participant._id}
       paidById={paidById}
       currencySymbol={currencySymbol}
@@ -39,7 +46,7 @@ export default function SplitMenu({
   setParticipants,
   currencySymbol = "",
   splitMethod,
-  paidById
+  paidById,
 }) {
   useEffect(() => {
     // Reset split amounts when split method changes
@@ -65,7 +72,8 @@ export default function SplitMenu({
 
       {participants.length === 0 && (
         <p className="text-sm text-white opacity-70">
-          No participants added yet. Please add participants to split the amount.
+          No participants added yet. Please add participants to split the
+          amount.
         </p>
       )}
 

@@ -2,13 +2,11 @@
     transition: scale 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-.sidebarItem.active {
-    cursor: pointer;
-}
 
 .sidebarItem.disabled {
-    cursor: not-allowed;
+    cursor: pointer;
     opacity: 0.5;
+    transition: opacity 0.2s ease-in-out;
 }
 
 .sidebarItem.disabled .icon svg {

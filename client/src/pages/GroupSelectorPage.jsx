@@ -14,6 +14,8 @@ import Observer from "../utils/observer.js";
 import Spinner from "../components/ui/Spinner/Spinner.jsx";
 import LoadingCard from "../components/ui/LoadingCard/LoadingCard.jsx";
 
+import { useNavigate } from "react-router-dom";
+
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 
 import {
@@ -43,7 +45,10 @@ const GroupSelectorPage = () => {
   const [isJoinerOpen, setIsJoinerOpen] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const [spinnerVisible, setSpinnerVisible] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const menuRef = useRef(null);
+
+  const navigate = useNavigate();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -210,15 +215,23 @@ const GroupSelectorPage = () => {
           setAllGroups((prev) => [data.payload, ...prev]);
           setLoading(false);
           break;
+        case "actionError":
+          setLoading(false);
+          setSpinnerVisible(false);
+          break;
       }
     };
 
     observer.current.subscribe(handleObserver);
 
     async function fetchData() {
-      await fetchGroups();
-      await fetchArchivedGroups();
+      // Fetch all data concurrently
+      await Promise.all([
+        fetchGroups(),
+        fetchArchivedGroups(),
+      ]);
     }
+
     fetchData();
 
     return () => {
@@ -267,7 +280,6 @@ const GroupSelectorPage = () => {
 
   return (
     <>
-      <Sidebar />
       <Wrapper>
         <Navbar
           title="Select a Group"
@@ -280,7 +292,7 @@ const GroupSelectorPage = () => {
           actionsDropdown={true}
           onActionClick={setActiveAction}
         />
-        <div className="w-full flex flex-grow">
+        <div className="w-full flex h-full flex-grow">
           {loading ? (
             <>
               {/* Desktop loading cards */}
@@ -420,7 +432,7 @@ const GroupSelectorPage = () => {
             icon={
               <ChevronUpIcon
                 className={`w-6 transition-transform duration-400 md:group-hover:rotate-180 ${
-                  isMenuOpen ? "rotate-45" : ""
+                  isMenuOpen ? "rotate-180" : ""
                 }`}
               />
             }

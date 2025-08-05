@@ -1,9 +1,8 @@
 .wrapper {
-    margin-left: 80px;
-    width: calc(100% - 80px);
-    min-height: 100vh;
+    width: auto;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
 /* Mobile styles */

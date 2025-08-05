@@ -29,15 +29,15 @@ function formatMembers(members) {
   if (members.length === 1) {
     // Retrieve the name of the first member
 
-    return members[0].email;
+    return members[0].firstName || members[0].email;
   }
 
   if (members.length === 2) {
-    return `${members[0].email} and ${members[1].email}`;
+    return `${members[0].firstName || members[0].email} and ${members[1].firstName || members[1].email}`;
   }
 
   if (members.length > 2) {
-    return `${members[0].email}, ${members[1].email} and ${
+    return `${members[0].firstName || members[0].email}, ${members[1].firstName || members[1].email} and ${
       members.length - 2
     } others`;
   }
@@ -109,7 +109,7 @@ export const Group = ({
         onComplete={handleEditComplete}
       />
 
-      <Card className={`${className} w-full md:h-55`} onClick={handleNavigate}>
+      <Card className={`${className} w-full md:h-55 cursor-pointer`} onClick={handleNavigate}>
         <div className="flex w-full items-center h-full gap-4 md:items-start ">
           <div className="flex flex-row items-center gap-4 flex-1 min-w-0 h-full md:flex-col md:items-start md:gap-9">
             <div className="flex md:flex-col items-center md:items-stretch">
@@ -228,6 +228,11 @@ export const Group = ({
                                 observer.notify({
                                   type: "groupDeleted",
                                   payload: { groupId: entryId },
+                                });
+                              } else {
+                                observer.notify({
+                                  type: "actionError",
+                                  payload: { error },
                                 });
                               }
                             }

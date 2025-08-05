@@ -1,4 +1,4 @@
-import { Dialog, Transition } from '@headlessui/react';
+import { Dialog, TransitionChild, DialogPanel, DialogTitle, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import Button from '../Button/Button';
 import { ClipboardDocumentIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -16,7 +16,7 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -25,12 +25,12 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-50" />
-        </Transition.Child>
+          <div className="fixed inset-0 bg-black/80" />
+        </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -39,17 +39,17 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title
+              <DialogPanel className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-black border-1 border-[#BD9EFF]/50 p-6 text-left align-middle shadow-xl transition-all">
+                <DialogTitle
                   as="h3"
                   className="text-lg font-medium leading-6 text-white"
                 >
                   Share this invite code
-                </Dialog.Title>
+                </DialogTitle>
                 <div className="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
                     <button
                         type="button"
-                        className="rounded-md bg-gray-800 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="rounded-md cursor-pointer bg-gray-800 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         onClick={onClose}
                     >
                         <span className="sr-only">Close</span>
@@ -69,9 +69,9 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
                   <Button
                     icon={<ClipboardDocumentIcon className="w-6" />}
                     onClick={copyToClipboard}
-                    text="Copy"
+                    iconVisibility={true}
                     size="minimal"
-                    style="ghost"
+                    style="outline"
                     disabled={!inviteCode}
                   />
                 </div>
@@ -84,8 +84,8 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
                     size="full"
                   />
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

@@ -1,4 +1,4 @@
-import { Dialog, Transition } from '@headlessui/react';
+import { Dialog, Transition, DialogTitle, DialogPanel, TransitionChild } from '@headlessui/react';
 import { Fragment, useState } from 'react';
 import Button from '../Button/Button';
 import Input from '../Input/Input';
@@ -17,7 +17,7 @@ export default function JoinGroupModal({ isOpen, onClose, onJoin, isJoining }) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -26,12 +26,12 @@ export default function JoinGroupModal({ isOpen, onClose, onJoin, isJoining }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-50" />
-        </Transition.Child>
+          <div className="fixed inset-0 bg-black/80" />
+        </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -40,13 +40,13 @@ export default function JoinGroupModal({ isOpen, onClose, onJoin, isJoining }) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title
+              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-black border-1 border-[#BD9EFF]/40 p-6 text-left align-middle shadow-xl transition-all">
+                <DialogTitle
                   as="h3"
                   className="text-lg font-medium leading-6 text-white"
                 >
                   Join a Group
-                </Dialog.Title>
+                </DialogTitle>
                  <div className="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
                     <button
                         type="button"
@@ -65,17 +65,18 @@ export default function JoinGroupModal({ isOpen, onClose, onJoin, isJoining }) {
                     <Input 
                         type="text"
                         placeholder="e.g. a1b2c3d4"
+                        className={""}
                         value={inviteCode}
                         onChange={(e) => setInviteCode(e.target.value)}
                         autoFocus
                     />
                     </div>
 
-                    <div className="mt-6 flex justify-end gap-4">
+                    <div className="mt-6 flex justify-between gap-4">
                         <Button
                             text="Cancel"
                             onClick={onClose}
-                            style="secondary"
+                            style="outline"
                         />
                         <Button
                             text={isJoining ? "Joining..." : "Join"}
@@ -85,8 +86,8 @@ export default function JoinGroupModal({ isOpen, onClose, onJoin, isJoining }) {
                         />
                     </div>
                 </form>
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

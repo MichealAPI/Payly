@@ -20,7 +20,7 @@ export default function PaidBySelector({
     <div className="relative mt-1">
       <Select
         required
-        value={paidBy?._id}
+        value={paidBy?._id || ""}
         onChange={handleSelection}
         className={clsx(
           "block w-full appearance-none rounded-lg border-1 bg-black py-1.5 pr-8 pl-3 text-sm/6 text-white",
@@ -33,7 +33,9 @@ export default function PaidBySelector({
         </option>
         {participants.map((participant) => (
           <option key={participant._id} value={participant._id}>
-            {participant.email}
+            {participant.firstName && participant.lastName
+              ? `${participant.firstName} ${participant.lastName}`
+              : participant.email}
           </option>
         ))}
       </Select>
