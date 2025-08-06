@@ -18,18 +18,19 @@ export const registerUser = async (req, res) => {
     if (error.code === 11000) {
       return res.status(409).json({ message: "Email already in use" });
     }
-    res.status(500).json({ message: "Server error during registration" });
+    // Log this unexpected error with Sentry
+    throw new Error(`Server error during registration: ${error.message}`);
   }
 };
 
 export const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json({ message: "Invalid email or password" });
-  }
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
-  if (user) {
     req.session.user = {
       id: user._id,
       email: user.email,
@@ -37,9 +38,12 @@ export const loginUser = async (req, res) => {
       lastName: user.lastName,
       profilePicture: user.profilePicture,
     };
-  }
 
-  res.json({ message: "Login successful", user: req.session.user });
+    res.json({ message: "Login successful", user: req.session.user });
+  } catch (error) {
+    // Log this unexpected error with Sentry
+    throw new Error(`Server error during login: ${error.message}`);
+  }
 };
 
 export const deleteUserAccount = async (req, res) => {
@@ -49,6 +53,7 @@ export const deleteUserAccount = async (req, res) => {
     req.session.destroy();
     res.status(200).json({ message: "Account deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error while deleting account" });
+    // Log this unexpected error with Sentry
+    throw new Error(`Server error while deleting account: ${error.message}`);
   }
 };

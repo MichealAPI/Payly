@@ -32,8 +32,7 @@ export const createInvite = async (req, res) => {
         res.status(201).json({ message: 'Invite created successfully.', inviteCode: invite.code });
 
     } catch (error) {
-        console.error('Error creating invite:', error);
-        res.status(500).json({ message: 'Server error while creating invite.' });
+        throw new Error(`Error creating invite: ${error.message}`);
     }
 };
 
@@ -76,7 +75,6 @@ export const acceptInvite = async (req, res) => {
         res.status(200).json({ message: 'Successfully joined the group!', group: updatedGroup });
 
     } catch (error) {
-        console.error('Error accepting invite:', error);
-        res.status(500).json({ message: 'Server error while accepting invite.' });
+        throw new Error(`Error accepting invite: ${error.message}`);
     }
 };

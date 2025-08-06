@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "react-hot-toast";
+import apiClient from "../../../api/axiosConfig";
 
 export function useExpenseForm({
   expenseToEdit,
@@ -34,16 +35,12 @@ export function useExpenseForm({
   }, [currentUser]);
 
   useEffect(() => {
-
-    console.log("Members in useEffect:", members);
     const initialParticipants = members.map((member) => ({
       ...member,
       user: member._id,
       splitAmount: 0,
       isEnabled: true,
     }));
-
-    console.log("Initial participants:", initialParticipants);
 
     if (isEditMode && expenseToEdit) {
       setTitle(expenseToEdit.title);
@@ -54,9 +51,6 @@ export function useExpenseForm({
       setSplitMethod(expenseToEdit.splitMethod);
       setDate(new Date(expenseToEdit.date));
       setPaidBy(expenseToEdit.paidBy || null);
-
-      console.log("Editing....", expenseToEdit);
-      
 
       const participantMap = new Map(
         expenseToEdit.participants.map((p) => [p.id, p])
@@ -123,8 +117,8 @@ export function useExpenseForm({
       setIsLoading(true);
 
       const url = isEditMode
-        ? `/api/expenses/${groupId}/${expenseToEdit._id}`
-        : `/api/expenses/${groupId}`;
+        ? `/expenses/${groupId}/${expenseToEdit._id}/update`
+        : `/expenses/${groupId}/create`;
       const method = isEditMode ? "PUT" : "POST";
 
       let finalParticipants = [];
@@ -205,22 +199,15 @@ export function useExpenseForm({
           amount: amount !== null ? amount : 0,
         };
 
-        const response = await fetch(url, {
-          method: method,
+        const response = await apiClient.request({
+          url,
+          method,
+          data: payload,
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(payload),
         });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            data.message ||
-              `Failed to ${isEditMode ? "update" : "create"} expense`
-          );
-        }
+        const data = response.data;
 
         toast.success(
           `Expense '${title}' ${

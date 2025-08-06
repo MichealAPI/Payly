@@ -3,7 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Group from "./Group";
 
-const SortableGroup = ({ id, group, observer, isArchived, className }) => {
+const SortableGroup = ({ id, group, isArchived, className }) => {
   const {
     attributes,
     listeners,
@@ -30,13 +30,7 @@ const SortableGroup = ({ id, group, observer, isArchived, className }) => {
     >
       <Group
         className={`hover:-translate-y-[2px] transition-all duration-300 hover:shadow-[0px_0px_20px_2px_rgba(198,172,255,0.35)]`}
-        key={group._id}
-        icon={group.icon}
-        title={group.name}
-        members={group.members}
-        entryId={group._id}
-        description={group.description}
-        observer={observer}
+        groupData={group}
         isArchived={isArchived}
       />
     </div>

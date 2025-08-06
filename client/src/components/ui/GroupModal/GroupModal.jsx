@@ -10,18 +10,21 @@ import Button from "../Button/Button";
 import { PlusIcon, ChevronDownIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { CustomEmojiPicker } from "../CustomEmojiPicker/CustomEmojiPicker";
 import { toast } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { createGroup, updateGroup } from "../../../features/groups/groupsSlice";
 
 export default function GroupModal({
   isOpen,
   setIsOpen,
-  onComplete,
-  setSpinnerVisible,
   defGroupName = "",
   defDescription = "",
   defIcon = "👥",
   isEditMode = false,
   groupId = null,
 }) {
+
+  const dispatch = useDispatch();
+
   const [groupName, setGroupName] = useState(defGroupName);
   const [description, setDescription] = useState(defDescription);
   const [icon, setIcon] = useState(defIcon);
@@ -43,52 +46,37 @@ export default function GroupModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start the local button spinner
 
-    setIsLoading(true);
-
-    const url = isEditMode ? `/api/groups/${groupId}` : "/api/groups/";
-    const method = isEditMode ? "PUT" : "POST";
+    const groupData = { name: groupName, description, icon };
+    const actionToDispatch = isEditMode
+      ? updateGroup({ groupId, groupData })
+      : createGroup(groupData);
 
     try {
-      if (setSpinnerVisible) setSpinnerVisible(true);
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: groupName, description, icon }),
-      });
+      // Dispatch the appropriate action and wait for it to complete
+      await dispatch(actionToDispatch).unwrap();
 
-      const data = await response.json();
+      // If .unwrap() doesn't throw, the action was successful
+      toast.success(
+        `Group '${groupName}' ${isEditMode ? "updated" : "created"} successfully!`,
+        { position: "bottom-center" }
+      );
 
-      if (!response.ok) {
-        throw new Error(data.message || `Failed to ${isEditMode ? 'update' : 'create'} group`);
-      }
-
-      toast.success(`Group '${groupName}' ${isEditMode ? 'updated' : 'created'} successfully!`, {
-        position: "bottom-center",
-      });
-
-      if (onComplete) {
-        setIsLoading(false);
-        onComplete(data.group);
-      }
-
-      // Reset form fields and close the modal on success only if not in edit mode
+      // Reset form only when creating a new group
       if (!isEditMode) {
-        setIcon("👥");
         setGroupName("");
         setDescription("");
+        setIcon("👥");
       }
       closeModal();
     } catch (err) {
-      console.error("Group submission error:", err);
-      const errorMessage = err.message || `An error occurred during group ${isEditMode ? 'update' : 'creation'}`;
-      toast.error(errorMessage, {
+      // The action was rejected, 'err' is the payload from rejectWithValue
+      toast.error(err.message || "An error occurred.", {
         position: "bottom-center",
       });
     } finally {
-      if (setSpinnerVisible) setSpinnerVisible(false);
+      setIsLoading(false); // Stop the local button spinner
     }
   };
 
@@ -97,9 +85,10 @@ export default function GroupModal({
   }
 
   const modalTitle = isEditMode ? "Edit Group" : "Create a New Group";
-  const submitButtonText = isEditMode ? "Save Changes" : "Create";
+  const submitButtonText = isLoading
+    ? (isEditMode ? "Saving..." : "Creating...")
+    : (isEditMode ? "Save Changes" : "Create");
   const submitButtonIcon = isEditMode ? <PencilSquareIcon className="w-6" /> : <PlusIcon className="w-6" />;
-
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-30" onClose={closeModal}>

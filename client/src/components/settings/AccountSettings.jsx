@@ -5,11 +5,9 @@ import Button from "../ui/Button/Button";
 import Label from "../ui/Label/Label";
 import SettingRow from "./SettingRow";
 import { Switch } from "@headlessui/react";
-import Warning from "../ui/Warning/Warning";
 import { TrashIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
-import { convertFileToBase64 } from "../../utils/fileSelectorUtils";
 
 const UserInfoPill = ({ title, value }) => (
   <div className="flex flex-col border-r-1 border-white/20 pr-3 last:border-r-0">

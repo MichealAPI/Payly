@@ -233,11 +233,13 @@ const Expense = ({
           <div className="absolute -bottom-5 left-8 items-center hidden md:flex">
             <div className="flex -space-x-4">
               {participants.slice(0, 2).map((participant, index) => (
-                <ProfilePicture
-                  className={`size-10 rounded-full bg-white`}
-                  profilePicture={participant.profilePicture}
-                  key={index}
-                />
+                (participant.isEnabled && (
+                  <ProfilePicture
+                    className={`size-10 rounded-full bg-white`}
+                    profilePicture={participant.profilePicture}
+                    key={index}
+                  />
+                ))
               ))}
               {participants.length > 2 && (
                 <a

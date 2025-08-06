@@ -12,10 +12,11 @@ import {
   ArchiveBoxIcon,
   TrashIcon,
 } from "@heroicons/react/24/solid";
-import { handleArchive, handleDelete } from "../../../utils/groupUtils.js";
+import { archiveGroup, deleteGroup } from "../../../features/groups/groupsSlice.js";
 import { useState } from "react";
 import ConfirmModal from "../ConfirmModal/ConfirmModal.jsx";
 import GroupModal from "../GroupModal/GroupModal.jsx";
+import { useDispatch } from "react-redux";
 
 // members is an array of objects with a name property
 function formatMembers(members) {
@@ -45,15 +46,20 @@ function formatMembers(members) {
 
 export const Group = ({
   className,
-  title,
-  members,
-  entryId,
-  description,
-  icon,
-  observer,
+  groupData,
   isArchived,
 }) => {
+
+  const {
+    _id: groupId,
+    name: title,
+    description,
+    icon,
+    members,
+  } = groupData;
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [confirmModalTitle, setConfirmModalTitle] = useState("");
   const [confirmModalMessage, setConfirmModalMessage] = useState("");
@@ -74,7 +80,7 @@ export const Group = ({
   };
 
   const handleNavigate = () => {
-    navigate(`/overview/${entryId}`);
+    navigate(`/overview/${groupId}`);
   };
 
   // Stop propagation to prevent parent onClick if it existed
@@ -82,11 +88,9 @@ export const Group = ({
     e.stopPropagation();
   };
 
-  const handleEditComplete = (updatedGroup) => {
-    observer.notify({ type: "groupUpdated", payload: updatedGroup });
-  };
-
   const formattedMembers = formatMembers(members);
+
+  console.log("My group data:", groupData);
 
   return (
     <>
@@ -102,11 +106,10 @@ export const Group = ({
         isOpen={isEditModalOpen}
         setIsOpen={setIsEditModalOpen}
         isEditMode={true}
-        groupId={entryId}
+        groupId={groupId}
         defGroupName={title}
         defDescription={description}
         defIcon={icon}
-        onComplete={handleEditComplete}
       />
 
       <Card className={`${className} w-full md:h-55 cursor-pointer`} onClick={handleNavigate}>
@@ -178,26 +181,7 @@ export const Group = ({
                             isArchived ? "Unarchive Group" : "Archive Group",
                             `Are you sure you want to ${isArchived ? "unarchive" : "archive"} this group? You can ${isArchived ? "archive it again later" : "restore it later"}.`,
                             async () => {
-                              observer.notify({ type: "archivingGroup" });
-                              const success = await handleArchive(
-                                error,
-                                setError,
-                                entryId,
-                                isArchived
-                              );
-                              if (success) {
-                                const groupData = {
-                                  _id: entryId,
-                                  name: title,
-                                  description,
-                                  icon,
-                                  members,
-                                };
-                                observer.notify({
-                                  type: isArchived ? "groupUnarchived" : "groupArchived",
-                                  payload: groupData,
-                                });
-                              }
+                              await dispatch(archiveGroup(groupData)).unwrap();
                             }
                           );
                         }}
@@ -218,23 +202,7 @@ export const Group = ({
                             "Delete Group",
                             "Are you sure you want to delete this group? This action <b>CANNOT</b> be undone.",
                             async () => {
-                              observer.notify({ type: "deletingGroup" });
-                              const success = await handleDelete(
-                                error,
-                                setError,
-                                entryId
-                              );
-                              if (success) {
-                                observer.notify({
-                                  type: "groupDeleted",
-                                  payload: { groupId: entryId },
-                                });
-                              } else {
-                                observer.notify({
-                                  type: "actionError",
-                                  payload: { error },
-                                });
-                              }
+                              await dispatch(deleteGroup(groupData)).unwrap();
                             }
                           );
                         }}
@@ -260,19 +228,6 @@ export const Group = ({
       </Card>
     </>
   );
-};
-
-Group.propTypes = {
-  icon: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  members: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  entryId: PropTypes.string.isRequired,
-  onActionComplete: PropTypes.func,
 };
 
 export default Group;

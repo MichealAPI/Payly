@@ -1,0 +1,217 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import apiClient from "../../api/axiosConfig";
+import { arrayMove } from "@dnd-kit/sortable"; // You'll use this in the reducer
+
+export const fetchGroups = createAsyncThunk(
+  "groups/fetchGroups",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get("/groups/list");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const fetchArchivedGroups = createAsyncThunk(
+  "groups/fetchArchived",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get("/users/archived");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const reorderGroups = createAsyncThunk(
+  "groups/reorderGroups",
+  async ({ oldIndex, newIndex, allGroups }, { rejectWithValue }) => {
+    // Optimistically create the new array
+    const newOrderedGroups = arrayMove(allGroups, oldIndex, newIndex);
+    const orderedGroupIds = newOrderedGroups.map((g) => g._id);
+
+    try {
+      await apiClient.put("/users/order", { orderedGroupIds });
+      // On success, return the new, correctly ordered array
+      return newOrderedGroups;
+    } catch (error) {
+      // On failure, the thunk will reject, and we can revert in the reducer
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteGroup = createAsyncThunk(
+  "groups/deleteGroup",
+  async (group, { rejectWithValue }) => {
+    try {
+      await apiClient.delete(`/groups/${group._id}/delete`);
+      return group._id; // On success, return the ID of the deleted group
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const createGroup = createAsyncThunk(
+  "groups/createGroup",
+  async (groupData, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post("/groups/create", groupData);
+      return response.data.group; // Expect the new group object back from the API
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const archiveGroup = createAsyncThunk(
+  "groups/archiveGroup",
+  async (group, { rejectWithValue }) => {
+    try {
+      await apiClient.post(`/users/${group._id}/archive`);
+      return group; // Return the full group object to move it between lists
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const unarchiveGroup = createAsyncThunk(
+  "groups/unarchiveGroup",
+  async (group, { rejectWithValue }) => {
+    try {
+      await apiClient.post(`/users/${group._id}/unarchive`);
+      return group; // Return the full group object
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const joinGroup = createAsyncThunk(
+  'groups/joinGroup',
+  async (inviteCode, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post('/invites/accept', { inviteCode });
+      // The API returns { group, message }, we'll pass this whole object along
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateGroup = createAsyncThunk(
+    "groups/updateGroup",
+    async ({ groupId, groupData }, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.put(`/${groupId}/update`, groupData);
+            return response.data; // Expect the updated group object back from the API
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+
+const initialState = {
+  items: [],
+  archivedItems: [],
+  isLoading: false,
+  error: null,
+};
+
+const groupsSlice = createSlice({
+  name: "groups",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      // Handle all pending states by showing the spinner
+      .addCase(fetchGroups.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createGroup.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteGroup.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(archiveGroup.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(unarchiveGroup.pending, (state) => {
+        state.isLoading = true;
+      })
+
+      // Handle all rejection states by hiding the spinner
+      .addCase(fetchGroups.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(createGroup.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteGroup.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      // etc. for all rejections...
+
+      // Handle fulfillment
+      .addCase(fetchGroups.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.items = action.payload;
+      })
+      .addCase(fetchArchivedGroups.fulfilled, (state, action) => {
+        state.archivedItems = action.payload;
+      })
+      .addCase(createGroup.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.items.unshift(action.payload); // Add new group to the top
+      })
+      .addCase(deleteGroup.fulfilled, (state, action) => {
+        state.isLoading = false;
+        // The payload is the groupId, filter it out from both lists
+        state.items = state.items.filter((g) => g._id !== action.payload);
+        state.archivedItems = state.archivedItems.filter(
+          (g) => g._id !== action.payload
+        );
+      })
+      .addCase(archiveGroup.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const groupToArchive = action.payload;
+        state.items = state.items.filter((g) => g._id !== groupToArchive._id);
+        state.archivedItems.push(groupToArchive);
+      })
+      .addCase(unarchiveGroup.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const groupToUnarchive = action.payload;
+        state.archivedItems = state.archivedItems.filter(
+          (g) => g._id !== groupToUnarchive._id
+        );
+        state.items.unshift(groupToUnarchive);
+      })
+      // Handle reorderGroups lifecycle: optimistically reorder items on pending
+      .addCase(reorderGroups.pending, (state, action) => {
+        const { oldIndex, newIndex } = action.meta.arg;
+        state.items = arrayMove(state.items, oldIndex, newIndex);
+      })
+      .addCase(reorderGroups.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.items = action.payload;
+      })
+      .addCase(reorderGroups.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
+    // ... and cases for joinGroup, reorderGroups, updateGroup...
+  },
+});
+
+export default groupsSlice.reducer;

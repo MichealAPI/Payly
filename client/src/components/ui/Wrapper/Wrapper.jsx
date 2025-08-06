@@ -1,8 +1,7 @@
-import styles from './Wrapper.module.css';
 
 const Wrapper = ({ className, children }) => {
     return (
-        <div className={`${className} ${styles.wrapper}`}>
+        <div className={`flex flex-col min-h-screen md:w-auto w-full ${className}`}>
             {children}
         </div>
     );

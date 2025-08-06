@@ -19,7 +19,7 @@ router.get("/list", getGroups);
 router.get("/:groupId/balances", getBalances);
 router.get("/:groupId/retrieve", retrieveGroup);
 
-router.post("/", createGroup);
+router.post("/create", createGroup);
 router.post("/:groupId/:userId/kick", kickUserFromGroup);
 
 router.put("/:groupId/update", updateGroup);

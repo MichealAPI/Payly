@@ -17,8 +17,7 @@ async function uploadImage(fileBuffer, folderName, identifier) {
             ]
         }, (error, result) => {
             if (error) {
-                console.error("Cloudinary Upload Error:", error);
-                return reject(new Error("Failed to upload image."));
+                return reject(new Error(`Failed to upload image: ${error.message}`));
             }
             resolve(result.public_id);
         });

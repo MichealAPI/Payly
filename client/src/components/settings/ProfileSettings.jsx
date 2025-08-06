@@ -2,7 +2,6 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import Input from "../ui/Input/Input";
 import Button from "../ui/Button/Button";
-import Card from "../ui/Card/Card";
 
 const ProfileSettings = () => {
   const [name, setName] = useState("");

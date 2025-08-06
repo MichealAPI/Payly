@@ -19,9 +19,9 @@ router.get("/current", getCurrentUser);
 router.post("/:groupId/archive", handleArchivingUserGroup);
 router.post("/:groupId/unarchive", handleArchivingUserGroup);
 
-router.get("/:groupId/archived", getUserArchivedGroups);
+router.get("/archived", getUserArchivedGroups);
 
-router.put("/:groupId/order", updateUserGroupOrder);
+router.put("/order", updateUserGroupOrder);
 router.put("/settings/update", requireAuth, uploadMiddleware, updateUserSettings);
 
 export default router;

@@ -5,7 +5,6 @@ import Expense from "../models/Expense.js"; // Import Expense model
 import { calculateBalances } from "../utils/calculateBalance.js";
 
 export const createGroup = async (req, res) => {
-
   const { name, description, icon } = req.body;
   const ownerId = req.user.id; // Get user ID from auth middleware
 
@@ -37,11 +36,11 @@ export const createGroup = async (req, res) => {
   } catch (error) {
     console.error("Error creating group:", error);
     res.status(500).json({ message: "Server error while creating group" });
+    throw new Error("Error creating group: " + error.message);
   }
 };
 
 export const updateGroup = async (req, res) => {
-
   const { groupId } = req.params;
   const { name, description, icon } = req.body;
   const userId = req.user.id;
@@ -67,20 +66,20 @@ export const updateGroup = async (req, res) => {
     await group.save();
 
     // Repopulate the members field before sending the response
-    const updatedGroup = await Group.findById(groupId).populate("members", "email");
+    const updatedGroup = await Group.findById(groupId).populate(
+      "members",
+      "email"
+    );
 
     res
       .status(200)
       .json({ message: "Group updated successfully", group: updatedGroup });
   } catch (error) {
-    console.error("Error updating group:", error);
-    res.status(500).json({ message: "Server error while updating group" });
-  }
+    throw new Error("Error updating group: " + error.message);
+}
 };
 
-
 export const deleteGroup = async (req, res) => {
-
   const currentUserId = req.user.id; // Get user ID from auth middleware
 
   const { groupId } = req.params;
@@ -107,12 +106,9 @@ export const deleteGroup = async (req, res) => {
 
     res.status(200).json({ message: "Group deleted successfully" });
   } catch (error) {
-    console.error("Error deleting group:", error);
-    res.status(500).json({ message: "Server error while deleting group" });
+    throw new Error(`Error deleting group: ${error.message}`);
   }
-
 };
-
 
 export const retrieveGroup = async (req, res) => {
   const { groupId } = req.params;
@@ -136,8 +132,16 @@ export const retrieveGroup = async (req, res) => {
       .populate({
         path: "expenses",
         populate: [
-          { path: "paidBy", model: "User", select: "email firstName lastName profilePicture" },
-          { path: "participants.user", model: "User", select: "email firstName lastName profilePicture" },
+          {
+            path: "paidBy",
+            model: "User",
+            select: "email firstName lastName profilePicture",
+          },
+          {
+            path: "participants.user",
+            model: "User",
+            select: "email firstName lastName profilePicture",
+          },
         ],
       });
 
@@ -181,13 +185,9 @@ export const retrieveGroup = async (req, res) => {
     groupObj.expenses = transformedExpenses;
     res.status(200).json(groupObj);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Server error while fetching group details" });
+    throw new Error(`Error fetching group details: ${error.message}`);
   }
 };
-
-
 
 // Modify your existing list/fetch groups controller
 export const getGroups = async (req, res) => {
@@ -210,15 +210,14 @@ export const getGroups = async (req, res) => {
     // The 'groups' array is already sorted as per the user's document
     res.json(user.groups);
   } catch (error) {
-    console.error("Failed to fetch groups:", error);
-    res.status(500).json({ message: "Failed to fetch groups" });
+    throw new Error("Failed to fetch groups: " + error.message);
   }
 };
 
 export const getBalances = async (req, res) => {
-  const { id } = req.params; // TODO: group ID, to be name-refactored
+  const { groupId } = req.params; // TODO: group ID, to be name-refactored
 
-  if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+  if (!groupId || !mongoose.Types.ObjectId.isValid(groupId)) {
     return res.status(400).json({ message: "Invalid groupId provided." });
   }
 
@@ -226,20 +225,22 @@ export const getBalances = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const balances = await calculateBalances(id, userId);
+    const balances = await calculateBalances(groupId, userId);
     res.status(200).json(balances);
   } catch (error) {
     res
       .status(500)
       .json({ message: "Server error while calculating balances" });
+
+    throw new Error(`Error calculating balances: ${error.message}`);
   }
 };
 
 export const kickUserFromGroup = async (req, res) => {
-  const { id, userId } = req.params;
+  const { groupId, userId } = req.params;
   const currentUserId = req.user.id;
 
-  if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+  if (!groupId || !mongoose.Types.ObjectId.isValid(groupId)) {
     return res.status(400).json({ message: "Invalid groupId provided." });
   }
 
@@ -248,7 +249,7 @@ export const kickUserFromGroup = async (req, res) => {
   }
 
   try {
-    const group = await Group.findById(id);
+    const group = await Group.findById(groupId);
 
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
@@ -306,8 +307,6 @@ export const kickUserFromGroup = async (req, res) => {
 
     res.status(200).json({ message: "User kicked from group successfully" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Server error while kicking user from group" });
+    throw new Error(`Error kicking user from group: ${error.message}`);
   }
 };

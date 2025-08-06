@@ -5,6 +5,7 @@ import Button from "../Button/Button.jsx";
 import ConfirmModal from "../ConfirmModal/ConfirmModal.jsx";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
+import apiClient from "../../../api/axiosConfig.js";
 
 const getBalanceDetails = (netBalance) => {
   if (netBalance === 0) {
@@ -33,7 +34,7 @@ const Participant = ({
   currencyBalances,
   onDelete,
   className,
-  image
+  image,
 }) => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [confirmModalMessage, setConfirmModalMessage] = useState("");
@@ -48,74 +49,68 @@ const Participant = ({
     getBalanceDetails(balance);
 
   const handleDelete = async () => {
+    try {
+      const response = await apiClient.post(
+        `/groups/${groupId}/${participantId}/kick`
+      );
 
-    const response = await fetch(`/api/groups/${groupId}/${participantId}/kick`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
+      {onDelete}
 
-    if (response.ok) {
-        const data = await response.json();
-        {onDelete}
-        toast.success(data.message, { position: "bottom-center" });
-        // todo Optionally, call a callback to refresh the participant list
-    } else {
-        const errorData = await response.json();
-        toast.error(errorData.message, { position: "bottom-center" });
+      toast.success(response.data.message, { position: "bottom-center" });
+    } catch (error) {
+      toast.error(error.message, { position: "bottom-center" });
     }
-
   };
 
   return (
     <>
-        <Card className={className}>
+      <Card className={className}>
         <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-4 w-full justify-between">
+          <div className="flex items-center gap-4 w-full justify-between">
             <div className="flex gap-4 items-center">
-                {image}
+              {image}
 
-                <div className="flex flex-col">
+              <div className="flex flex-col">
                 <h3 className="text-xl font-bold text-white">
-                    {participantName}
+                  {participantName}
                 </h3>
                 <p className="text-white text-lg">
-                    {netBalanceMessage}{" "}
-                    <span className={`font-bold ${netBalanceClass}`}>
-                       {currency ? `${currency} ` : ''}
-                       {Math.abs(balance).toFixed(2)}
-                    </span>
+                  {netBalanceMessage}{" "}
+                  <span className={`font-bold ${netBalanceClass}`}>
+                    {currency ? `${currency} ` : ""}
+                    {Math.abs(balance).toFixed(2)}
+                  </span>
                 </p>
-                </div>
+              </div>
             </div>
 
             {currentUserId === ownerId && (
-                <Button
+              <Button
                 size="minimal"
                 iconVisibility={true}
                 icon={<TrashIcon className="w-6" />}
                 onClick={() => {
-                    setIsConfirmModalOpen(true)
-                    setConfirmAction(() => handleDelete)
-                    setConfirmModalMessage(`Are you sure you want to remove ${participantName}?`)
-                    setConfirmModalTitle("Remove Participant")
+                  setIsConfirmModalOpen(true);
+                  setConfirmAction(() => handleDelete);
+                  setConfirmModalMessage(
+                    `Are you sure you want to remove ${participantName}?`
+                  );
+                  setConfirmModalTitle("Remove Participant");
                 }}
                 style="fill"
-                />
+              />
             )}
-            </div>
+          </div>
         </div>
-        </Card>
+      </Card>
 
-        <ConfirmModal
-            title={confirmModalTitle}
-            message={confirmModalMessage}
-            onConfirm={confirmAction}
-            setIsOpen={setIsConfirmModalOpen}
-            isOpen={isConfirmModalOpen}
-        />
-
+      <ConfirmModal
+        title={confirmModalTitle}
+        message={confirmModalMessage}
+        onConfirm={confirmAction}
+        setIsOpen={setIsConfirmModalOpen}
+        isOpen={isConfirmModalOpen}
+      />
     </>
   );
 };

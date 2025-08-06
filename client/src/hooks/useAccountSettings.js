@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import apiClient from "../api/axiosConfig";
 
 export const useAccountSettings = ({
   currentFirstName,
@@ -56,15 +57,13 @@ export const useAccountSettings = ({
     }
 
     try {
-      const res = await fetch("/api/auth/settings", {
-        method: "PUT",
-        body: formData, // No 'Content-Type' header, browser sets it for FormData
+      const res = await apiClient.put("/users/settings/update", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to update settings");
-      }
+      const data = res.data;
 
       toast.success("Account settings updated successfully!");
       setPassword("");

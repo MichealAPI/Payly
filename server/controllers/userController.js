@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Group from "../models/Group.js";
 
 export const getCurrentUser = async (req, res) => {
   const userId = req.user.id;
@@ -62,8 +63,7 @@ export const updateUserSettings = async (req, res) => {
       profilePicture: newProfilePictureUrl || user.profilePicture,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error while updating settings" });
+    throw new Error("Error updating user settings: " + error.message);
   }
 };
 
@@ -71,11 +71,11 @@ export const handleArchivingUserGroup = async (req, res) => {
   // Determine if we are archiving or unarchiving
   const isArchived = req.path.includes("unarchive") ? false : true;
 
-  const { id } = req.params;
+  const { groupId } = req.params;
   const userId = req.user.id; // Get user ID from auth middleware
 
   try {
-    const group = await Group.findById(id);
+    const group = await Group.findById(groupId);
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
     }
@@ -94,7 +94,7 @@ export const handleArchivingUserGroup = async (req, res) => {
 
     res.status(200).json({ message: "Group updated successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error while updating group" });
+    throw new Error("Error updating group: " + error.message);
   }
 };
 
@@ -110,9 +110,7 @@ export const getUserArchivedGroups = async (req, res) => {
 
     res.status(200).json(user.archived_groups);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Server error while fetching archived groups" });
+    throw new Error("Error fetching archived groups: " + error.message);
   }
 };
 
@@ -131,6 +129,6 @@ export const updateUserGroupOrder = async (req, res) => {
     await User.findByIdAndUpdate(userId, { $set: { groups: orderedGroupIds } });
     res.status(200).json({ message: "Group order updated successfully." });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update group order." });
+    throw new Error("Error updating group order: " + error.message);
   }
 };

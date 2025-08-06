@@ -8,23 +8,20 @@ const currencies = currenciesData;
 
 const CurrencySelector = ({ setCurrency, currency }) => {
     const [query, setQuery] = useState('');
-    const [selectedId, setSelectedId] = useState(currencies.find((c) => c.name === currency)?.id || currencies[0].id);
-    setCurrency(currencies.find((c) => c.id === selectedId));
-
-    const selected = useMemo(() => currencies.find((c) => c.id === selectedId), [selectedId]);
 
     const filteredCurrencies = useMemo(() => {
         return query === ''
             ? currencies
-            : currencies.filter((currency) => currency.name.toLowerCase().includes(query.toLowerCase()));
+            : currencies.filter((c) => c.name.toLowerCase().includes(query.toLowerCase()));
     }, [query]);
 
     return (
         <Combobox
-            value={selected}
-            onChange={(currency) => {
-                setSelectedId(currency.id);
-                setCurrency(currency);
+            value={currency}
+            onChange={(selectedCurrency) => {
+                if (selectedCurrency) {
+                    setCurrency(selectedCurrency);
+                }
             }}
             onClose={() => setQuery('')}
         >
@@ -34,8 +31,9 @@ const CurrencySelector = ({ setCurrency, currency }) => {
                         'w-full rounded-lg border-1 bg-black py-1.5 pr-8 pl-3 text-sm/6 text-white',
                         'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
                     )}
-                    displayValue={(currency) => currency?.name}
+                    displayValue={(c) => c?.name || ''}
                     onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Select currency"
                 />
                 <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
                     <ChevronDownIcon className="size-4 fill-white/60 group-data-hover:fill-white" />
@@ -46,7 +44,7 @@ const CurrencySelector = ({ setCurrency, currency }) => {
                 anchor="bottom"
                 transition
                 className={clsx(
-                    'w-(--input-width) h-50 rounded-xl border no-scrollbar shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] bg-black p-1 [--anchor-gap:--spacing(1)] empty:invisible',
+                    'w-[var(--input-width)] max-h-60 overflow-y-auto rounded-xl border no-scrollbar shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] bg-black p-1 [--anchor-gap:--spacing(1)] empty:invisible',
                     'transition duration-100 ease-in data-leave:data-closed:opacity-0'
                 )}
             >

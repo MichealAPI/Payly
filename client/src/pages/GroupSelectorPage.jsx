@@ -5,16 +5,17 @@ import Group from "../components/ui/Group/Group";
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import Button from "../components/ui/Button/Button.jsx";
-import {ChevronUpIcon, PlusIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronUpIcon,
+  PlusIcon,
+  UserPlusIcon,
+} from "@heroicons/react/24/outline";
 
 import GroupModal from "../components/ui/GroupModal/GroupModal.jsx";
 import JoinGroupModal from "../components/ui/JoinGroupModal/JoinGroupModal.jsx";
 import { toast } from "react-hot-toast";
-import Observer from "../utils/observer.js";
 import Spinner from "../components/ui/Spinner/Spinner.jsx";
 import LoadingCard from "../components/ui/LoadingCard/LoadingCard.jsx";
-
-import { useNavigate } from "react-router-dom";
 
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 
@@ -28,27 +29,42 @@ import {
   DragOverlay,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import SortableGroup from "../components/ui/Group/SortableGroup.jsx";
+import {
+  fetchArchivedGroups,
+  fetchGroups,
+  joinGroup,
+  reorderGroups,
+} from "../features/groups/groupsSlice.js";
+import { useDispatch, useSelector } from "react-redux";
 
 const GroupSelectorPage = () => {
-  const [allGroups, setAllGroups] = useState([]);
-  const [activeGroup, setActiveGroup] = useState(null); // New state for the active group
-  const [archivedGroups, setArchivedGroups] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+
+  const {
+    error,
+    items: allGroups,
+    archivedItems,
+    isLoading,
+  } = useSelector((state) => state.groups);
+
+  // --- Keep ONLY local UI state ---
+  const [activeGroup, setActiveGroup] = useState(null);
   const [activeAction, setActiveAction] = useState("showall");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
   const [isJoinerOpen, setIsJoinerOpen] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
-  const [spinnerVisible, setSpinnerVisible] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [isJoining, setIsJoining] = useState(false); // For local button spinner
   const menuRef = useRef(null);
 
-  const navigate = useNavigate();
+  // initial fetch
+  useEffect(() => {
+    dispatch(fetchGroups());
+    dispatch(fetchArchivedGroups());
+  }, [dispatch]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -82,162 +98,36 @@ const GroupSelectorPage = () => {
       const oldIndex = allGroups.findIndex((g) => g._id === active.id);
       const newIndex = allGroups.findIndex((g) => g._id === over.id);
 
-      const newAllGroups = arrayMove(allGroups, oldIndex, newIndex);
-
-      // Optimistically update the UI
-      setAllGroups(newAllGroups);
-
-      // Persist the new order to the database
-      try {
-        const orderedGroupIds = newAllGroups.map((g) => g._id);
-        const response = await fetch("/api/groups/order", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ orderedGroupIds }),
+      dispatch(reorderGroups({ oldIndex, newIndex, allGroups }))
+        .unwrap()
+        .catch((error) => {
+          console.error("Reorder failed:", error);
+          toast.error("Failed to reorder groups.");
         });
-
-        if (!response.ok) {
-          throw new Error("Failed to save the new group order.");
-        }
-
-      } catch (error) {
-        console.error(error);
-        toast.error("Could not save new order. Reverting.");
-        // If the API call fails, revert the state to the original order
-        setAllGroups(allGroups);
-      }
     }
   };
 
   const handleJoinGroup = async (inviteCode) => {
     setIsJoining(true);
     try {
-      const response = await fetch('/api/invites/accept', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inviteCode }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to join group.');
-      }
-
-      // Check if the group is already in the list to avoid duplicates
-      if (!allGroups.some(g => g._id === data.group._id)) {
-        setAllGroups(prev => [data.group, ...prev]);
-      }
-      
-      toast.success(data.message);
+      const result = await dispatch(joinGroup(inviteCode)).unwrap();
+      toast.success(result.message);
       setIsJoinerOpen(false);
-
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || "Failed to join group.");
     } finally {
       setIsJoining(false);
     }
   };
 
-  const isGroupsListEmpty = () => (
-    allGroups.length === 0 && archivedGroups.length === 0
-  );
-
-  const fetchArchivedGroups = async () => {
-    try {
-      setSpinnerVisible(true);
-      const response = await fetch("/api/groups/archived");
-      if (!response.ok) {
-        throw new Error("Failed to fetch archived groups");
-      }
-      const data = await response.json();
-      setArchivedGroups(data);
-    } catch (error) {
-      console.error("Failed to fetch archived groups:", error);
-      toast.error("Could not load archived groups.");
-    } finally {
-      setSpinnerVisible(false);
-    }
-  };
-
-  const fetchGroups = async () => {
-    try {
-      const response = await fetch("/api/groups/list");
-      if (!response.ok) {
-        throw new Error("Failed to fetch groups");
-      }
-      const data = await response.json();
-      setAllGroups(data);
-    } catch (error) {
-      console.error("Failed to fetch groups:", error);
-      toast.error("Could not load groups.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handling Group card Actions
-  const observer = useRef(new Observer());
+  const isGroupsListEmpty = () =>
+    allGroups.length === 0 && archivedItems.length === 0;
 
   useEffect(() => {
-    const handleObserver = (data) => {
-      switch (data.type) {
-        case "groupArchived":
-          setArchivedGroups((prev) => [...prev, data.payload]);
-          setSpinnerVisible(false);
-          break;
-        case "groupUnarchived":
-          setArchivedGroups((prev) =>
-            prev.filter((g) => g._id !== data.payload._id)
-          );
-          setSpinnerVisible(false);
-          break;
-        case "groupDeleted":
-          setAllGroups((prev) => prev.filter((g) => g._id !== data.payload.groupId));
-          setLoading(false);
-          break;
-        case "deletingGroup":
-          setLoading(true);
-          break;
-        case "groupUpdated":
-          // Replace the re-fetch with a direct state update
-          setAllGroups((prev) =>
-            prev.map((g) => (g._id === data.payload._id ? data.payload : g))
-          );
-          break;
-        case "unarchivingGroup":
-        case "archivingGroup":
-          setSpinnerVisible(true);
-          break;
-        case "groupCreated":
-          setAllGroups((prev) => [data.payload, ...prev]);
-          setLoading(false);
-          break;
-        case "actionError":
-          setLoading(false);
-          setSpinnerVisible(false);
-          break;
-      }
-    };
-
-    observer.current.subscribe(handleObserver);
-
-    async function fetchData() {
-      // Fetch all data concurrently
-      await Promise.all([
-        fetchGroups(),
-        fetchArchivedGroups(),
-      ]);
+    if (error) {
+      toast.error(error.message || "An unknown error occurred.");
     }
-
-    fetchData();
-
-    return () => {
-      observer.current.unsubscribe(handleObserver);
-    };
-  }, []);
+  }, [error]);
 
   // Effect to handle clicks outside the menu to close it on mobile
   useEffect(() => {
@@ -253,15 +143,16 @@ const GroupSelectorPage = () => {
   }, []);
 
   const filteredGroups = useMemo(() => {
-    const archivedIds = new Set(archivedGroups.map((g) => g._id));
+    const archivedIds = new Set(archivedItems.map((g) => g._id.toString()));
+
     let groupsToShow = [];
 
     switch (activeAction) {
       case "archived":
-        groupsToShow = allGroups.filter((group) => archivedIds.has(group._id));
+        groupsToShow = allGroups.filter((group) => archivedIds.has(group._id.toString()));
         break;
       case "running":
-        groupsToShow = allGroups.filter((group) => !archivedIds.has(group._id));
+        groupsToShow = allGroups.filter((group) => !archivedIds.has(group._id.toString()));
         break;
       case "showall":
       default:
@@ -269,7 +160,7 @@ const GroupSelectorPage = () => {
         break;
     }
     return groupsToShow;
-  }, [activeAction, allGroups, archivedGroups]);
+  }, [activeAction, allGroups, archivedItems]);
 
   const handlePrimaryButtonClick = () => {
     // Only toggle on smaller screens, larger screens are handled by hover
@@ -293,7 +184,7 @@ const GroupSelectorPage = () => {
           onActionClick={setActiveAction}
         />
         <div className="w-full flex h-full flex-grow">
-          {loading ? (
+          {isLoading ? (
             <>
               {/* Desktop loading cards */}
               <div className="hidden md:flex flex-col md:flex-row md:flex-wrap gap-10 justify-center items-center p-10">
@@ -327,9 +218,10 @@ const GroupSelectorPage = () => {
                         key={group._id}
                         id={group._id}
                         group={group}
-                        observer={observer.current}
-                        className={`${allGroups.length < 2 ? "" : "cursor-pointer"} touch-action-none`}
-                        isArchived={archivedGroups.some(
+                        className={`${
+                          allGroups.length < 2 ? "" : "cursor-pointer"
+                        } touch-action-none`}
+                        isArchived={archivedItems.some(
                           (g) => g._id === group._id
                         )}
                       />
@@ -341,11 +233,7 @@ const GroupSelectorPage = () => {
                   {activeGroup ? (
                     <Group
                       className="shadow-lg transform scale-105 transition-transform duration-100"
-                      icon={activeGroup.icon}
-                      title={activeGroup.name}
-                      members={activeGroup.members}
-                      entryId={activeGroup._id}
-                      description={activeGroup.description}
+                      groupData={activeGroup}
                     />
                   ) : null}
                 </DragOverlay>
@@ -359,16 +247,19 @@ const GroupSelectorPage = () => {
                 className="w-1/3 mb-5 animate-translate select-none pointer-events-none"
               />
               {activeAction === "archived" ? (
-                <p className="text-white text-lg md:text-2xl">No archived groups found.</p>
+                <p className="text-white text-lg md:text-2xl">
+                  No archived groups found.
+                </p>
               ) : (
                 <p className="text-white md:text-2xl text-lg text-center">
-                  No groups found, click on the "<b>+</b>" button<br/> in the bottom-right menu to create one!
+                  No groups found, click on the "<b>+</b>" button
+                  <br /> in the bottom-right menu to create one!
                 </p>
               )}
             </div>
           )}
         </div>
-        {spinnerVisible && (
+        {isLoading && (
           <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black/30">
             <Spinner />
           </div>
@@ -383,7 +274,9 @@ const GroupSelectorPage = () => {
         {/* Secondary Action Buttons */}
         <div
           className={`flex flex-col-reverse items-center gap-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 ${
-            isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none md:pointer-events-auto"
+            isMenuOpen
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-2 pointer-events-none md:pointer-events-auto"
           }`}
         >
           {/* Join Group Button */}
@@ -417,13 +310,14 @@ const GroupSelectorPage = () => {
 
         {/* Main Trigger Button */}
         <div className="flex">
-          {isGroupsListEmpty() && (activeAction === "showall" || activeAction === "running") &&
+          {isGroupsListEmpty() &&
+            (activeAction === "showall" || activeAction === "running") && (
               <img
                 src="https://res.cloudinary.com/dzeah7jtd/image/upload/v1753265161/drawn_arrow_zxhhdw.png"
                 alt="No groups"
                 className="w-10 h-10 absolute right-15 bottom-5 animate-translate select-none pointer-events-none"
               />
-            }
+            )}
 
           <Button
             size="minimal"
@@ -440,14 +334,7 @@ const GroupSelectorPage = () => {
           />
         </div>
 
-        <GroupModal
-          isOpen={isCreatorOpen}
-          setIsOpen={setIsCreatorOpen}
-          onComplete={(newGroup) =>
-            observer.current.notify({ type: "groupCreated", payload: newGroup })
-          }
-          setSpinnerVisible={setLoading}
-        />
+        <GroupModal isOpen={isCreatorOpen} setIsOpen={setIsCreatorOpen} />
 
         <JoinGroupModal
           isOpen={isJoinerOpen}

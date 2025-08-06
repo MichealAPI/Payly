@@ -10,46 +10,33 @@ import {
 } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { useAuth } from "../context/AuthContext";
-
+import { loginUser } from "../features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
+
+  const { error, isLoading } = useSelector((state) => state.auth);
+
   const navigate = useNavigate();
-  const {setUser} = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(null);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || "Login failed");
-        throw new Error(data.message || "Login failed");
-      }
-
-      setUser(data.user);
+      await dispatch(loginUser({ email, password })).unwrap();
 
       toast.success("Login successful!", { position: "bottom-center" });
-      console.log("Login successful:", data);
-      
+
       navigate("/groups");
     } catch (err) {
-      console.error("Login error:", err);
-      toast.error(err.message || "An error occurred during login", {
+
+      console.error("Login error:", err || error);
+      toast.error(err.message || error || "An error occurred during login", {
         position: "bottom-center",
       });
     }
@@ -99,8 +86,9 @@ const LoginPage = () => {
             />
 
             <Button
-              text="Sign in"
+              text={isLoading ? "Logging in..." : "Sign In"}
               size="full"
+              disabled={isLoading}
               className="mt-5"
               textVisibility={true}
               iconVisibility={true}

@@ -1,22 +1,10 @@
 
-import createRequire from 'module';
+import * as Sentry from '@sentry/node';
 
-const require = createRequire(import.meta.url);
-
-const Sentry = require("@sentry/node");
-
-// Ensure to call this before requiring any other modules!
 Sentry.init({
-  dsn: "https://examplePublicKey@o0.ingest.sentry.io/0",
+  dsn: "https://e33668c7f4e568a7175d56b75eb9ad20@o4504045887029248.ingest.us.sentry.io/4509796424810496",
 
-  // Adds request headers and IP for users, for more info visit:
-  // https://docs.sentry.io/platforms/javascript/guides/node/configuration/options/#sendDefaultPii
+  // Setting this option to true will send default PII data to Sentry.
+  // For example, automatic IP address collection on events
   sendDefaultPii: true,
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for tracing.
-  // We recommend adjusting this value in production
-  // Learn more at
-  // https://docs.sentry.io/platforms/javascript/guides/node/configuration/options/#tracesSampleRate
-  tracesSampleRate: 1.0,
 });

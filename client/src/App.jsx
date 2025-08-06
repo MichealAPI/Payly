@@ -7,25 +7,34 @@ import RegisterPage from "./pages/RegisterPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import GroupSelectorPage from "./pages/GroupSelectorPage";
 import OverviewPage from "./pages/OverviewPage";
-import { useAuth } from "./context/AuthContext";
 import Spinner from "./components/ui/Spinner/Spinner";
 import LayoutWithSidebar from "./components/ui/Layout/LayoutWithSidebar";
 import SettingsPage from "./pages/SettingsPage";
+import { useSelector, useDispatch } from "react-redux";
+import { checkAuthStatus } from "./features/auth/authSlice";
+import { useEffect } from "react";
+
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { error, isAuthenticated, isLoading } = useSelector((state) => state.auth) || {};
 
-  if (loading) {
+  if (isLoading) {
     return <Spinner />;
   }
 
-  if (!user) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
   return children;
 };
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(checkAuthStatus());
+  }, [dispatch]);
+
   return (
     <>
       <Routes>

@@ -1,4 +1,3 @@
-import Expense from "../models/Expense.js";
 import mongoose from "mongoose";
 import Group from "../models/Group.js";
 
@@ -13,7 +12,7 @@ export const calculateBalances = async (groupId, userId) => {
     !mongoose.Types.ObjectId.isValid(groupId) ||
     !mongoose.Types.ObjectId.isValid(userId)
   ) {
-    throw new Error("Invalid groupId or userId provided.");
+    throw new Error(`Invalid groupId or userId provided: ${groupId}, ${userId}`);
   }
 
   const foundGroup = await Group.findById(groupId)
