@@ -5,13 +5,9 @@ import {
   updateGroup,
   deleteGroup,
   getBalances,
-  archiveGroup,
-  getUserArchivedGroups,
-  updateGroupOrder,
-  getGroupDetails,
-  kickUserFromGroup
+  retrieveGroup,
+  kickUserFromGroup,
 } from "../controllers/groupController.js";
-import { createInvite } from "../controllers/inviteController.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -20,16 +16,14 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.get("/list", getGroups);
-router.get("/archived", getUserArchivedGroups);
-router.put("/order", updateGroupOrder);
+router.get("/:groupId/balances", getBalances);
+router.get("/:groupId/retrieve", retrieveGroup);
+
 router.post("/", createGroup);
-router.put("/:id", updateGroup);
-router.get("/:id", getGroupDetails);
-router.delete("/:id", deleteGroup);
-router.post("/:id/archive", archiveGroup);
-router.post("/:id/unarchive", archiveGroup);
-router.post("/:id/invites", createInvite); 
-router.get("/:id/balances", getBalances);
-router.post("/:id/:userId/kick", kickUserFromGroup);
+router.post("/:groupId/:userId/kick", kickUserFromGroup);
+
+router.put("/:groupId/update", updateGroup);
+
+router.delete("/:groupId/delete", deleteGroup);
 
 export default router;

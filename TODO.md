@@ -60,3 +60,4 @@
 - Refactor since members qualifies as the whole set of members in the group and participants only to the expense's  
 - Use a listbox instead of paid by selector to also add profile pictures besides the participant's name
 - Debug split methods, overview board calculation and fix the centering of the register vs login form.
+- Implement Sentry for Backend

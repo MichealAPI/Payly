@@ -1,6 +1,5 @@
 import Group from "../models/Group.js";
 import Expense from "../models/Expense.js";
-import { calculateBalances } from '../utils/calculateBalance.js';
 import { getAndTransformExpense } from '../utils/expenseUtils.js';
 
 export const createExpense = async (req, res) => {
@@ -8,7 +7,7 @@ export const createExpense = async (req, res) => {
     const { groupId } = req.params;
 
     const { title, description, amount, type, participants, splitMethod, date, paidBy, currency } = req.body;
-    const userId = req.user.id; // Get the authenticated user's ID from the request
+    const userId = req.user.id;
 
     try {
         // Validate group existence
@@ -33,7 +32,6 @@ export const createExpense = async (req, res) => {
 
         await newExpense.save();
 
-        // Optionally, update the group's expenses array
         group.expenses.push(newExpense._id);
         await group.save();
 
@@ -49,7 +47,6 @@ export const createExpense = async (req, res) => {
 export const updateExpense = async (req, res) => {
     const { expenseId } = req.params;
     const { title, description, amount, type, participants, splitMethod, date, paidBy, currency } = req.body;
-    const userId = req.user.id;
 
     try {
         const expense = await Expense.findById(expenseId);
@@ -57,7 +54,7 @@ export const updateExpense = async (req, res) => {
         if (!expense) {
             return res.status(404).json({ message: 'Expense not found' });
         }
-        
+
         const updatedExpenseData = {
             title: title,
             amount: amount,
@@ -67,7 +64,7 @@ export const updateExpense = async (req, res) => {
             splitMethod: splitMethod,
             currency: currency,
             date: date,
-            paidBy: paidBy.id || paidBy // Use the id from the paidBy object
+            paidBy: paidBy.id ? paidBy.id : paidBy 
         };
 
         const updatedExpense = await Expense.findByIdAndUpdate(expenseId, updatedExpenseData, { new: true });

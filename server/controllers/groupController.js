@@ -5,8 +5,6 @@ import Expense from "../models/Expense.js"; // Import Expense model
 import { calculateBalances } from "../utils/calculateBalance.js";
 
 export const createGroup = async (req, res) => {
-  // start stopwatch to measure execution time
-  console.time("createGroup");
 
   const { name, description, icon } = req.body;
   const ownerId = req.user.id; // Get user ID from auth middleware
@@ -40,30 +38,20 @@ export const createGroup = async (req, res) => {
     console.error("Error creating group:", error);
     res.status(500).json({ message: "Server error while creating group" });
   }
-
-  // end stopwatch and log execution time
-  console.timeEnd("createGroup");
 };
 
 export const updateGroup = async (req, res) => {
-  // start stopwatch to measure execution time
-  console.time("updateGroup");
 
-  const { id } = req.params;
+  const { groupId } = req.params;
   const { name, description, icon } = req.body;
   const userId = req.user.id;
 
   try {
-    const group = await Group.findById(id);
+    const group = await Group.findById(groupId);
 
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
     }
-
-    // Ensure the user updating the group is the owner
-    //if (group.owner.toString() !== userId) {
-    //    return res.status(403).json({ message: 'User not authorized to update this group' });
-    //}
 
     if (!group.members.includes(userId)) {
       return res
@@ -79,7 +67,7 @@ export const updateGroup = async (req, res) => {
     await group.save();
 
     // Repopulate the members field before sending the response
-    const updatedGroup = await Group.findById(id).populate("members", "email");
+    const updatedGroup = await Group.findById(groupId).populate("members", "email");
 
     res
       .status(200)
@@ -88,21 +76,17 @@ export const updateGroup = async (req, res) => {
     console.error("Error updating group:", error);
     res.status(500).json({ message: "Server error while updating group" });
   }
-
-  // end stopwatch and log execution time
-  console.timeEnd("updateGroup");
 };
 
+
 export const deleteGroup = async (req, res) => {
+
   const currentUserId = req.user.id; // Get user ID from auth middleware
 
-  // start stopwatch to measure execution time
-  console.time("deleteGroup");
-
-  const { id } = req.params;
+  const { groupId } = req.params;
 
   try {
-    const groupOwner = await Group.findById(id).select("owner");
+    const groupOwner = await Group.findById(groupId).select("owner");
 
     if (!groupOwner.owner || groupOwner.owner.toString() !== currentUserId) {
       return res
@@ -110,7 +94,7 @@ export const deleteGroup = async (req, res) => {
         .json({ message: "Only the group owner can delete the group" });
     }
 
-    const group = await Group.findByIdAndDelete(id);
+    const group = await Group.findByIdAndDelete(groupId);
 
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
@@ -127,67 +111,27 @@ export const deleteGroup = async (req, res) => {
     res.status(500).json({ message: "Server error while deleting group" });
   }
 
-  // end stopwatch and log execution time
-  console.timeEnd("deleteGroup");
 };
 
-export const archiveGroup = async (req, res) => {
-  // start stopwatch to measure execution time
-  console.time("archiveGroup");
 
-  // Determine if we are archiving or unarchiving
-  const isArchived = req.path.includes("unarchive") ? false : true;
-
-  const { id } = req.params;
+export const retrieveGroup = async (req, res) => {
+  const { groupId } = req.params;
   const userId = req.user.id; // Get user ID from auth middleware
 
-  try {
-    const group = await Group.findById(id);
-    if (!group) {
-      return res.status(404).json({ message: "Group not found" });
-    }
-
-    // Add the group to the user's archived groups
-
-    if (isArchived) {
-      await User.findByIdAndUpdate(userId, {
-        $push: { archived_groups: group._id },
-      });
-    } else {
-      await User.findByIdAndUpdate(userId, {
-        $pull: { archived_groups: group._id },
-      });
-    }
-
-    res.status(200).json({ message: "Group updated successfully" });
-  } catch (error) {
-    console.error("Error updating group:", error);
-    res.status(500).json({ message: "Server error while updating group" });
-  }
-
-  // end stopwatch and log execution time
-  console.timeEnd("archiveGroup");
-};
-
-export const getGroupDetails = async (req, res) => {
-  const { id } = req.params;
-  const userId = req.user.id; // Get user ID from auth middleware
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
     return res.status(400).json({ message: "Invalid group ID" });
   }
 
   try {
-    const groupMembers = await Group.findById(id).select("members");
+    const groupMembers = await Group.findById(groupId).select("members");
 
-    console.log("Group members:", groupMembers.members);
     if (!groupMembers || !groupMembers.members.includes(userId)) {
       return res
         .status(403)
         .json({ message: "You're not a member of this group" });
     }
 
-    const group = await Group.findById(id)
+    const group = await Group.findById(groupId)
       .populate("members", "firstName lastName email profilePicture")
       .populate({
         path: "expenses",
@@ -237,51 +181,13 @@ export const getGroupDetails = async (req, res) => {
     groupObj.expenses = transformedExpenses;
     res.status(200).json(groupObj);
   } catch (error) {
-    console.error("Error fetching group details:", error);
     res
       .status(500)
       .json({ message: "Server error while fetching group details" });
   }
 };
 
-export const getUserArchivedGroups = async (req, res) => {
-  const userId = req.user.id; // Get user ID from auth middleware
 
-  try {
-    const user = await User.findById(userId).populate("archived_groups");
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json(user.archived_groups);
-  } catch (error) {
-    console.error("Error fetching archived groups:", error);
-    res
-      .status(500)
-      .json({ message: "Server error while fetching archived groups" });
-  }
-};
-
-export const updateGroupOrder = async (req, res) => {
-  const { orderedGroupIds } = req.body;
-  const userId = req.user.id; // Standardize to req.user.id
-
-  if (!orderedGroupIds || !Array.isArray(orderedGroupIds)) {
-    return res
-      .status(400)
-      .json({ message: "Invalid group order data provided." });
-  }
-
-  try {
-    // Find the user and update their 'groups' array to the new order.
-    await User.findByIdAndUpdate(userId, { $set: { groups: orderedGroupIds } });
-    res.status(200).json({ message: "Group order updated successfully." });
-  } catch (error) {
-    console.error("Error updating group order:", error);
-    res.status(500).json({ message: "Failed to update group order." });
-  }
-};
 
 // Modify your existing list/fetch groups controller
 export const getGroups = async (req, res) => {
@@ -400,7 +306,6 @@ export const kickUserFromGroup = async (req, res) => {
 
     res.status(200).json({ message: "User kicked from group successfully" });
   } catch (error) {
-    console.error("Error kicking user from group:", error);
     res
       .status(500)
       .json({ message: "Server error while kicking user from group" });

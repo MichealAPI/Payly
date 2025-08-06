@@ -17,6 +17,7 @@ const require = createRequire(import.meta.url);
 dotenv.config();
 const app = express();
 
+require("./instrument.js");
 require("@dotenvx/dotenvx").config();
 
 //app.use(cors({origin: process.env.CLIENT_URL, credentials: true}));
