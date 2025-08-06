@@ -1,5 +1,5 @@
 import React from 'react';
-import SidebarItem from '../SidebarItem/SidebarItem';
+import SidebarItem from './SidebarItem/SidebarItem';
 import { HomeIcon, Cog6ToothIcon } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
