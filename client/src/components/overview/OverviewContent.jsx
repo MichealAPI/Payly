@@ -59,8 +59,8 @@ const OverviewContent = ({
       ) || [];
 
     const sortedExpenses = [...filteredExpenses].sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
+      const dateA = new Date(a.paidAt);
+      const dateB = new Date(b.paidAt);
       return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
     });
 
@@ -78,9 +78,9 @@ const OverviewContent = ({
     let lastDate = null;
 
     sortedExpenses.forEach((item) => {
-      const itemDate = new Date(item.date).toDateString();
+      const itemDate = new Date(item.paidAt).toDateString();
       if (itemDate !== lastDate) {
-        expenseElements.push(<DateSeparator key={itemDate} date={item.date} />);
+        expenseElements.push(<DateSeparator key={itemDate} date={item.paidAt} />);
         lastDate = itemDate;
       }
 

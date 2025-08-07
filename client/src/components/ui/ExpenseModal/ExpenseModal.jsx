@@ -66,10 +66,6 @@ export default function ExpenseModal({
     currentUser,
   });
 
-  console.log("Participants in ExpenseModal:", participants);
-  console.log("Expense to edit in ExpenseModal:", expenseToEdit);
-  console.log("Members in ExpenseModal:", members);
-
   const { modalTitle, submitButtonText, submitButtonIcon } = useMemo(() => {
     const title = isEditMode ? "Edit Expense" : "Add Expense";
     const buttonText = isEditMode ? "Save Changes" : "Add";

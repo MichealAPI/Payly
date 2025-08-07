@@ -22,29 +22,68 @@ const AccountSettings = (props) => {
     setFirstName,
     lastName,
     setLastName,
-    profilePicture,
-    setProfilePicture,
+    settings,
+    setSettings,
     email,
     setEmail,
     isEmailVerified,
     password,
     setPassword,
     confirmPassword,
-    emailNotifications,
-    setEmailNotifications,
-    pushNotifications,
-    setPushNotifications,
-    inAppAlerts,
-    setInAppAlerts,
     setConfirmPassword,
-    handleSaveChanges,
     handleDeleteAccount,
+    handleSaveChanges,
   } = useAccountSettings(props);
 
-  const { groupsAmount, firstSeen } = props;
+  const {
+    groupsAmount,
+    firstSeen,
+    profilePicture: initialProfilePicture,
+  } = props;
   const cld = new Cloudinary({ cloud: { cloudName: "dzeah7jtd" } });
   const fileInputRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(null);
+
+  const upsertLocalSettings = (key, value) => {
+    setSettings((prevSettings) => {
+      const existingSettingIndex = prevSettings.findIndex(
+        (setting) => setting.key === key
+      );
+
+      if (existingSettingIndex > -1) {
+        // Update the existing setting
+        const updatedSettings = [...prevSettings];
+        updatedSettings[existingSettingIndex] = { key, value };
+        return updatedSettings;
+      } else {
+        // Add the new setting
+        return [...prevSettings, { key, value }];
+      }
+    });
+  };
+
+  const toggleLocalSetting = (key) => {
+    setSettings((prevSettings) => {
+      const settingIndex = prevSettings.findIndex(
+        (setting) => setting.key === key
+      );
+
+      if (settingIndex > -1) {
+        // Setting exists, toggle it
+        return prevSettings.map((setting) =>
+          setting.key === key ? { ...setting, value: !setting.value } : setting
+        );
+      } else {
+        // Setting does not exist, add it with value: true
+        return [...prevSettings, { key: key, value: true }];
+      }
+    });
+  };
+
+  const getLocalSetting = (key) => {
+    const setting = settings.find((s) => s.key === key);
+    return setting ? setting.value : false;
+  };
 
   useEffect(() => {
     // Clean up the object URL to avoid memory leaks
@@ -67,7 +106,7 @@ const AccountSettings = (props) => {
         toast.error("File is too large. Please select an image under 5MB.");
         return;
       }
-      setProfilePicture(file); // Store the file object for upload
+      upsertLocalSettings("profilePicture", file); // Store the file object for upload
 
       if (imagePreview) {
         URL.revokeObjectURL(imagePreview);
@@ -83,7 +122,10 @@ const AccountSettings = (props) => {
     <div className="flex flex-col gap-6 w-full max-w-3xl">
       {/* Profile Header */}
       <div className="flex items-center w-full gap-4">
-        <div className="flex cursor-pointer" onClick={handleProfilePictureClick}>
+        <div
+          className="flex cursor-pointer"
+          onClick={handleProfilePictureClick}
+        >
           <input
             type="file"
             ref={fileInputRef}
@@ -97,9 +139,9 @@ const AccountSettings = (props) => {
               alt="Profile Preview"
               className="w-16 h-16 rounded-full object-cover"
             />
-          ) : profilePicture ? (
+          ) : settings.profilePicture ? (
             <AdvancedImage
-              cldImg={cld.image(profilePicture).setVersion(Date.now())}
+              cldImg={cld.image(settings.profilePicture).setVersion(Date.now())}
               alt="Profile"
               className="w-16 h-16 rounded-full object-cover"
             />
@@ -190,8 +232,8 @@ const AccountSettings = (props) => {
         >
           <div className="flex w-full justify-end">
             <Switch
-              checked={emailNotifications}
-              onChange={setEmailNotifications}
+              checked={getLocalSetting("emailNotifications")}
+              onChange={() => toggleLocalSetting("emailNotifications")}
               className="group inline-flex h-6 w-11 items-center rounded-full bg-gray-700 transition data-checked:bg-[#BD9EFF]/80"
             >
               <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
@@ -205,8 +247,8 @@ const AccountSettings = (props) => {
         >
           <div className="flex w-full justify-end">
             <Switch
-              checked={pushNotifications}
-              onChange={setPushNotifications}
+              checked={getLocalSetting("pushNotifications")}
+              onChange={() => toggleLocalSetting("pushNotifications")}
               className="group inline-flex h-6 w-11 items-center rounded-full bg-gray-700 transition data-checked:bg-[#BD9EFF]/80"
             >
               <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
@@ -219,8 +261,8 @@ const AccountSettings = (props) => {
         >
           <div className="flex w-full justify-end">
             <Switch
-              checked={inAppAlerts}
-              onChange={setInAppAlerts}
+              checked={getLocalSetting("inAppAlerts")}
+              onChange={() => toggleLocalSetting("inAppAlerts")}
               className="group inline-flex h-6 w-11 items-center rounded-full bg-gray-700 transition data-checked:bg-[#BD9EFF]/80"
             >
               <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />

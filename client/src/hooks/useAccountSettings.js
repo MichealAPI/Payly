@@ -6,32 +6,31 @@ import apiClient from "../api/axiosConfig";
 export const useAccountSettings = ({
   currentFirstName,
   currentLastName,
-  currentProfilePicture,
   currentEmail,
   currentIsEmailVerified,
-  emailNotifications: currentEmailNotifications,
-  pushNotifications: currentPushNotifications,
-  inAppAlerts: currentInAppAlerts,
+  settings: initialSettings,
 }) => {
   const [firstName, setFirstName] = useState(currentFirstName || "");
   const [lastName, setLastName] = useState(currentLastName || "");
-  const [profilePicture, setProfilePicture] = useState(
-    currentProfilePicture || null
-  );
   const [email, setEmail] = useState(currentEmail || "");
-  const [isEmailVerified] = useState(currentIsEmailVerified || false);
+  const [settings, setSettings] = useState(() => {
+    const defaultSettings = {
+      emailNotifications: false,
+      pushNotifications: false,
+      inAppAlerts: false,
+      profilePicture: null,
+    };
+    const settingsObject = initialSettings || defaultSettings;
+    return settingsObject.map((setting) => ({
+      key: setting.key,
+      value: setting.value,
+    }));
+  });
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [emailNotifications, setEmailNotifications] = useState(
-    currentEmailNotifications ?? true
-  );
-  const [pushNotifications, setPushNotifications] = useState(
-    currentPushNotifications ?? false
-  );
+  const [isEmailVerified] = useState(currentIsEmailVerified || false);
 
-  const hasProfilePictureChanged = profilePicture instanceof File;
-
-  const [inAppAlerts, setInAppAlerts] = useState(currentInAppAlerts ?? true);
   const navigate = useNavigate();
 
   const handleSaveChanges = useCallback(async () => {
@@ -40,52 +39,73 @@ export const useAccountSettings = ({
       return;
     }
 
-    const formData = new FormData();
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
-    formData.append("email", email);
-    formData.append("emailNotifications", emailNotifications);
-    formData.append("pushNotifications", pushNotifications);
-    formData.append("inAppAlerts", inAppAlerts);
+    // Convert settings array back to an object for submission
+    const settingsObject = settings.reduce((acc, { key, value }) => {
+      acc[key] = value;
+      return acc;
+    }, {});
 
-    if (hasProfilePictureChanged) {
-      formData.append("profilePicture", profilePicture);
+    const submissionData = new FormData();
+    submissionData.append("firstName", firstName);
+    submissionData.append("lastName", lastName);
+    submissionData.append("email", email);
+
+    // Append settings, ensuring profilePicture is handled correctly
+    if (settingsObject.profilePicture instanceof File) {
+      submissionData.append("profilePicture", settingsObject.profilePicture);
     }
 
+    // Append other settings, excluding profilePicture if it's a file
+    const settingsToSubmit = { ...settingsObject };
+    if (settingsObject.profilePicture instanceof File) {
+      delete settingsToSubmit.profilePicture;
+    }
+    const settingsAsArray = Object.entries(settingsToSubmit).map(
+      ([key, value]) => ({ key, value })
+    );
+    submissionData.append("settings", JSON.stringify(settingsAsArray));
+
     if (password) {
-      formData.append("password", password);
+      submissionData.append("password", password);
     }
 
     try {
-      const res = await apiClient.put("/users/settings/update", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await apiClient.put(
+        "/users/settings/update",
+        submissionData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       const data = res.data;
 
       toast.success("Account settings updated successfully!");
       setPassword("");
       setConfirmPassword("");
-      // Optionally refresh or update state to show new image without a full reload
-      if (data.profilePicture) {
-        setProfilePicture(data.profilePicture);
+      if (data.settings.profilePicture) {
+        setSettings((prev) => ([
+          ...prev,
+          { key: "profilePicture", value: data.settings.profilePicture },
+        ]));
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to update settings"
+      );
     }
   }, [
     firstName,
     lastName,
     email,
+    settings,
     password,
     confirmPassword,
-    emailNotifications,
-    pushNotifications,
-    inAppAlerts,
-    profilePicture,
-    hasProfilePictureChanged,
+    navigate,
   ]);
 
   const handleDeleteAccount = useCallback(async () => {
@@ -95,18 +115,15 @@ export const useAccountSettings = ({
       )
     ) {
       try {
-        const res = await fetch("/api/auth/account", {
-          method: "DELETE",
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.message || "Failed to delete account");
-        }
+        await apiClient.delete("/users/account");
         toast.success("Account deleted successfully!");
         navigate("/login");
       } catch (error) {
-        toast.error(error.message);
+        toast.error(
+          error.response?.data?.message ||
+            error.message ||
+            "Failed to delete account"
+        );
       }
     }
   }, [navigate]);
@@ -116,21 +133,14 @@ export const useAccountSettings = ({
     setFirstName,
     lastName,
     setLastName,
-    profilePicture,
-    setProfilePicture,
     email,
     setEmail,
+    settings,
+    setSettings,
     isEmailVerified,
     password,
     setPassword,
-    confirmPassword,
     setConfirmPassword,
-    emailNotifications,
-    setEmailNotifications,
-    pushNotifications,
-    setPushNotifications,
-    inAppAlerts,
-    setInAppAlerts,
     handleSaveChanges,
     handleDeleteAccount,
   };

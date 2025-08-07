@@ -9,6 +9,8 @@ const currencies = currenciesData;
 const CurrencySelector = ({ setCurrency, currency }) => {
     const [query, setQuery] = useState('');
 
+
+    console.log("Current currency in CurrencySelector:", currency);
     const filteredCurrencies = useMemo(() => {
         return query === ''
             ? currencies
@@ -31,7 +33,7 @@ const CurrencySelector = ({ setCurrency, currency }) => {
                         'w-full rounded-lg border-1 bg-black py-1.5 pr-8 pl-3 text-sm/6 text-white',
                         'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
                     )}
-                    displayValue={(c) => c?.name || ''}
+                    displayValue={(c) => c?.name || c || ''}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Select currency"
                 />
@@ -51,7 +53,7 @@ const CurrencySelector = ({ setCurrency, currency }) => {
                 {filteredCurrencies.map((currency) => (
                     <ComboboxOption
                         key={currency.id}
-                        value={currency}
+                        value={currency.name}
                         className="group flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-[#BD9EFF]/10"
                     >
                         <CheckIcon className="invisible size-4 fill-white group-data-selected:visible" />

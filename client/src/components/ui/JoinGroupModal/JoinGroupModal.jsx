@@ -65,7 +65,6 @@ export default function JoinGroupModal({ isOpen, onClose, onJoin, isJoining }) {
                     <Input 
                         type="text"
                         placeholder="e.g. a1b2c3d4"
-                        className={""}
                         value={inviteCode}
                         onChange={(e) => setInviteCode(e.target.value)}
                         autoFocus

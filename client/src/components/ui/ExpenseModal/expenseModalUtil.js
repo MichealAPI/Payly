@@ -23,6 +23,8 @@ export function useExpenseForm({
   const [date, setDate] = useState(new Date());
   const [paidBy, setPaidBy] = useState(null);
 
+  console.log("Current expense in useExpenseForm:", expenseToEdit);
+
   const resetFields = useCallback(() => {
     setTitle("");
     setAmount(0);
@@ -49,11 +51,11 @@ export function useExpenseForm({
       setAmount(expenseToEdit.amount);
       setCurrency(expenseToEdit.currency);
       setSplitMethod(expenseToEdit.splitMethod);
-      setDate(new Date(expenseToEdit.date));
+      setDate(new Date(expenseToEdit.paidAt));
       setPaidBy(expenseToEdit.paidBy || null);
 
       const participantMap = new Map(
-        expenseToEdit.participants.map((p) => [p.id, p])
+        expenseToEdit.splitDetails.map((p) => [p.id, p])
       );
 
       const editedParticipants = initialParticipants.map((member) => {
@@ -116,10 +118,7 @@ export function useExpenseForm({
 
       setIsLoading(true);
 
-      const url = isEditMode
-        ? `/expenses/${groupId}/${expenseToEdit._id}/update`
-        : `/expenses/${groupId}/create`;
-      const method = isEditMode ? "PUT" : "POST";
+      const url = `/groups/${groupId}/expenses`;
 
       let finalParticipants = [];
       const enabledParticipants = participants.filter(
@@ -191,22 +190,19 @@ export function useExpenseForm({
           title: title,
           description: description,
           type: type,
-          participants: finalParticipants,
+          splitDetails: finalParticipants,
           splitMethod: splitMethod,
-          currency: currency.name,
-          date: date ? date.toISOString() : new Date(),
-          paidBy: paidBy ? paidBy : null,
+          currency: currency,
+          paidAt: date ? date.toISOString() : new Date(),
+          paidBy: paidBy ? paidBy._id : null,
           amount: amount !== null ? amount : 0,
         };
 
-        const response = await apiClient.request({
-          url,
-          method,
-          data: payload,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        if (isEditMode && expenseToEdit) {
+          payload._id = expenseToEdit._id;
+        }
+
+        const response = await apiClient.post(url, payload);
         const data = response.data;
 
         toast.success(

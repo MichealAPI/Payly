@@ -5,8 +5,8 @@ export const checkAuthStatus = createAsyncThunk(
   "auth/checkAuthStatus",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get("/users/current");
-      return response.data.user;
+      const response = await apiClient.get("/auth/profile");
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -18,8 +18,8 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await apiClient.post("/auth/login", {
-        email,
-        password,
+        email: email,
+        password: password,
       });
       return response.data.user;
     } catch (error) {

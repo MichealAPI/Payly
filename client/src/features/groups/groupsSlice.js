@@ -7,6 +7,7 @@ export const fetchGroups = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.get("/groups/list");
+      console.log("Fetched groups:", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -18,7 +19,7 @@ export const fetchArchivedGroups = createAsyncThunk(
   "groups/fetchArchived",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get("/users/archived");
+      const response = await apiClient.get("/users/settings/archived-groups");
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -60,8 +61,9 @@ export const createGroup = createAsyncThunk(
   "groups/createGroup",
   async (groupData, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post("/groups/create", groupData);
-      return response.data.group; // Expect the new group object back from the API
+      const response = await apiClient.post("/groups/upsert", groupData);
+
+      return response.data; // Expect the new group object back from the API
     } catch (error) {
       return rejectWithValue(error.response.data);
     }

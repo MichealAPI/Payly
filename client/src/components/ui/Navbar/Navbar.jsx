@@ -11,6 +11,7 @@ import { HomeIcon, HomeModernIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import ProfilePicture from "../ProfilePicture/ProfilePicture";
 import { toast } from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 const Navbar = ({
   title,
@@ -20,7 +21,6 @@ const Navbar = ({
   actionsDropdown,
 }) => {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState(null);
 
   const getActiveActionLabel = () => {
     if (actions && activeAction) {
@@ -30,28 +30,7 @@ const Navbar = ({
     return "Options";
   };
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      console.log("Fetching current user...");
-      try {
-        const response = await fetch("/api/users/current");
-        if (!response.ok) {
-          throw new Error("Failed to fetch current user");
-        }
-        const data = await response.json();
-        console.log("Current user data:", data);
-        setCurrentUser(data);
-      } catch (error) {
-        console.error("Failed to fetch current user:", error);
-        toast.error("Could not load user data.");
-        navigate("/login");
-      }
-    };
-
-    fetchCurrentUser();
-  }, [navigate]);
-
-  console.log("Current user in Navbar:", currentUser);
+  const { currentUser } = useSelector((state) => state.auth);
 
   return (
     <nav className={styles.navbar}>

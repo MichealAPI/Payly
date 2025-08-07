@@ -30,6 +30,11 @@ yarn-error.log*
 *.njsproj
 *.sln
 
+
+/nest-server/payly-server/.env
+/nest-server/payly-server/.env.local
+/nest-server/payly-server/.env.*.local
+
 /server/.vscode
 /client/.vscode
 

@@ -89,6 +89,7 @@ export default function GroupModal({
     ? (isEditMode ? "Saving..." : "Creating...")
     : (isEditMode ? "Save Changes" : "Create");
   const submitButtonIcon = isEditMode ? <PencilSquareIcon className="w-6" /> : <PlusIcon className="w-6" />;
+  
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-30" onClose={closeModal}>

@@ -4,7 +4,7 @@ import { AdvancedImage } from "@cloudinary/react";
 const ProfilePicture = ({className="w-16 h-16", currentUser, profilePicture=null }) => {
 
     console.log("Current user in ProfilePicture:", currentUser);
-    if ((currentUser && currentUser.user && currentUser.user.profilePicture) || profilePicture) {
+    if ((currentUser && currentUser.settings["profile-picture"]) || profilePicture) {
 
         const cloudinary = new Cloudinary({
             cloud: {
@@ -14,7 +14,7 @@ const ProfilePicture = ({className="w-16 h-16", currentUser, profilePicture=null
 
         return (
             <AdvancedImage
-                cldImg={cloudinary.image(profilePicture || currentUser.user.profilePicture)}
+                cldImg={cloudinary.image(profilePicture || currentUser.settings["profile-picture"])}
                 alt="Profile Picture"
                 className={`${className} object-cover`}
             />
@@ -23,8 +23,8 @@ const ProfilePicture = ({className="w-16 h-16", currentUser, profilePicture=null
 
   return (
     <img
-      src={`https://placehold.co/64x64/BD9EFF/fff?text=${currentUser?.user.firstName.charAt(0)}`}
-      alt={`${currentUser?.user.firstName}'s Profile Picture`}
+      src={`https://placehold.co/64x64/BD9EFF/fff?text=${currentUser?.firstName.charAt(0)}`}
+      alt={`${currentUser?.firstName}'s Profile Picture`}
       className={`${className} object-cover rounded-full`}
     />
   );
