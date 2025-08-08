@@ -10,19 +10,16 @@ import {
 } from "@heroicons/react/24/outline";
 import Button from "../Button/Button";
 import ProfilePicture from "../ProfilePicture/ProfilePicture";
+import apiClient from "../../../api/axiosConfig";
 
-const deleteExpenseRequest = async (entryId) => {
-  const response = await fetch(`/api/expenses/${entryId}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    // Let the caller handle the error state by throwing an error
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to delete expense");
+const deleteExpenseRequest = async (entryId, groupId) => {
+  try {
+    const response = await apiClient.delete(`/expenses/${groupId}/${entryId}/delete`);
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "An error occurred while deleting the expense"
+    );
   }
-
-  return true; // Indicate success
 };
 
 const Expense = ({
@@ -37,6 +34,7 @@ const Expense = ({
   onEdit,
   onView,
   expenseId,
+  groupId,
   observer,
 }) => {
   const [confirmModalTitle, setConfirmModalTitle] = useState("");
@@ -78,7 +76,7 @@ const Expense = ({
         async () => {
           observer.notify({ type: "deletingExpense" });
           try {
-            await deleteExpenseRequest(expenseId);
+            await deleteExpenseRequest(expenseId, groupId);
             observer.notify({
               type: "expenseDeleted",
               payload: { expenseId: expenseId },
@@ -236,7 +234,7 @@ const Expense = ({
                 (participant.isEnabled && (
                   <ProfilePicture
                     className={`size-10 rounded-full bg-white`}
-                    profilePicture={participant.profilePicture}
+                    currentUser={participant.user}
                     key={index}
                   />
                 ))

@@ -29,8 +29,6 @@ export class ExpenseService {
       throw new BadRequestException('User is not a member of the group');
     }
 
-    console.log('Upserting expense:', expenseData);
-
     const transformedData = {
       ...expenseData,
       paidBy: new mongoose.Types.ObjectId(expenseData.paidBy),
@@ -49,12 +47,6 @@ export class ExpenseService {
 
       if (!existingExpense) {
         throw new NotFoundException('Expense not found');
-      }
-
-      if (!existingExpense.createdBy.equals(currentUser._id)) {
-        throw new UnauthorizedException(
-          'You can only update expenses you have created.',
-        );
       }
 
       savedExpense = await this.expenseModel
@@ -103,10 +95,10 @@ export class ExpenseService {
 
   async deleteExpense(
     currentUser,
-    groupId: string,
     expenseId: string,
+    groupId: string,
   ): Promise<any> {
-    if (!(await this.groupsService.isGroupMember(currentUser._id, groupId))) {
+    if (!(await this.groupsService.isGroupMember(currentUser, groupId))) {
       throw new BadRequestException('User is not a member of the group');
     }
 
@@ -119,14 +111,12 @@ export class ExpenseService {
     const expenseObjectId: mongoose.Types.ObjectId =
       new mongoose.Types.ObjectId(expenseId);
 
-    if (!expense.createdBy.equals(currentUser._id)) {
-      throw new BadRequestException('Only the creator can delete this expense');
+    // remove the one-to-many relationship from the group
+    if (!await this.groupsService.removeExpense(groupId, expenseObjectId)) {
+      throw new BadRequestException('Failed to remove expense from group');
     }
 
     await this.expenseModel.deleteOne({ _id: expenseObjectId }).exec();
-
-    // Optionally remove the association from the group
-    await this.groupsService.removeExpense(groupId, expenseObjectId);
 
     return { message: 'Expense deleted successfully!' };
   }

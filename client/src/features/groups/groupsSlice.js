@@ -98,7 +98,7 @@ export const joinGroup = createAsyncThunk(
   'groups/joinGroup',
   async (inviteCode, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post('/invites/accept', { inviteCode });
+      const response = await apiClient.post(`/invites/${inviteCode}/join`);
       // The API returns { group, message }, we'll pass this whole object along
       return response.data;
     } catch (error) {

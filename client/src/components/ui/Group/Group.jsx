@@ -20,10 +20,8 @@ import { useDispatch } from "react-redux";
 
 // members is an array of objects with a name property
 function formatMembers(members) {
-  console.log("members", members);
 
   if (!members || members.length === 0) {
-    console.log("No members found");
     return "No members";
   }
 
@@ -89,8 +87,6 @@ export const Group = ({
   };
 
   const formattedMembers = formatMembers(members);
-
-  console.log("My group data:", groupData);
 
   return (
     <>

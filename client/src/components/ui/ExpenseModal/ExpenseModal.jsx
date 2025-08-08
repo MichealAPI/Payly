@@ -35,7 +35,6 @@ export default function ExpenseModal({
   }, [setIsOpen]);
 
   const {
-    isEditMode,
     title,
     setTitle,
     description,
@@ -44,21 +43,21 @@ export default function ExpenseModal({
     setCurrency,
     type,
     setType,
-    participants,
-    setParticipants,
+    splitDetails,
+    setSplitDetails,
     splitMethod,
     setSplitMethod,
     isLoading,
     amount,
     setAmount,
-    date,
-    setDate,
+    paidAt,
+    setPaidAt,
     paidBy,
     setPaidBy,
     handleSubmit,
   } = useExpenseForm({
     expenseToEdit,
-    members: members,
+    members,
     groupId,
     onComplete,
     setSpinnerVisible,
@@ -67,9 +66,9 @@ export default function ExpenseModal({
   });
 
   const { modalTitle, submitButtonText, submitButtonIcon } = useMemo(() => {
-    const title = isEditMode ? "Edit Expense" : "Add Expense";
-    const buttonText = isEditMode ? "Save Changes" : "Add";
-    const icon = isEditMode ? (
+    const title = expenseToEdit ? "Edit Expense" : "Add Expense";
+    const buttonText = expenseToEdit ? "Save Changes" : "Add";
+    const icon = expenseToEdit ? (
       <PencilSquareIcon className="w-6" />
     ) : (
       <PlusIcon className="w-6" />
@@ -79,9 +78,7 @@ export default function ExpenseModal({
       submitButtonText: buttonText,
       submitButtonIcon: icon,
     };
-  }, [isEditMode]);
-
-  console.log(participants)
+  }, [expenseToEdit]);
 
   return (
     <AnimatePresence>
@@ -214,7 +211,7 @@ export default function ExpenseModal({
                         >
                           Paid on
                         </label>
-                        <DatePicker date={date} setDate={setDate} />
+                        <DatePicker date={paidAt} setDate={setPaidAt} />
                       </div>
                     </div>
 
@@ -250,9 +247,9 @@ export default function ExpenseModal({
                       <SplitMenu
                         currencySymbol={currency?.symbol || ""}
                         splitMethod={splitMethod}
-                        participants={participants}
-                        setParticipants={setParticipants}
-                        expenseToEdit={isEditMode ? expenseToEdit : null}
+                        members={members}
+                        splitDetails={splitDetails}
+                        setSplitDetails={setSplitDetails}
                         paidById={paidBy?._id || null}
                       />
                     </div>

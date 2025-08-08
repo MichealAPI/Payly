@@ -19,8 +19,6 @@ import ProfilePicture from "../ProfilePicture/ProfilePicture";
 const ExpenseDetailModal = ({ isOpen, onClose, expense }) => {
   // The parent component now controls rendering, so we can assume `expense` exists.
 
-  console.log("Expense in ExpenseDetailModal:", expense);
-
   const formattedDate = new Date(expense.paidAt).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -142,7 +140,7 @@ const ExpenseDetailModal = ({ isOpen, onClose, expense }) => {
                       >
                         {console.log("Participant in ExpenseDetailModal:", p)}
                         <ProfilePicture
-                          currentUser={p}
+                          currentUser={p.user}
                           className="w-4 h-4 rounded-full"
                         />
                         <span className="text-xs text-white">

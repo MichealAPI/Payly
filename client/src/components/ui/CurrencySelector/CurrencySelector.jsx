@@ -9,8 +9,6 @@ const currencies = currenciesData;
 const CurrencySelector = ({ setCurrency, currency }) => {
     const [query, setQuery] = useState('');
 
-
-    console.log("Current currency in CurrencySelector:", currency);
     const filteredCurrencies = useMemo(() => {
         return query === ''
             ? currencies

@@ -12,7 +12,6 @@ class Observer {
   }
 
   notify(data) {
-    console.log("Observer notified with data:", data);
     this.subscribers.forEach((sub) => sub(data));
   }
 }

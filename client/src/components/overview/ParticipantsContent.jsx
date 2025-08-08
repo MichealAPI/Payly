@@ -14,6 +14,7 @@ const ParticipantsContent = ({
   groupId,
   ownerId,
   currencySymbol,
+  refreshBalances,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -73,7 +74,7 @@ const ParticipantsContent = ({
                     ? `${participant.firstName} ${participant.lastName}`
                     : participant.email
                 }
-                image={<ProfilePicture className="rounded-full w-12 h-12" profilePicture={participant.profilePicture} />}
+                image={<ProfilePicture className="rounded-full w-12 h-12" currentUser={participant} />}
                 currencyBalances={currencyBalances}
                 currencySymbol={currencySymbol}
               />

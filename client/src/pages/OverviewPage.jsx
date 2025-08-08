@@ -28,7 +28,8 @@ const OverviewPage = () => {
     setGroupData,
     setExpenses,
     setMembers,
-    handleCreateInvite,
+  handleCreateInvite,
+  refreshBalances,
   } = useGroupData();
 
   const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
@@ -107,6 +108,8 @@ const OverviewPage = () => {
                   onViewExpense={handleViewExpense}
                   balances={balances}
                   members={members}
+                  groupId={groupId}
+                  refreshBalances={refreshBalances}
                 />
               ) : (
                 <ParticipantsContent
@@ -119,10 +122,12 @@ const OverviewPage = () => {
                   currentUserId={currentUser._id}
                   groupId={groupId}
                   currencySymbol={groupData ? groupData.currencySymbol : "$"}
+                  refreshBalances={refreshBalances}
                   onDelete={(participantId) => {
                     setMembers((prev) =>
                       prev.filter((m) => m._id !== participantId)
                     );
+                    refreshBalances?.();
                   }}
                 />
               )}
@@ -163,6 +168,8 @@ const OverviewPage = () => {
           } else {
             setExpenses((prev) => [...prev, newExpense]);
           }
+          // Recalculate balances after any expense mutation
+          refreshBalances?.();
         }}
       />
 

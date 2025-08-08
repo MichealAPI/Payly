@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import {
   MagnifyingGlassIcon,
@@ -26,28 +26,40 @@ const OverviewContent = ({
   setExpenseModalOpen,
   loading,
   members,
+  groupId,
   onEditExpense,
   balances, // Receive balances as a prop
   onViewExpense,
+  refreshBalances,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("desc"); // 'desc' or 'asc'
 
-  const observer = new Observer();
+  const observer = useMemo(() => new Observer(), []);
 
-  observer.subscribe((data) => {
-    switch (data.type) {
-      case "expenseDeleted":
-        toast.success("Expense deleted successfully!", {
-          position: "bottom-center",
-        });
+  useEffect(() => {
+    const handler = (data) => {
+      switch (data.type) {
+        case "expenseDeleted":
+          toast.success("Expense deleted successfully!", {
+            position: "bottom-center",
+          });
 
-        setExpenses(
-          expenses.filter((exp) => exp._id !== data.payload.expenseId)
-        );
-        break;
-    }
-  });
+          setExpenses((prev) =>
+            prev.filter((exp) => exp._id !== data.payload.expenseId)
+          );
+          // After list update, refresh balances
+          if (typeof refreshBalances === "function") {
+            refreshBalances();
+          }
+          break;
+        default:
+          break;
+      }
+    };
+    observer.subscribe(handler);
+    return () => observer.unsubscribe(handler);
+  }, [observer, setExpenses, refreshBalances]);
 
   const mapExpenses = () => {
     const filteredExpenses =
@@ -99,10 +111,11 @@ const OverviewContent = ({
             description={item.description}
             expenseId={item._id}
             paidBy={item.paidBy}
-            participants={item.participants}
+            participants={item.splitDetails}
             onEdit={() => onEditExpense(item)}
             onView={() => onViewExpense(item)}
             observer={observer}
+            groupId={groupId}
             currency={item.currency}
           />
         </motion.div>

@@ -20,29 +20,36 @@ export default function SplitField({
   const isOverLimit = useRef(false);
   const maxValue = splitMethod === "fixed" ? 99999999 : 100; // Set max value for fixed entries
 
-  console.log(amount, "amount in split field");
-
+  // Keep local display value in sync with parent state (preserve comma formatting)
   useEffect(() => {
-    // Keep local display value in sync with parent state
-    const valueStr = String(amount);
-    if (parseFloat(valueStr) !== parseFloat(displayValue.replace(",", "."))) {
-      setDisplayValue(valueStr.replace(".", ","));
+    const next = amount ?? 0;
+    const current = parseFloat((displayValue || "0").replace(",", "."));
+    if (!Number.isNaN(next) && next !== current) {
+      // stringify with up to 2 decimals but keep integer if exact
+  const nextStr = Number(next).toLocaleString("it-IT", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+        useGrouping: false,
+      });
+  setDisplayValue(nextStr);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amount]);
+
+  // Ensure the payer cannot be disabled
+  useEffect(() => {
+    if (paidById === participantId && !isEnabled) {
+      setIsEnabled(true);
+    }
+  }, [paidById, participantId, isEnabled, setIsEnabled]);
 
   const handleInputChange = (e) => {
     const rawValue = e.target.value;
     // Allow only numbers and a single comma
-    let sanitizedValue = rawValue
-      .replace(/[^0-9,]/g, "")
-      .replace(/,(?=.*,)/g, "");
+    let sanitizedValue = rawValue.replace(/[^0-9,]/g, "").replace(/,(?=.*,)/g, "");
 
     // Remove leading zero if starting to type an integer
-    if (
-      sanitizedValue.length > 1 &&
-      sanitizedValue.startsWith("0") &&
-      !sanitizedValue.startsWith("0,")
-    ) {
+    if (sanitizedValue.length > 1 && sanitizedValue.startsWith("0") && !sanitizedValue.startsWith("0,")) {
       sanitizedValue = sanitizedValue.substring(1);
     }
 
@@ -64,12 +71,9 @@ export default function SplitField({
       if (numericValue > maxValue) {
         // Prevent value from exceeding the limit and show toast only once
         if (!isOverLimit.current) {
-          toast.error(
-            "Amount cannot exceed " + String(maxValue).length + " figures",
-            {
-              position: "bottom-center",
-            }
-          );
+          toast.error("Amount cannot exceed " + String(maxValue).length + " figures", {
+            position: "bottom-center",
+          });
           isOverLimit.current = true;
         }
         // Do not update the display value to prevent typing over the limit
@@ -78,21 +82,17 @@ export default function SplitField({
 
       // Reset the limit flag if the number is valid again
       isOverLimit.current = false;
-      setAmount(numericValue);
+      if (numericValue !== amount) {
+        setAmount(numericValue);
+      }
     } else if (sanitizedValue === "0") {
-      setAmount(0);
+      if (amount !== 0) setAmount(0);
     }
 
     setDisplayValue(sanitizedValue);
   };
 
-  const [integerPart, decimalPart] = displayValue.split(",");
-
-  console.log("Split type:", splitMethod);
-
-  if (paidById === participantId && !isEnabled) {
-    setIsEnabled(true);
-  }
+  const [integerPart, decimalPart] = (displayValue || "0").split(",");
 
   return (
     <Field
@@ -104,12 +104,9 @@ export default function SplitField({
         checked={isEnabled}
         onChange={(val) => {
           if (paidById === participantId && !val) {
-            toast.error(
-              "Cannot disable the participant who paid for the expense",
-              {
-                position: "bottom-center",
-              }
-            );
+            toast.error("Cannot disable the participant who paid for the expense", {
+              position: "bottom-center",
+            });
             return;
           }
 
@@ -121,11 +118,7 @@ export default function SplitField({
       >
         <CheckIcon className="hidden w-4 text-black group-data-checked:block stroke-3" />
       </Checkbox>
-      <p
-        className={`flex-1 text-sm text-white ${
-          !isEnabled ? "opacity-50 select-none" : ""
-        }`}
-      >
+      <p className={`flex-1 text-sm text-white ${!isEnabled ? "opacity-50 select-none" : ""}`}>
         {participantName}
       </p>
 

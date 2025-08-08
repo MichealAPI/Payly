@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import apiClient from "../api/axiosConfig";
+import { useSelector } from "react-redux";
 
 export const useGroupData = () => {
   const { groupId } = useParams();
@@ -11,10 +12,11 @@ export const useGroupData = () => {
   const [groupData, setGroupData] = useState(null);
   const [expenses, setExpenses] = useState([]);
   const [members, setMembers] = useState([]);
-  const [currentUser, setCurrentUser] = useState({});
   const [balances, setBalances] = useState(null);
   const [isCreatingInvite, setIsCreatingInvite] = useState(false);
   const [inviteCode, setInviteCode] = useState(null);
+
+  const { currentUser } = useSelector((state) => state.auth);
 
   const fetchGroupDetails = useCallback(async () => {
     try {
@@ -25,7 +27,6 @@ export const useGroupData = () => {
       setGroupData(data);
       setExpenses(data.expenses || []);
       setMembers(data.members || []);
-      setCurrentUser(data.currentUser || {});
     } catch {
       toast.error("Failed to load group", { position: "bottom-center" });
       navigate("/groups");
@@ -63,10 +64,10 @@ export const useGroupData = () => {
     setInviteCode(null);
 
     try {
-      const res = await apiClient.post(`/groups/${groupId}/invites`);
+      const res = await apiClient.post(`/invites/${groupId}/create`);
       const data = res.data;
-      setInviteCode(data.inviteCode);
-      return data.inviteCode;
+      setInviteCode(data.code);
+      return data.code;
     } catch (err) {
       toast.error(err.message, { position: "bottom-center" });
       return null;
@@ -89,5 +90,8 @@ export const useGroupData = () => {
     setExpenses,
     setMembers,
     handleCreateInvite,
+  // Allow pages/components to manually refresh data after mutations
+  refreshBalances: fetchBalances,
+  refreshGroup: fetchGroupDetails,
   };
 };

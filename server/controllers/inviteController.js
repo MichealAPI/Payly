@@ -17,8 +17,6 @@ export const createInvite = async (req, res) => {
             return res.status(404).json({ message: 'Group not found.' });
         }
 
-        console.log('Group members:', group.members);
-
         // Check if the inviter is a member of the group
         if (!group.members.includes(inviterId)) {
             return res.status(403).json({ message: 'Only group members can create invites.' });

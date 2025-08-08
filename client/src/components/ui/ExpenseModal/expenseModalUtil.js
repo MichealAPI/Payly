@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { toast } from "react-hot-toast";
 import apiClient from "../../../api/axiosConfig";
 
@@ -11,19 +11,16 @@ export function useExpenseForm({
   closeModal,
   currentUser,
 }) {
-  const isEditMode = useMemo(() => !!expenseToEdit, [expenseToEdit]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [currency, setCurrency] = useState(null);
   const [type, setType] = useState("expense");
-  const [participants, setParticipants] = useState([]);
+  const [splitDetails, setSplitDetails] = useState([]);
   const [splitMethod, setSplitMethod] = useState("equal");
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState(0);
-  const [date, setDate] = useState(new Date());
+  const [paidAt, setPaidAt] = useState(new Date());
   const [paidBy, setPaidBy] = useState(null);
-
-  console.log("Current expense in useExpenseForm:", expenseToEdit);
 
   const resetFields = useCallback(() => {
     setTitle("");
@@ -31,58 +28,77 @@ export function useExpenseForm({
     setCurrency(null);
     setType("expense");
     setSplitMethod("equal");
+    setSplitDetails([]);
     setDescription("");
-    setDate(new Date());
+    setPaidAt(new Date());
     setPaidBy(currentUser || null);
   }, [currentUser]);
 
-  useEffect(() => {
-    const initialParticipants = members.map((member) => ({
-      ...member,
-      user: member._id,
-      splitAmount: 0,
-      isEnabled: true,
-    }));
-
-    if (isEditMode && expenseToEdit) {
-      setTitle(expenseToEdit.title);
-      setDescription(expenseToEdit.description || "");
-      setType(expenseToEdit.type);
-      setAmount(expenseToEdit.amount);
-      setCurrency(expenseToEdit.currency);
-      setSplitMethod(expenseToEdit.splitMethod);
-      setDate(new Date(expenseToEdit.paidAt));
-      setPaidBy(expenseToEdit.paidBy || null);
-
-      const participantMap = new Map(
-        expenseToEdit.splitDetails.map((p) => [p.id, p])
-      );
-
-      const editedParticipants = initialParticipants.map((member) => {
-        const savedParticipant = participantMap.get(member._id);
-        return savedParticipant
-          ? {
-              ...member,
-              splitAmount: savedParticipant.splitAmount,
-              isEnabled: savedParticipant.isEnabled,
-            }
-          : { ...member, isEnabled: false };
+  // Normalize split details coming from edit mode to a minimal, client-usable shape
+  const normalizeSplitDetailsFromEdit = useCallback(
+    (details = [], memberList = []) => {
+      const byId = new Map(memberList.map((m) => [m._id, { _id: m._id, isEnabled: true, splitAmount: 0 }]));
+      details.forEach((d) => {
+        const uid = d?.user?._id || d?.user || d?._id; // support various shapes
+        if (!uid) return;
+        byId.set(uid, {
+          _id: uid,
+          isEnabled: d.isEnabled ?? true,
+          splitAmount: Number(d.splitAmount ?? 0),
+        });
       });
-      setParticipants(editedParticipants);
+      return Array.from(byId.values());
+    },
+    []
+  );
+
+
+  useEffect(() => {
+
+    if (expenseToEdit) {
+      // Prevent double hydration
+      //if (didHydrateRef.current) return;
+      setTitle(expenseToEdit.title || "");
+      setDescription(expenseToEdit.description || "");
+      setType(expenseToEdit.type || "expense");
+      setAmount(Number(expenseToEdit.amount) || 0);
+      setCurrency(expenseToEdit.currency ?? null);
+      setSplitMethod(expenseToEdit.splitMethod || "equal");
+      setPaidAt(
+        expenseToEdit.paidAt ? new Date(expenseToEdit.paidAt) : new Date()
+      );
+      setPaidBy(expenseToEdit.paidBy || null);
+      // Ensure splitDetails contain participant _id references for client logic
+      const normalized = normalizeSplitDetailsFromEdit(
+        expenseToEdit.splitDetails || [],
+        members || []
+      );
+      setSplitDetails(normalized);
+
     } else {
+
       resetFields();
-      setParticipants(initialParticipants);
-      if (currentUser) {
-        setPaidBy(currentUser);
+      if (currentUser) setPaidBy(currentUser);
+      setPaidAt(new Date());
+      // Prepare default split entries for all members (enabled, amount 0)
+      if (Array.isArray(members) && members.length > 0) {
+        setSplitDetails(members.map((m) => ({ _id: m._id, isEnabled: true, splitAmount: 0 })));
+      } else {
+        setSplitDetails([]);
       }
+
     }
-  }, [isEditMode, expenseToEdit, members, resetFields, currentUser]);
+  }, [
+    resetFields,
+    expenseToEdit,
+    normalizeSplitDetailsFromEdit,
+    JSON.stringify((members || []).map((m) => m._id)),
+    currentUser,
+  ]);
 
   const checkFields = useCallback(() => {
-    if (!title || !currency || !participants.length) {
-      toast.error("Please fill in all fields", {
-        position: "bottom-center",
-      });
+    if (!title || !currency || !splitMethod) {
+      toast.error("Please fill in all fields", { position: "bottom-center" });
       return false;
     }
 
@@ -93,7 +109,7 @@ export function useExpenseForm({
       return false;
     }
 
-    if (!date) {
+    if (!paidAt) {
       toast.error("Please select a date for the expense", {
         position: "bottom-center",
       });
@@ -108,34 +124,35 @@ export function useExpenseForm({
     }
 
     return true;
-  }, [title, currency, participants, amount, date, paidBy]);
+  }, [title, currency, splitDetails, amount, paidAt, paidBy]);
 
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-
       if (!checkFields()) return;
-
       setIsLoading(true);
 
-      const url = `/groups/${groupId}/expenses`;
+      const url = `/expenses/${groupId}/upsert`;
 
       let finalParticipants = [];
-      const enabledParticipants = participants.filter(
+      const enabledParticipants = splitDetails.filter(
         (p) => p.isEnabled ?? true
       );
+
 
       if (splitMethod === "equal") {
         if (enabledParticipants.length === 0) {
           toast.error(
             "At least one participant must be enabled for an equal split.",
-            { position: "bottom-center" }
+            {
+              position: "bottom-center",
+            }
           );
           setIsLoading(false);
           return;
         }
         const splitAmount = amount / enabledParticipants.length;
-        finalParticipants = participants.map((p) => ({
+        finalParticipants = splitDetails.map((p) => ({
           user: p._id,
           splitAmount: p.isEnabled ? splitAmount : 0,
           isEnabled: p.isEnabled ?? true,
@@ -146,7 +163,6 @@ export function useExpenseForm({
           0
         );
         if (Math.abs(totalSplit - amount) > 0.01) {
-          // Tolerance for floating point issues
           toast.error(
             `The sum of fixed amounts (€${totalSplit.toFixed(
               2
@@ -156,7 +172,7 @@ export function useExpenseForm({
           setIsLoading(false);
           return;
         }
-        finalParticipants = participants.map((p) => ({
+        finalParticipants = splitDetails.map((p) => ({
           user: p._id,
           splitAmount: p.splitAmount || 0,
           isEnabled: p.isEnabled ?? true,
@@ -171,13 +187,15 @@ export function useExpenseForm({
             `The sum of percentages (${totalPercentage.toFixed(
               2
             )}%) must equal 100%.`,
-            { position: "bottom-center" }
+            {
+              position: "bottom-center",
+            }
           );
           setIsLoading(false);
           return;
         }
-        finalParticipants = participants.map((p) => ({
-          user: p._id || p.user,
+        finalParticipants = splitDetails.map((p) => ({
+          user: p._id,
           splitAmount: p.isEnabled ? (p.splitAmount / 100) * amount : 0,
           isEnabled: p.isEnabled ?? true,
         }));
@@ -187,18 +205,18 @@ export function useExpenseForm({
         if (setSpinnerVisible) setSpinnerVisible(true);
 
         const payload = {
-          title: title,
-          description: description,
-          type: type,
+          title,
+          description,
+          type,
           splitDetails: finalParticipants,
-          splitMethod: splitMethod,
-          currency: currency,
-          paidAt: date ? date.toISOString() : new Date(),
+          splitMethod,
+          currency,
+          paidAt: paidAt ? paidAt.toISOString() : new Date().toISOString(),
           paidBy: paidBy ? paidBy._id : null,
-          amount: amount !== null ? amount : 0,
+          amount: amount ?? 0,
         };
 
-        if (isEditMode && expenseToEdit) {
+        if (expenseToEdit) {
           payload._id = expenseToEdit._id;
         }
 
@@ -207,7 +225,7 @@ export function useExpenseForm({
 
         toast.success(
           `Expense '${title}' ${
-            isEditMode ? "updated" : "created"
+            expenseToEdit ? "updated" : "created"
           } successfully!`,
           {
             position: "bottom-center",
@@ -219,7 +237,7 @@ export function useExpenseForm({
           onComplete(data.expense);
         }
 
-        if (!isEditMode) {
+        if (!expenseToEdit) {
           resetFields();
         }
 
@@ -229,21 +247,18 @@ export function useExpenseForm({
         const errorMessage =
           err.message ||
           `An error occurred during expense ${
-            isEditMode ? "update" : "creation"
+            expenseToEdit ? "update" : "creation"
           }`;
-        toast.error(errorMessage, {
-          position: "bottom-center",
-        });
+        toast.error(errorMessage, { position: "bottom-center" });
       } finally {
         if (setSpinnerVisible) setSpinnerVisible(false);
       }
     },
     [
       checkFields,
-      isEditMode,
       expenseToEdit,
       groupId,
-      participants,
+      splitDetails,
       splitMethod,
       amount,
       setSpinnerVisible,
@@ -252,15 +267,15 @@ export function useExpenseForm({
       type,
       currency,
       onComplete,
-      date,
       paidBy,
       closeModal,
       resetFields,
     ]
+
+
   );
 
   return {
-    isEditMode,
     title,
     setTitle,
     description,
@@ -269,15 +284,15 @@ export function useExpenseForm({
     setCurrency,
     type,
     setType,
-    participants,
-    setParticipants,
+    splitDetails,
+    setSplitDetails,
     splitMethod,
     setSplitMethod,
     isLoading,
     amount,
     setAmount,
-    date,
-    setDate,
+    paidAt,
+    setPaidAt,
     paidBy,
     setPaidBy,
     handleSubmit,

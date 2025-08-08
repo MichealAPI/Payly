@@ -1,8 +1,9 @@
-import { Body, Controller, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Put, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SettingsUpdateDto } from './dto/settings-update.dto';
+import { multerConfig } from 'src/config/multer.config';
 
 @Controller('users')
 @UseGuards(AuthenticatedGuard)
@@ -15,20 +16,12 @@ export class UsersController {
     return this.usersService.getUserSettings(currentUser, setting);
   }
 
+  @UseInterceptors(FileInterceptor('profilePicture', multerConfig))
   @Put('settings/update')
-  @UseInterceptors(FileInterceptor('profilePicture'))
   async updateUserSettings(
     @Request() req, 
     @Body() updates: SettingsUpdateDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 2 }),
-          new FileTypeValidator({ fileType: 'image' }),
-        ],
-        fileIsRequired: false,
-      }),
-    )
+    @UploadedFile()
     profilePicture: Express.Multer.File,
   ) {
 
@@ -40,7 +33,7 @@ export class UsersController {
       updates.settings.push({ key: 'transferProfilePicture', value: profilePicture });
     }
 
-    return this.usersService.updateUserSettings(currentUser, updates);
+    return this.usersService.updateUserSettings(currentUser, updates, profilePicture);
   }
 
 }

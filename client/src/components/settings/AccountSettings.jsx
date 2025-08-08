@@ -33,6 +33,7 @@ const AccountSettings = (props) => {
     setConfirmPassword,
     handleDeleteAccount,
     handleSaveChanges,
+    setPendingProfileFile, // new: used to stage the selected file for upload
   } = useAccountSettings(props);
 
   const {
@@ -40,9 +41,16 @@ const AccountSettings = (props) => {
     firstSeen,
     profilePicture: initialProfilePicture,
   } = props;
+
   const cld = new Cloudinary({ cloud: { cloudName: "dzeah7jtd" } });
   const fileInputRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const currentSettingsProfilePicture = settings.find(
+    (s) => s.key === "profilePicture"
+  );
+  const currentSettingsProfilePictureVersion = settings.find(
+    (s) => s.key === "profilePictureVersion"
+  );
 
   const upsertLocalSettings = (key, value) => {
     setSettings((prevSettings) => {
@@ -106,7 +114,8 @@ const AccountSettings = (props) => {
         toast.error("File is too large. Please select an image under 5MB.");
         return;
       }
-      upsertLocalSettings("profilePicture", file); // Store the file object for upload
+      // Stage file for upload in the hook (do not store File in settings)
+      setPendingProfileFile(file);
 
       if (imagePreview) {
         URL.revokeObjectURL(imagePreview);
@@ -117,6 +126,18 @@ const AccountSettings = (props) => {
 
   const inputClasses =
     "block w-full rounded-md bg-transparent border border-white/30 text-white sm:text-sm p-2 focus:ring-indigo-500 focus:border-indigo-500";
+
+  // Build Cloudinary image with version for cache busting
+  const buildCldImage = () => {
+    if (!currentSettingsProfilePicture) return null;
+    const publicId = currentSettingsProfilePicture.value;
+    const version = currentSettingsProfilePictureVersion?.value;
+    const img = cld.image(publicId);
+    if (version) {
+      img.setVersion(version);
+    }
+    return img;
+  };
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-3xl">
@@ -139,9 +160,9 @@ const AccountSettings = (props) => {
               alt="Profile Preview"
               className="w-16 h-16 rounded-full object-cover"
             />
-          ) : settings.profilePicture ? (
+          ) : currentSettingsProfilePicture ? (
             <AdvancedImage
-              cldImg={cld.image(settings.profilePicture).setVersion(Date.now())}
+              cldImg={buildCldImage()}
               alt="Profile"
               className="w-16 h-16 rounded-full object-cover"
             />
@@ -286,7 +307,17 @@ const AccountSettings = (props) => {
           text={"Delete Account"}
         />
         <Button
-          onClick={handleSaveChanges}
+          onClick={async () => {
+            const ok = await handleSaveChanges();
+            if (ok) {
+              // Clear file input & preview after success to avoid stale state
+              if (fileInputRef.current) fileInputRef.current.value = "";
+              if (imagePreview) {
+                URL.revokeObjectURL(imagePreview);
+              }
+              setImagePreview(null);
+            }
+          }}
           text={"Save Changes"}
           iconVisibility={true}
           icon={<CheckIcon className="w-6" />}

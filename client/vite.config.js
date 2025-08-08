@@ -11,6 +11,19 @@ export default defineConfig({
   })],
 
   server: {
+    headers: {
+      "X-Frame-Options": "DENY",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "no-referrer",
+      "Content-Security-Policy": `
+        default-src 'self';
+        img-src 'self' data: https://res.cloudinary.com;
+        script-src 'self' 'unsafe-inline' 'unsafe-eval';
+        style-src 'self' 'unsafe-inline';
+        connect-src 'self' ws: wss:;
+      `.replace(/\s{2,}/g, '').trim(),
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:5000', // Your backend server address
@@ -21,6 +34,7 @@ export default defineConfig({
   },
 
   build: {
+    assetsInlineLimit: 0,
     sourcemap: true
   }
 })

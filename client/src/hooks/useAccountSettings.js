@@ -31,12 +31,15 @@ export const useAccountSettings = ({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isEmailVerified] = useState(currentIsEmailVerified || false);
 
+  // Track a pending new profile picture file independently from settings
+  const [pendingProfileFile, setPendingProfileFile] = useState(null);
+
   const navigate = useNavigate();
 
   const handleSaveChanges = useCallback(async () => {
     if (password && password !== confirmPassword) {
       toast.error("Passwords do not match!");
-      return;
+      return false;
     }
 
     // Convert settings array back to an object for submission
@@ -45,21 +48,20 @@ export const useAccountSettings = ({
       return acc;
     }, {});
 
+
     const submissionData = new FormData();
     submissionData.append("firstName", firstName);
     submissionData.append("lastName", lastName);
     submissionData.append("email", email);
 
-    // Append settings, ensuring profilePicture is handled correctly
-    if (settingsObject.profilePicture instanceof File) {
-      submissionData.append("profilePicture", settingsObject.profilePicture);
+    // Append profile picture file if present
+    if (pendingProfileFile) {
+      submissionData.append("profilePicture", pendingProfileFile);
     }
 
-    // Append other settings, excluding profilePicture if it's a file
+    // Append other settings, always exclude profilePicture (server upserts it from the file)
     const settingsToSubmit = { ...settingsObject };
-    if (settingsObject.profilePicture instanceof File) {
-      delete settingsToSubmit.profilePicture;
-    }
+    delete settingsToSubmit.profilePicture;
     const settingsAsArray = Object.entries(settingsToSubmit).map(
       ([key, value]) => ({ key, value })
     );
@@ -85,18 +87,21 @@ export const useAccountSettings = ({
       toast.success("Account settings updated successfully!");
       setPassword("");
       setConfirmPassword("");
-      if (data.settings.profilePicture) {
-        setSettings((prev) => ([
-          ...prev,
-          { key: "profilePicture", value: data.settings.profilePicture },
-        ]));
+      setPendingProfileFile(null);
+
+      // Replace settings with the latest from server (includes profilePictureVersion for cache-busting)
+      if (Array.isArray(data.settings)) {
+        setSettings(data.settings.map(({ key, value }) => ({ key, value })));
       }
+
+      return true;
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
           error.message ||
           "Failed to update settings"
       );
+      return false;
     }
   }, [
     firstName,
@@ -106,6 +111,7 @@ export const useAccountSettings = ({
     password,
     confirmPassword,
     navigate,
+    pendingProfileFile,
   ]);
 
   const handleDeleteAccount = useCallback(async () => {
@@ -143,5 +149,7 @@ export const useAccountSettings = ({
     setConfirmPassword,
     handleSaveChanges,
     handleDeleteAccount,
+    // expose pending file setter for profile picture selection
+    setPendingProfileFile,
   };
 };

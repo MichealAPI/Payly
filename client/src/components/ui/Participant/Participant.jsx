@@ -54,7 +54,9 @@ const Participant = ({
         `/groups/${groupId}/${participantId}/kick`
       );
 
-      {onDelete}
+      if (typeof onDelete === "function") {
+        onDelete(participantId);
+      }
 
       toast.success(response.data.message, { position: "bottom-center" });
     } catch (error) {
