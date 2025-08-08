@@ -1,6 +1,6 @@
 import {Controller, Post, UseGuards, Request, Get, Session, Body} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
+import { AuthenticatedGuard } from './guards/authenticated.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { LocalAuthGuard } from './guards/local.auth.guard';
