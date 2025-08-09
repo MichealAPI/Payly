@@ -7,7 +7,7 @@ import {
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { HomeIcon, HomeModernIcon } from "@heroicons/react/24/solid";
+import { ArrowLeftIcon, HomeIcon, HomeModernIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import ProfilePicture from "../ProfilePicture/ProfilePicture";
 import { toast } from "react-hot-toast";
@@ -19,6 +19,7 @@ const Navbar = ({
   activeAction,
   onActionClick,
   actionsDropdown,
+  isBackButtonEnabled=true,
 }) => {
   const navigate = useNavigate();
 
@@ -32,14 +33,39 @@ const Navbar = ({
 
   const { currentUser } = useSelector((state) => state.auth);
 
+  console.log("IsBackButtonEnabled:", isBackButtonEnabled);
+
   return (
     <nav className={styles.navbar}>
       <div
-        className={`${styles.title} order-1 md:order-0 flex flex-col justify-center`}
+        className={`${
+          styles.title
+        } order-1 md:order-0 flex flex-col justify-center ${
+          isBackButtonEnabled ? "cursor-pointer hover:opacity-80 transition-opacity" : ""
+        }`}
+        onClick={() => {
+          if (isBackButtonEnabled) {
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              navigate("/groups"); // default route
+            }
+          }
+        }}
       >
-        <p className={`${actionsDropdown ? "hidden md:block" : ""}`}>
-          {title || "No title provided"}
-        </p>
+        <div className="flex items-center gap-2 text-white">
+          {isBackButtonEnabled && (
+            <div className="hidden md:block">
+              <ArrowLeftIcon
+              className="w-4 stroke-1 stroke-white"
+            />
+            </div>
+          )}
+
+          <p className={`${actionsDropdown ? "hidden md:block" : ""}`}>
+            {title || "No title provided"}
+          </p>
+        </div>
 
         {actionsDropdown && (
           <div className="md:hidden flex justify-center z-20 flex-1 w-full">

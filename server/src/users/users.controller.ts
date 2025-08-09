@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -34,6 +34,12 @@ export class UsersController {
     }
 
     return this.usersService.updateUserSettings(currentUser, updates, profilePicture);
+  }
+
+  @Post(':groupId/toggleArchive')
+  async toggleArchiveGroup(@Request() req, @Param('groupId') groupId: string) {
+    const currentUser = req.user;
+    return this.usersService.toggleArchiveGroup(currentUser, groupId);
   }
 
 }

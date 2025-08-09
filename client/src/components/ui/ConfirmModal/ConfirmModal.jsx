@@ -64,7 +64,8 @@ const ConfirmModal = ({ title, message, isOpen, setIsOpen, onConfirm, onCancel }
                   <div className="mt-6 flex justify-between space-x-4">
                     <Button
                       text="Confirm"
-                      size="large"
+                      size="full"
+                      className={"flex-1"}
                       iconVisibility={true}
                       icon={<CheckIcon className="w-6" />}
                       onClick={() => {
@@ -76,7 +77,8 @@ const ConfirmModal = ({ title, message, isOpen, setIsOpen, onConfirm, onCancel }
                     <Button
                       text="Cancel"
                       style="outline"
-                      size="large"
+                      size="full"
+                      className={"flex-1"}
                       onClick={() => closeModal(true)}
                       iconVisibility={true}
                       icon={<XMarkIcon className="w-6" />}

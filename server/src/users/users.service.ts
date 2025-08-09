@@ -11,12 +11,16 @@ import * as bcrypt from 'bcrypt';
 import { UserResponseDto } from './dto/user-response.dto';
 import { ConfigService } from '@nestjs/config';
 import { uploadImage } from 'src/utils/upload.util';
+// Removed GroupsService dependency to avoid circular import
+import * as mongoose from 'mongoose';
+import { Group } from 'src/groups/schemas/group.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly configService: ConfigService,
+  @InjectModel(Group.name) private readonly groupModel: Model<Group>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
@@ -60,10 +64,58 @@ export class UsersService {
         throw new NotFoundException(`Setting ${setting} not found for user`);
       }
 
-      return userSetting;
+      return userSetting.value;
     }
 
     return user.settings;
+  }
+
+  async toggleArchiveGroup(currentUser: User, groupIdAsString: string): Promise<any> {
+    const user = await this.userModel.findById(currentUser._id).exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // throws NotFoundException if group is not found
+    const group = await this.groupModel.findById(groupIdAsString).exec();
+    if (!group) {
+      throw new NotFoundException('Group not found');
+    }
+    const groupId = group._id as mongoose.Types.ObjectId;
+
+    const currentlyArchivedGroups = user.settings.find(
+      (s) => s.key === 'archivedGroups',
+    );
+
+    let message: string;
+
+    if (currentlyArchivedGroups) {
+      const groupIndex = currentlyArchivedGroups.value.findIndex(
+        (id: mongoose.Types.ObjectId) => id.equals(groupId),
+      );
+
+      if (groupIndex > -1) {
+        currentlyArchivedGroups.value.splice(groupIndex, 1);
+        message = 'Group un-archived successfully';
+      } else {
+        currentlyArchivedGroups.value.push(groupId);
+        message = 'Group archived successfully';
+      }
+    } else {
+      user.settings.push({
+        key: 'archivedGroups',
+        value: [groupId],
+      });
+      message = 'Group archived successfully';
+    }
+
+    user.markModified('settings');
+    await user.save();
+
+    return {
+      message,
+      group: group
+    };
   }
 
   async updateUserSettings(

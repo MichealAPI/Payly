@@ -23,7 +23,7 @@ const SettingsPage = () => {
 
   return (
     <Wrapper>
-      <Navbar title="Settings" />
+      <Navbar title="Settings" goBackEndpoint={"/groups"} />
       <div className="flex w-full justify-center">
         <div className="p-4 w-full max-w-3xl flex justify-center items-center">
           {isLoading || !currentUser ? (

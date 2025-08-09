@@ -143,23 +143,17 @@ const GroupSelectorPage = () => {
   }, []);
 
   const filteredGroups = useMemo(() => {
-    const archivedIds = new Set(archivedItems.map((g) => g._id.toString()));
-
-    let groupsToShow = [];
+    const archivedIds = new Set((archivedItems || []).map((id) => id.toString()));
 
     switch (activeAction) {
       case "archived":
-        groupsToShow = allGroups.filter((group) => archivedIds.has(group._id.toString()));
-        break;
+        return allGroups.filter((g) => archivedIds.has(g._id?.toString()));
       case "running":
-        groupsToShow = allGroups.filter((group) => !archivedIds.has(group._id.toString()));
-        break;
+        return allGroups.filter((g) => !archivedIds.has(g._id?.toString()));
       case "showall":
       default:
-        groupsToShow = [...allGroups];
-        break;
+        return [...allGroups];
     }
-    return groupsToShow;
   }, [activeAction, allGroups, archivedItems]);
 
   const handlePrimaryButtonClick = () => {
@@ -173,6 +167,7 @@ const GroupSelectorPage = () => {
     <>
       <Wrapper>
         <Navbar
+          isBackButtonEnabled={false}
           title="Select a Group"
           actions={[
             { id: "showall", label: "Show all" },
@@ -221,8 +216,8 @@ const GroupSelectorPage = () => {
                         className={`${
                           allGroups.length < 2 ? "" : "cursor-pointer"
                         } touch-action-none`}
-                        isArchived={archivedItems.some(
-                          (g) => g._id === group._id
+                        isArchived={(archivedItems || []).some(
+                          (id) => id?.toString() === group._id?.toString()
                         )}
                       />
                     ))}

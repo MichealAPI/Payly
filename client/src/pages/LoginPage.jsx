@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const { error, isLoading } = useSelector((state) => state.auth);
+  const { error, currentUser, isLoading } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -41,6 +41,10 @@ const LoginPage = () => {
       toast.error(message, { position: "bottom-center" });
     }
   };
+
+  if (currentUser) {
+    navigate("/groups", { replace: true });
+  }
 
   return (
     <div className="flex flex-col min-h-[100vh] bg-black md:bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] md:bg-[length:30px_30px]">

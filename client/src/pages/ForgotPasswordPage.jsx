@@ -45,7 +45,6 @@ const ForgotPasswordPage = () => {
                             icon={<ArrowRightIcon className="w-6" />}
                             onClick={() => {
                                 // Proceed with reset logic
-                                console.log("Reset successful with email:", email);
                             }} /* Todo: implement reset logic */
                             style="fill"
                             type="submit"

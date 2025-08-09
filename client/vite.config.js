@@ -18,7 +18,7 @@ export default defineConfig({
       "Referrer-Policy": "no-referrer",
       "Content-Security-Policy": `
         default-src 'self';
-        img-src 'self' data: https://res.cloudinary.com;
+        img-src 'self' data: https://res.cloudinary.com https://placehold.co https://flagpedia.net;
         script-src 'self' 'unsafe-inline' 'unsafe-eval';
         style-src 'self' 'unsafe-inline';
         connect-src 'self' ws: wss:;

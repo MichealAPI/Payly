@@ -12,7 +12,6 @@ export default function PaidBySelector({
       (p) => p._id === e.target.value
     );
 
-    console.log("Selected participant:", selectedParticipant);
     setPaidBy(selectedParticipant || null);
   };
 

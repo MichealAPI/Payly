@@ -12,7 +12,7 @@ import {
   ArchiveBoxIcon,
   TrashIcon,
 } from "@heroicons/react/24/solid";
-import { archiveGroup, deleteGroup } from "../../../features/groups/groupsSlice.js";
+import { deleteGroup, toggleArchiveGroup } from "../../../features/groups/groupsSlice.js";
 import { useState } from "react";
 import ConfirmModal from "../ConfirmModal/ConfirmModal.jsx";
 import GroupModal from "../GroupModal/GroupModal.jsx";
@@ -177,7 +177,7 @@ export const Group = ({
                             isArchived ? "Unarchive Group" : "Archive Group",
                             `Are you sure you want to ${isArchived ? "unarchive" : "archive"} this group? You can ${isArchived ? "archive it again later" : "restore it later"}.`,
                             async () => {
-                              await dispatch(archiveGroup(groupData)).unwrap();
+                              await dispatch(toggleArchiveGroup(groupData)).unwrap();
                             }
                           );
                         }}

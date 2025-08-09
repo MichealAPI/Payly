@@ -9,7 +9,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Group } from './schemas/group.schema';
 import { Model } from 'mongoose';
 import { UpsertGroupDto } from './dto/upsert-group.dto';
-import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/users/schemas/user.schema';
 import * as mongoose from 'mongoose';
 import { Expense } from 'src/expenses/schemas/expense.schema';
@@ -20,7 +19,6 @@ import path from 'path';
 export class GroupsService {
   constructor(
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
-    private readonly authService: AuthService,
   ) {}
 
   async upsertGroup(
@@ -59,6 +57,19 @@ export class GroupsService {
         select: 'firstName lastName email _id',
       })
       .exec();
+  }
+
+  async findById(groupId: string): Promise<Group> {
+    const group = await this.groupModel.findById(groupId).exec();
+    if (!group) {
+      throw new NotFoundException('Group not found');
+    }
+    return group;
+  }
+
+  async exists(groupId: string | mongoose.Types.ObjectId): Promise<boolean> {
+    const group = await this.groupModel.findById(groupId).exec();
+    return !!group;
   }
 
   async deleteGroup(

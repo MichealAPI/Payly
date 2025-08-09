@@ -7,7 +7,6 @@ export const fetchGroups = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.get("/groups/list");
-      console.log("Fetched groups:", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -19,8 +18,26 @@ export const fetchArchivedGroups = createAsyncThunk(
   "groups/fetchArchived",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get("/users/settings/archived-groups");
-      return response.data;
+      const response = await apiClient.get("/users/settings/archivedGroups");
+      // API may return either an array or an object with a `value` array.
+      const data = response.data;
+      const archivedArray = Array.isArray(data) ? data : data?.value ?? [];
+      // Normalize to an array of string IDs only
+      const archivedIds = archivedArray
+        .map((item) => {
+          if (!item) return null;
+          if (typeof item === "string") return item;
+          if (typeof item === "number") return String(item);
+          // object-like
+          if (typeof item === "object") {
+            // support {_id}, {id}, or value wrappers
+            const possibleId = item._id ?? item.id ?? item.value ?? null;
+            return possibleId ? String(possibleId) : null;
+          }
+          return null;
+        })
+        .filter(Boolean);
+      return archivedIds;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -70,24 +87,12 @@ export const createGroup = createAsyncThunk(
   }
 );
 
-export const archiveGroup = createAsyncThunk(
-  "groups/archiveGroup",
+export const toggleArchiveGroup = createAsyncThunk(
+  "groups/toggleArchiveGroup",
   async (group, { rejectWithValue }) => {
     try {
-      await apiClient.post(`/users/${group._id}/archive`);
+      await apiClient.post(`/users/${group._id}/toggleArchive`);
       return group; // Return the full group object to move it between lists
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const unarchiveGroup = createAsyncThunk(
-  "groups/unarchiveGroup",
-  async (group, { rejectWithValue }) => {
-    try {
-      await apiClient.post(`/users/${group._id}/unarchive`);
-      return group; // Return the full group object
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -137,16 +142,16 @@ const groupsSlice = createSlice({
       .addCase(fetchGroups.pending, (state) => {
         state.isLoading = true;
       })
+      .addCase(fetchArchivedGroups.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(createGroup.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(deleteGroup.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(archiveGroup.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(unarchiveGroup.pending, (state) => {
+      .addCase(toggleArchiveGroup.pending, (state) => {
         state.isLoading = true;
       })
 
@@ -163,6 +168,10 @@ const groupsSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
+      .addCase(fetchArchivedGroups.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
       // etc. for all rejections...
 
       // Handle fulfillment
@@ -171,7 +180,8 @@ const groupsSlice = createSlice({
         state.items = action.payload;
       })
       .addCase(fetchArchivedGroups.fulfilled, (state, action) => {
-        state.archivedItems = action.payload;
+  // store only archived IDs
+  state.archivedItems = action.payload;
       })
       .addCase(createGroup.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -182,22 +192,24 @@ const groupsSlice = createSlice({
         // The payload is the groupId, filter it out from both lists
         state.items = state.items.filter((g) => g._id !== action.payload);
         state.archivedItems = state.archivedItems.filter(
-          (g) => g._id !== action.payload
+          (id) => id !== action.payload,
         );
       })
-      .addCase(archiveGroup.fulfilled, (state, action) => {
+      .addCase(toggleArchiveGroup.fulfilled, (state, action) => {
         state.isLoading = false;
-        const groupToArchive = action.payload;
-        state.items = state.items.filter((g) => g._id !== groupToArchive._id);
-        state.archivedItems.push(groupToArchive);
-      })
-      .addCase(unarchiveGroup.fulfilled, (state, action) => {
-        state.isLoading = false;
-        const groupToUnarchive = action.payload;
-        state.archivedItems = state.archivedItems.filter(
-          (g) => g._id !== groupToUnarchive._id
+        // Support various payload shapes: group object, { id }, or raw id
+        const toggledId = String(
+          action.payload?._id ?? action.payload?.id ?? action.payload,
         );
-        state.items.unshift(groupToUnarchive);
+        if (!toggledId) return;
+        const isArchived = state.archivedItems.includes(toggledId);
+        if (isArchived) {
+          // Unarchive
+          state.archivedItems = state.archivedItems.filter((id) => id !== toggledId);
+        } else {
+          // Archive
+          state.archivedItems.push(toggledId);
+        }
       })
       // Handle reorderGroups lifecycle: optimistically reorder items on pending
       .addCase(reorderGroups.pending, (state, action) => {

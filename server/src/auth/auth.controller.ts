@@ -32,7 +32,6 @@ export class AuthController {
     @UseGuards(AuthenticatedGuard)
     @Get('profile')
     getProfile(@Request() req) {
-        console.log('Current user:', req.user);
         return req.user;
     }
 
