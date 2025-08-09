@@ -102,3 +102,9 @@ input[type="number"]::-webkit-outer-spin-button {
         transform: translateY(5px);
     }
 }
+
+/* Prevent layout shift when vertical scrollbar appears */
+html {
+  /* Prefer stable overlay if supported, else reserve gutter */
+  scrollbar-gutter: stable both-edges;
+}

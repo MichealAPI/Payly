@@ -8,111 +8,155 @@ import {
   EnvelopeIcon,
   KeyIcon,
 } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { loginUser } from "../features/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-
   const { error, isLoading } = useSelector((state) => state.auth);
-
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+
+  const isSubmitDisabled =
+    isLoading || !isValidEmail(email) || password.length < 6;
+
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
-
-      await dispatch(loginUser({ email, password })).unwrap();
-
+      await dispatch(loginUser({ email: email.trim(), password })).unwrap();
       toast.success("Login successful!", { position: "bottom-center" });
-
-      navigate("/groups");
+      navigate("/groups", { replace: true });
     } catch (err) {
-
-      console.error("Login error:", err || error);
-      toast.error(err.message || error || "An error occurred during login", {
-        position: "bottom-center",
-      });
+      const message =
+        typeof err === "string"
+          ? err
+          : err?.message || error || "An error occurred during login";
+      console.error("Login error:", message);
+      toast.error(message, { position: "bottom-center" });
     }
   };
 
   return (
-    <div className="flex flex-col min-h-[100vh] bg-[#1A1A1E]">
+    <div className="flex flex-col min-h-[100vh] bg-black md:bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] md:bg-[length:30px_30px]">
       <HomeNavbar />
 
-      <div className="flex flex-col flex-1 mt-8 items-center justify-between">
-        <div className="flex flex-col items-center">
-          <Logo className="w-10 h-auto mb-2" onClickHomepageNavigate={false} />
+      <main
+        className="flex flex-col flex-1 items-center justify-center relative"
+        role="main"
+      >
+        {/* Glow wrapper + glass card */}
+        <div className="relative md:mb-60">
+          {/* Purple glow behind the card */}
+          <div
+            className="hidden md:block absolute -inset-x-24 -inset-y-16 bg-gradient-to-br from-fuchsia-500/12 via-purple-500/5 to-transparent blur-3xl rounded-[2rem] pointer-events-none"
+            aria-hidden="true"
+          />
 
-          <div className="flex flex-col justify-center items-center text-center">
-            <h1 className="text-4xl font-bold text-white m-0">Welcome Back!</h1>
-            <p className="text-2xl text-white m-0">Sign in to continue</p>
-          </div>
+          {/* Glass effect card */}
+          <div className="flex flex-col items-center bg-transparent md:bg-white/5 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40">
+            <div className="flex items-center flex-col gap-2">
+              <Logo className="w-12 h-12 bg-radial from-gray-700/60 to-black p-3 rounded-xl outline-1 outline-white/10" onClickHomepageNavigate={false}/>
 
-          <form
-            className="flex flex-col gap-4 mt-8 w-xs md:w-sm"
-            onSubmit={handleLogin}
-          >
-            <Input
-              type="email"
-              label="Email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              icon={<EnvelopeIcon className="w-6" />}
-            />
+              <h1 className="text-white text-2xl font-medium mb-2">
+                Log in to Payly
+              </h1>
+            </div>
 
-            <Input
-              type="password"
-              label="Password"
-              rightLabel={
-                <a
-                  className="hover:text-blue-400 transition-colors font-bold text-blue-600 text-xs cursor-pointer"
-                  onClick={() => navigate("/forgot")}
-                >
-                  forgot?
-                </a>
-              }
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              icon={<KeyIcon className="w-6" />}
-            />
-
-            <Button
-              text={isLoading ? "Logging in..." : "Sign In"}
-              size="full"
-              disabled={isLoading}
-              className="mt-5"
-              textVisibility={true}
-              iconVisibility={true}
-              icon={<ArrowRightIcon className="w-6" />}
-              style="fill"
-              type="submit"
-            />
-          </form>
-
-          <div className="flex mt-5">
-            <p className="text-white text-lg">Don't have an account?</p>
-            <a
-              onClick={() => navigate("/register")}
-              className="text-[#9f74fc] text-lg font-bold cursor-pointer ml-2 hover:underline"
+            <form
+              className="flex flex-col gap-4 mt-8 w-full max-w-sm"
+              onSubmit={handleLogin}
+              aria-describedby="login-instructions"
             >
-              Sign up
-            </a>
+              <p id="login-instructions" className="sr-only">
+                Enter your email address and password to sign in. Password must be
+                at least 6 characters.
+              </p>
+
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                autoFocus
+                required
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                icon={<EnvelopeIcon className="w-6" />}
+                disabled={isLoading}
+                aria-label="Email address"
+                aria-invalid={email.length > 0 && !isValidEmail(email)}
+                aria-describedby="email-hint"
+              />
+              <p id="email-hint" className="sr-only">
+                Use a valid email address like name@example.com.
+              </p>
+
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                rightLabel={
+                  <Link
+                    className="hover:text-blue-400 transition-colors font-medium text-[#9f74fc] text-base"
+                    to="/forgot"
+                    aria-label="Forgot your password?"
+                  >
+                    forgot?
+                  </Link>
+                }
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                icon={<KeyIcon className="w-6" />}
+                disabled={isLoading}
+                aria-label="Password"
+                aria-invalid={password.length > 0 && password.length < 6}
+                aria-describedby="password-hint"
+              />
+              <p id="password-hint" className="sr-only">
+                Password must be at least 6 characters.
+              </p>
+
+              <Button
+                text={isLoading ? "Logging in..." : "Sign In"}
+                size="full"
+                disabled={isSubmitDisabled}
+                className="mt-5"
+                textVisibility={true}
+                style="fill"
+                type="submit"
+                aria-busy={isLoading}
+              />
+            </form>
+
+            <div className="flex mt-10">
+              <p className="text-white text-lg">Don't have an account?</p>
+              <Link
+                to="/register"
+                className="text-[#9f74fc] text-lg cursor-pointer ml-1.5 hover:underline"
+              >
+                Sign up
+              </Link>
+            </div>
           </div>
         </div>
 
-        <p className="items-end text-sm opacity-70 mb-5 text-white">
-          Made with ❤️ in Italy
+        <p
+          className="absolute bottom-5 text-sm opacity-70 text-white"
+          aria-label="Made with love in Italy"
+        >
+          Made with <span aria-hidden="true">❤️</span> in Italy
         </p>
-      </div>
+      </main>
     </div>
   );
 };

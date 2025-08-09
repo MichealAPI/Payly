@@ -3,8 +3,8 @@ import Button from '../components/ui/Button/Button';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import HomeNavbar from '../components/ui/HomeNavbar/HomeNavbar';
 import heroImage from '../assets/hero-image.png';
-import logo from '../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
+import Logo from '../components/ui/Logo/Logo';
 
 const HomePage = () => {
 
@@ -20,7 +20,7 @@ const HomePage = () => {
 
                     <div className="flex flex-col gap-3 md:items-stretch items-center">
 
-                        <img src={logo} alt="Payly Logo" className="w-10 h-auto mb-2 block md:hidden" />
+                        <Logo />
 
                         <h1 className="text-4xl md:text-5xl font-bold text-white m-0">
                             Who said counting<br className="hidden md:block" /> expenses wasn't easy?

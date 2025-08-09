@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState } from "react";
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import "react-day-picker/style.css";
 import { AnimatePresence, motion } from "framer-motion";
@@ -10,7 +10,7 @@ export default function DatePicker({ date, setDate }) {
   const defaultClassNames = getDefaultClassNames();
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       <Button
         text={date ? date.toLocaleDateString() : "When"}
         className="max-w-full mt-1 h-10"
@@ -20,37 +20,36 @@ export default function DatePicker({ date, setDate }) {
         size="full"
         icon={<ChevronDownIcon className="w-6" />}
       />
-      <div className="mt-4">
-        <AnimatePresence mode="wait">
-          {showDatePicker && (
-            <motion.div
-              initial={{ opacity: 0.65, maxHeight: 0 }}
-              animate={{ opacity: 1, maxHeight: 400 }}
-              exit={{ opacity: 0, maxHeight: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <DayPicker
-                animate
-                disabled={{ after: new Date() }}
-                endMonth={new Date()}
-                mode="single"
-                selected={date}
-                onSelect={(val) => {
-                  if (val) setDate(val);
-                  setShowDatePicker(false);
-                }}
-                className="text-white justify-center"
-                classNames={{
-                  today: "bg-[#BD9EFF]/40 rounded-full",
-                  selected: "outline outline-[#BD9EFF] rounded-lg text-white",
-                  root: `${defaultClassNames.root} p-3 rounded-xl flex`,
-                  chevron: "fill-[#BD9EFF]",
-                }}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      <AnimatePresence mode="wait" initial={false}>
+        {showDatePicker && (
+          <motion.div
+            className="absolute left-0 right-0 top-full z-50 mt-2"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <DayPicker
+              animate
+              disabled={{ after: new Date() }}
+              endMonth={new Date()}
+              mode="single"
+              selected={date}
+              onSelect={(val) => {
+                if (val) setDate(val);
+                setShowDatePicker(false);
+              }}
+              className="text-white justify-center"
+              classNames={{
+                today: "bg-[#BD9EFF]/40 rounded-full",
+                selected: "outline outline-[#BD9EFF] rounded-lg text-white",
+                root: `${defaultClassNames.root} p-3 rounded-xl flex shadow-2xl shadow-purple-500/20 bg-black/70 backdrop-blur-xl border border-white/10`,
+                chevron: "fill-[#BD9EFF]",
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
