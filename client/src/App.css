@@ -8,6 +8,73 @@ body {
   width: calc(100% - 80px);
 }
 
+/* --- Hero/Globe subtle entrance and floating cards --- */
+@keyframes reveal-up-keyframes {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.98);
+    filter: saturate(0.9) brightness(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: saturate(1) brightness(1);
+  }
+}
+
+.reveal-up {
+  animation: reveal-up-keyframes 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes float-card-1 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-1deg) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0) rotate(1deg) scale(1.01);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-1deg) scale(1);
+  }
+}
+
+@keyframes float-card-2 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(1deg) scale(1);
+  }
+  50% {
+    transform: translate3d(0, 12px, 0) rotate(-1deg) scale(1.01);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(1deg) scale(1);
+  }
+}
+
+.nf-float-1 {
+  animation: float-card-1 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+.nf-float-2 {
+  animation: float-card-2 11s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Respect user preferences for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up,
+  .nf-float-1,
+  .nf-float-2 {
+    animation: none !important;
+  }
+}
+
+/* Soft drop shadow for the transparent globe canvas */
+.globe-shadow {
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.5)) drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
+}
+
 @media (max-width: 768px) {
   .content-with-sidebar {
     margin-left: 0;

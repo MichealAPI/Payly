@@ -1,16 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import "react-day-picker/style.css";
 import { AnimatePresence, motion } from "framer-motion";
 import Button from "../Button/Button";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import CustomSelectDropdown from "./CustomSelectDropdown";
 
-export default function DatePicker({ date, setDate }) {
+export default function DatePicker({ date, setDate, labelDropdown=false}) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const defaultClassNames = getDefaultClassNames();
+  const containerRef = useRef(null);
+
+  const handleClickOutside = (event) => {
+    if (containerRef.current && !containerRef.current.contains(event.target)) {
+      setShowDatePicker(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="w-full relative">
+    <div ref={containerRef} className="w-full relative">
       <Button
         text={date ? date.toLocaleDateString() : "When"}
         className="max-w-full mt-1 h-10"
@@ -28,6 +43,7 @@ export default function DatePicker({ date, setDate }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
+            onKeyDown={(e) => e.key === "Escape" && setShowDatePicker(false)}
           >
             <DayPicker
               animate
@@ -39,11 +55,13 @@ export default function DatePicker({ date, setDate }) {
                 if (val) setDate(val);
                 setShowDatePicker(false);
               }}
+              components={{ Dropdown: CustomSelectDropdown }}
+              captionLayout={labelDropdown ? "dropdown" : "label"}
               className="text-white justify-center"
               classNames={{
-                today: "bg-[#BD9EFF]/40 rounded-full",
+                today: "bg-[#BD9EFF]/60 rounded-full",
                 selected: "outline outline-[#BD9EFF] rounded-lg text-white",
-                root: `${defaultClassNames.root} p-3 rounded-xl flex shadow-2xl shadow-purple-500/20 bg-black/70 backdrop-blur-xl border border-white/10`,
+                root: `${defaultClassNames.root} p-3 rounded-xl flex shadow-2xl shadow-purple-500/20 bg-black/90 backdrop-blur-xl border border-white/10`,
                 chevron: "fill-[#BD9EFF]",
               }}
             />

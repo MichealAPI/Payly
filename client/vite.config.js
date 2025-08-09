@@ -35,6 +35,21 @@ export default defineConfig({
 
   build: {
     assetsInlineLimit: 0,
-    sourcemap: true
+    sourcemap: true,
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('three')) return 'three';
+            if (id.includes('@react-three/fiber') || id.includes('@react-three/drei')) return 'r3f';
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) return 'vendor-react';
+            if (id.includes('redux') || id.includes('@reduxjs/toolkit')) return 'vendor-state';
+            if (id.includes('axios') || id.includes('emoji-picker-react') || id.includes('framer-motion')) return 'vendor-ui';
+            return 'vendor';
+          }
+        }
+      }
+    }
   }
 })

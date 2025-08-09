@@ -1,16 +1,17 @@
 import PropTypes from 'prop-types';
 
 const SidebarItem = ({ icon, isActive, onClick }) => {
-    const baseClasses = "transition-all duration-200 ease-in-out cursor-pointer hover:bg-white/10 hover:rounded-md hover:scale-110";
-    const activeClasses = "";
-    const disabledClasses = "opacity-50";
+    const baseClasses = "transition-all duration-200 ease-in-out cursor-pointer select-none";
+    const hoverClasses = "hover:bg-white/15 hover:rounded-xl hover:scale-105";
+    const activeClasses = "rounded-xl ring-1 ring-white/30 bg-white/10 text-white";
+    const inactiveClasses = "text-white/70";
 
     return (
         <div 
-            className={`${baseClasses} ${isActive ? activeClasses : disabledClasses}`} 
+            className={`${baseClasses} ${hoverClasses} ${isActive ? activeClasses : inactiveClasses}`} 
             onClick={onClick}
         >
-            <div className={`w-8 ${isActive ? 'text-white' : ''}`}>
+            <div className={`w-10 h-10 flex items-center justify-center`}>
                 {icon} 
             </div>
         </div>

@@ -3,7 +3,7 @@ import Input from "../components/ui/Input/Input";
 import Button from "../components/ui/Button/Button";
 import Logo from "../components/ui/Logo/Logo";
 import { useState } from "react";
-import { EnvelopeIcon, KeyIcon, UserIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon, EnvelopeIcon, KeyIcon, UserIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
@@ -202,7 +202,9 @@ const RegisterPage = () => {
                       size="full"
                       disabled={isContinueDisabled || password !== confirmPassword}
                       className="mt-4"
+                      iconVisibility={true}
                       textVisibility={true}
+                      icon={<ArrowRightIcon className="w-5" />}
                       style="fill"
                       type="submit"
                     />
@@ -239,7 +241,7 @@ const RegisterPage = () => {
 
                     <div className="flex flex-col gap-2">
                       <p className="text-md font-sans text-white/60 m-0">Date of birth</p>
-                      <DatePicker date={dob} setDate={setDob} />
+                      <DatePicker date={dob} setDate={setDob} labelDropdown={true}/>
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -280,7 +282,7 @@ const RegisterPage = () => {
                         }}
                       />
                       <Button
-                        text={isLoading ? "Creating..." : "Create account"}
+                        text={isLoading ? "Creating..." : "Sign Up"}
                         size="medium"
                         disabled={isCreateDisabled}
                         textVisibility={true}
