@@ -10,7 +10,7 @@ import {
   BarsArrowUpIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
-import Observer from "../../utils/Observer";
+import Observer from "../../utils/observer";
 import Expense from "../ui/Expense/Expense";
 import Button from "../ui/Button/Button";
 import Warning from "../ui/Warning/Warning";

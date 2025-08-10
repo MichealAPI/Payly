@@ -23,6 +23,9 @@ importers:
       '@dnd-kit/sortable':
         specifier: ^10.0.0
         version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
+      '@dnd-kit/utilities':
+        specifier: ^3.2.2
+        version: 3.2.2(react@19.1.1)
       '@fortawesome/react-fontawesome':
         specifier: ^0.2.2
         version: 0.2.3(@fortawesome/fontawesome-svg-core@7.0.0)(react@19.1.1)
@@ -50,6 +53,12 @@ importers:
       axios:
         specifier: ^1.11.0
         version: 1.11.0
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      dnd-kit:
+        specifier: ^0.0.2
+        version: 0.0.2
       emoji-picker-react:
         specifier: ^4.13.2
         version: 4.13.2(react@19.1.1)
@@ -1156,6 +1165,10 @@ packages:
   detect-libc@2.0.4:
     resolution: {integrity: sha512-3UDv+G9CsCKO1WKMGw9fwq/SWJYbI0c5Y7LU1AXYoDdbhE2AHQ6N6Nb34sG8Fj7T5APy8qXDCKuuIHd1BR0tVA==}
     engines: {node: '>=8'}
+
+  dnd-kit@0.0.2:
+    resolution: {integrity: sha512-d8AYd6I7D2b5u882+QNVGw0slBAt851/LWZ2j/pU+onf5/TGEKXeb47sCyhPYKEAUXp4oLfvWfNCqfkU03R1lw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   dotenv@16.6.1:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
@@ -3110,6 +3123,8 @@ snapshots:
       webgl-constants: 1.1.1
 
   detect-libc@2.0.4: {}
+
+  dnd-kit@0.0.2: {}
 
   dotenv@16.6.1: {}
 
