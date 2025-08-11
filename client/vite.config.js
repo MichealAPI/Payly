@@ -28,7 +28,7 @@ export default defineConfig({
       '/api': {
         target: process.env.API || 'http://localhost:5000',
         changeOrigin: true,
-        secure: false,
+        secure: process.env.TZ === 'production',
       },
     },
   },
