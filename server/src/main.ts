@@ -31,6 +31,13 @@ async function bootstrap() {
       return cb(new Error('Not allowed by CORS'), false);
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+    ],
+    optionsSuccessStatus: 204,
+    maxAge: 600
   });
 
   app.setGlobalPrefix('api');
