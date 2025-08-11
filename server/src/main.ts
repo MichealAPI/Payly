@@ -10,13 +10,29 @@ declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.set('trust proxy', 1);
-  app.enableCors({
-    origin: true, // The origin of the client app
-    credentials: true, // This allows the session cookie to be sent back and forth
-  });
-  app.setGlobalPrefix('api'); // Set a global prefix for all routes
+
+  // Trust the full proxy chain 
+  app.set('trust proxy', true);
+
   const configService = app.get(ConfigService);
+  const isProd = configService.get<string>('NODE_ENV') === 'production';
+
+  // Allow only your production origins with credentials
+  const allowedOrigins = [
+    'https://app.payly.it',
+    'https://www.payly.it',
+  ];
+
+  app.enableCors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      if (allowedOrigins.includes(origin)) return cb(null, true);
+      return cb(new Error('Not allowed by CORS'), false);
+    },
+    credentials: true,
+  });
+
+  app.setGlobalPrefix('api');
 
   const sessionSecret = configService.get<string>('SESSION_SECRET');
   if (!sessionSecret) {
@@ -28,19 +44,22 @@ async function bootstrap() {
       secret: sessionSecret,
       resave: false,
       saveUninitialized: false,
+      proxy: true, // critical behind proxies for secure cookies
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24, // 1 day
-        sameSite: 'none',
-        secure: true, // Set to true if you're using https
+        maxAge: 1000 * 60 * 60 * 24,
+        httpOnly: true,
+        secure: isProd,                // true on prod
+        sameSite: isProd ? 'lax' : 'lax',
+        domain: isProd ? '.payly.it' : undefined, // keep frontend+api same-site
       },
       store: MongoStore.create({
         mongoUrl: configService.get<string>('MONGO_URI'),
         collectionName: 'sessions',
-      })
-    })
-  )
+      }),
+    }),
+  );
+
   app.use(passport.initialize());
-  
   app.use(passport.session());
 
   const port = configService.get<number>('PORT') || 3000;
@@ -50,6 +69,5 @@ async function bootstrap() {
     module.hot.accept();
     module.hot.dispose(() => app.close());
   }
-
 }
 bootstrap();
