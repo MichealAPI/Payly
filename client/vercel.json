@@ -1,1 +1,6 @@
-{ "rewrites": [ { "source": "/api/:path*", "destination": "https://api.payly.it/api/:path*" }, { "source": "/(.*)", "destination": "/index.html" } ]}
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "http://api.payly.it/api/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
