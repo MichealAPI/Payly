@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
       },
       proxy: {
         '/api': {
-          target: env.API || 'http://localhost:5000',
+          target: env.VITE_API_ENDPOINT || 'http://localhost:5000',
           changeOrigin: true,
           secure: env.TZ === 'production',
         },
