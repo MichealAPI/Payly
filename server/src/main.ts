@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import session from 'express-session';
 import passport from 'passport';
@@ -8,7 +9,8 @@ import { ConfigService } from '@nestjs/config';
 declare const module: any;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.set('trust proxy', 1);
   app.enableCors({
     origin: true, // The origin of the client app
     credentials: true, // This allows the session cookie to be sent back and forth
@@ -38,6 +40,7 @@ async function bootstrap() {
     })
   )
   app.use(passport.initialize());
+  
   app.use(passport.session());
 
   const port = configService.get<number>('PORT') || 3000;
