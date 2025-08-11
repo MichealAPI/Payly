@@ -21,6 +21,7 @@ async function bootstrap() {
   const allowedOrigins = [
     'https://app.payly.it',
     'https://www.payly.it',
+    'https://payly.it',
   ];
 
   app.enableCors({
