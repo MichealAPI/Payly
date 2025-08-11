@@ -28,7 +28,7 @@ async function bootstrap() {
       saveUninitialized: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24, // 1 day
-        sameSite: 'lax',
+        sameSite: 'none',
         secure: true, // Set to true if you're using https
       },
       store: MongoStore.create({
