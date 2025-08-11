@@ -10,7 +10,7 @@ declare const module: any;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: 'http://localhost:5173', // The origin of the client app
+    origin: true, // The origin of the client app
     credentials: true, // This allows the session cookie to be sent back and forth
   });
   app.setGlobalPrefix('api'); // Set a global prefix for all routes
@@ -28,8 +28,8 @@ async function bootstrap() {
       saveUninitialized: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24, // 1 day
-        sameSite: 'lax', // Or 'strict' depending on your needs
-        secure: 'auto', // Set to true if you're using https
+        sameSite: 'none', // Or 'lax', 'strict' depending on your needs
+        secure: true, // Set to true if you're using https
       },
       store: MongoStore.create({
         mongoUrl: configService.get<string>('MONGO_URI'),
@@ -37,12 +37,11 @@ async function bootstrap() {
       })
     })
   )
-
   app.use(passport.initialize());
   app.use(passport.session());
 
   const port = configService.get<number>('PORT') || 3000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 
   if (module.hot) {
     module.hot.accept();
