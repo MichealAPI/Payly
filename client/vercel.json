@@ -1,8 +1,1 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    }
-  ]
-}
+{ "rewrites": [ { "source": "/api/:path*", "destination": "http://api.payly.com/api/:path*" }, { "source": "/(.*)", "destination": "/index.html" } ]}
