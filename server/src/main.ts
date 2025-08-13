@@ -25,6 +25,7 @@ async function bootstrap() {
   ];
 
   app.enableCors({
+    allowedHeaders: ['Content-Type', 'Authorization'],
     origin: (origin, callback) => {
       if (!origin || whiteList.indexOf(origin) !== -1) {
         callback(null, true); // Allow the request
