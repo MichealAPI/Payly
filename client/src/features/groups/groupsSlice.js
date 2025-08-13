@@ -39,7 +39,7 @@ export const fetchArchivedGroups = createAsyncThunk(
         .filter(Boolean);
       return archivedIds;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return []
     }
   }
 );

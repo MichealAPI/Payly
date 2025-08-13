@@ -62,3 +62,6 @@
 - Debug split methods, overview board calculation and fix the centering of the register vs login form.
 - Implement Sentry for Backend
 - Fix navbar back-button for smaller devices which currently overrides the dropdown.
+
+
+- Implementing a CD/CI and Sentry for error logging.
