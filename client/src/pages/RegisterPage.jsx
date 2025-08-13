@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import DatePicker from "../components/ui/DatePicker/DatePicker";
+import apiClient from "../api/axiosConfig";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -67,15 +68,11 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email: email.trim(),
-          password,
-        }),
+      const response = await apiClient.post("/auth/register", {
+        firstName,
+        lastName,
+        email,
+        password
       });
 
   const data = await response.json();
