@@ -75,11 +75,6 @@ const RegisterPage = () => {
         password
       });
 
-  const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data?.message || "Registration failed");
-      }
-
       toast.success("Registration successful! Please log in.", {
         position: "bottom-center",
       });
