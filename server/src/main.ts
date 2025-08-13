@@ -18,26 +18,20 @@ async function bootstrap() {
   const isProd = configService.get<string>('NODE_ENV') === 'production';
 
   // Allow only your production origins with credentials
-  const allowedOrigins = [
-    'https://app.payly.it',
-    'https://www.payly.it',
-    'https://payly.it',
+  const whiteList = [
+    'http://app.payly.it',
+    'http://www.payly.it',
+    'http://payly.it',
   ];
 
   app.enableCors({
-    origin: (origin, cb) => {
-      if (!origin) return cb(null, true);
-      if (allowedOrigins.includes(origin)) return cb(null, true);
-      return cb(new Error('Not allowed by CORS'), false);
+    origin: (origin, callback) => {
+      if (!origin || whiteList.indexOf(origin) !== -1) {
+        callback(null, true); // Allow the request
+      } else {
+        callback(new Error('Not allowed by CORS')); // Deny the request
+      }
     },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-    ],
-    optionsSuccessStatus: 204,
-    maxAge: 600
   });
 
   app.setGlobalPrefix('api');
