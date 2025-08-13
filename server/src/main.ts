@@ -19,9 +19,8 @@ async function bootstrap() {
 
   // Allow only your production origins with credentials
   const whiteList = [
-    'http://app.payly.it',
-    'http://www.payly.it',
-    'http://payly.it',
+    'https://app.payly.it',
+    'https://www.payly.it',
   ];
 
   app.enableCors({
