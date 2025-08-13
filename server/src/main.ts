@@ -32,6 +32,7 @@ async function bootstrap() {
         callback(new Error('Not allowed by CORS')); // Deny the request
       }
     },
+    credentials: true, // Allow cookies to be sent
   });
 
   app.setGlobalPrefix('api');
