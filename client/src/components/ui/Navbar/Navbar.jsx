@@ -19,7 +19,7 @@ const Navbar = ({
   activeAction,
   onActionClick,
   actionsDropdown,
-  isBackButtonEnabled=true,
+  isBackButtonEnabled = true,
 }) => {
   const navigate = useNavigate();
 
@@ -35,30 +35,30 @@ const Navbar = ({
 
   console.log("IsBackButtonEnabled:", isBackButtonEnabled);
 
+  const handleTitleClick = () => {
+    if (!isBackButtonEnabled) return;
+    // Do not go back on small screens when the dropdown is shown
+    if (actionsDropdown && window.matchMedia("(max-width: 767px)").matches) return;
+
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/groups"); // default route
+    }
+  };
+
   return (
     <nav className={styles.navbar}>
       <div
-        className={`${
-          styles.title
-        } order-1 md:order-0 flex flex-col justify-center ${
-          isBackButtonEnabled ? "cursor-pointer hover:opacity-80 transition-opacity" : ""
+        className={`${styles.title} order-1 md:order-0 md:flex flex-col justify-center ${
+          isBackButtonEnabled ? "md:cursor-pointer md:hover:opacity-80 md:transition-opacity" : ""
         }`}
-        onClick={() => {
-          if (isBackButtonEnabled) {
-            if (window.history.length > 1) {
-              navigate(-1);
-            } else {
-              navigate("/groups"); // default route
-            }
-          }
-        }}
+        onClick={handleTitleClick}
       >
         <div className="flex items-center gap-2 text-white">
           {isBackButtonEnabled && (
             <div className="hidden md:block">
-              <ArrowLeftIcon
-              className="w-4 stroke-1 stroke-white"
-            />
+              <ArrowLeftIcon className="w-4 stroke-1 stroke-white" />
             </div>
           )}
 
@@ -68,9 +68,15 @@ const Navbar = ({
         </div>
 
         {actionsDropdown && (
-          <div className="md:hidden flex justify-center z-20 flex-1 w-full">
+          <div
+            className="md:hidden flex justify-center z-20 flex-1 w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Menu>
-              <MenuButton className="flex group items-center gap-2 rounded-md bg-transparent px-4 py-2 text-sm/6 font-semibold text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-700 data-open:bg-gray-700">
+              <MenuButton
+                className="flex group items-center gap-2 rounded-md bg-transparent px-4 py-2 text-sm/6 font-semibold text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-700 data-open:bg-gray-700"
+                onClick={(e) => e.stopPropagation()}
+              >
                 {getActiveActionLabel()}
                 <ChevronDownIcon className="size-4 transition-transform duration-150 group-data-[open]:rotate-180" />
               </MenuButton>
@@ -104,9 +110,8 @@ const Navbar = ({
           actions.map((action) => (
             <div
               key={action.id}
-              className={`${styles.action} ${
-                activeAction === action.id ? styles.active : ""
-              }`}
+              className={`${styles.action} ${activeAction === action.id ? styles.active : ""
+                }`}
               onClick={() => onActionClick && onActionClick(action.id)}
             >
               <p>{action.label}</p>
@@ -166,6 +171,7 @@ Navbar.propTypes = {
   activeAction: PropTypes.string,
   onActionClick: PropTypes.func,
   actionsDropdown: PropTypes.bool,
+  isBackButtonEnabled: PropTypes.bool,
 };
 
 export default Navbar;

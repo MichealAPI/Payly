@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const isProd = import.meta.env.PROD;
+
 const apiClient = axios.create({
-    baseURL: "https://api.payly.it/api",
+    baseURL: isProd ? "https://api.payly.it/api" : "http://localhost:5000/api",
     timeout: 10000,
     withCredentials: true
 })

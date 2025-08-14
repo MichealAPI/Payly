@@ -6,6 +6,8 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  const api = env.VITE_API_ENDPOINT || 'http://localhost:5000';
+  const apiOrigin = new URL(api).origin;
 
   return {
     plugins: [react(), tailwindcss(), sentryVitePlugin({
@@ -25,14 +27,14 @@ export default defineConfig(({ mode }) => {
           img-src 'self' data: https://res.cloudinary.com https://placehold.co https://flagpedia.net;
           script-src 'self' 'unsafe-inline' 'unsafe-eval';
           style-src 'self' 'unsafe-inline';
-          connect-src 'self' ws: wss:;
+          connect-src 'self' ${apiOrigin} ws: wss:;
         `.replace(/\s{2,}/g, '').trim(),
       },
       proxy: {
         '/api': {
-          target: env.VITE_API_ENDPOINT || 'http://localhost:5000',
+          target: api,
           changeOrigin: true,
-          secure: env.TZ === 'production',
+          secure: false,
         },
       },
     },

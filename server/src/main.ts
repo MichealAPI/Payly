@@ -21,7 +21,10 @@ async function bootstrap() {
   app.set('trust proxy', 1);
 
   const configService = app.get(ConfigService);
-  const isProd = configService.get<string>('NODE_ENV') === 'production';
+  const nodeEnv = (configService.get<string>('NODE_ENV') ?? process.env.NODE_ENV ?? 'development').toLowerCase();
+  const isProd = nodeEnv === 'production';
+
+  console.log(`Running in ${nodeEnv} mode`);
 
   // Conservative body size limits to mitigate DoS
   app.use(bodyParser.json({ limit: '200kb' }));
@@ -96,7 +99,7 @@ async function bootstrap() {
     'https://app.payly.it',
     'https://www.payly.it',
     // add dev origins when not in prod
-    ...(isProd ? [] : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:4200']),
+    ...(isProd ? [] : ['http://localhost:3000', "http://localhost:5000", 'http://localhost:5173']),
   ];
 
   app.enableCors({
