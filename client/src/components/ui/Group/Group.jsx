@@ -117,7 +117,7 @@ export const Group = ({
               </div>
 
               <div className="mt-2 flex flex-col justify-center">
-                <div className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold text-white">
+                <div className="m-0 select-none md:select-auto overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold text-white">
                   <h3>{title}</h3>
                 </div>
 
