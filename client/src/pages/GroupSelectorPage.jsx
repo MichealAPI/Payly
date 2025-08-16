@@ -111,7 +111,11 @@ const GroupSelectorPage = () => {
     setIsJoining(true);
     try {
       const result = await dispatch(joinGroup(inviteCode)).unwrap();
-      toast.success(result.message);
+      toast.success("Successfully joined group!", { position: "bottom-center" });
+      
+      dispatch(fetchGroups());
+      dispatch(fetchArchivedGroups());
+
       setIsJoinerOpen(false);
     } catch (error) {
       toast.error(error.message || "Failed to join group.");
@@ -213,9 +217,8 @@ const GroupSelectorPage = () => {
                         key={group._id}
                         id={group._id}
                         group={group}
-                        className={`${
-                          allGroups.length < 2 ? "" : "cursor-pointer"
-                        } touch-action-none`}
+                        className={`${allGroups.length < 2 ? "" : "cursor-pointer"
+                          } touch-action-none`}
                         isArchived={(archivedItems || []).some(
                           (id) => id?.toString() === group._id?.toString()
                         )}
@@ -268,11 +271,10 @@ const GroupSelectorPage = () => {
       >
         {/* Secondary Action Buttons */}
         <div
-          className={`flex flex-col-reverse items-center gap-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 ${
-            isMenuOpen
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-2 pointer-events-none md:pointer-events-auto"
-          }`}
+          className={`flex flex-col-reverse items-center gap-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 ${isMenuOpen
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-2 pointer-events-none md:pointer-events-auto"
+            }`}
         >
           {/* Join Group Button */}
           <div className="group/join flex justify-between w-full items-center">
@@ -284,7 +286,11 @@ const GroupSelectorPage = () => {
               iconVisibility={true}
               icon={<UserPlusIcon className="w-6" />}
               className="relative z-10"
-              onClick={() => setIsJoinerOpen(true)}
+              onClick={() => {
+                setIsMenuOpen(false);
+                setIsJoinerOpen(true)
+              }
+              }
             />
           </div>
 
@@ -298,7 +304,11 @@ const GroupSelectorPage = () => {
               iconVisibility={true}
               icon={<PlusIcon className="w-6" />}
               className="relative z-10"
-              onClick={() => setIsCreatorOpen(true)}
+              onClick={() => {
+                setIsMenuOpen(false);
+                setIsCreatorOpen(true)
+              }
+              }
             />
           </div>
         </div>
@@ -320,9 +330,8 @@ const GroupSelectorPage = () => {
             onClick={handlePrimaryButtonClick}
             icon={
               <ChevronUpIcon
-                className={`w-6 transition-transform duration-400 md:group-hover:rotate-180 ${
-                  isMenuOpen ? "rotate-180" : ""
-                }`}
+                className={`w-6 transition-transform duration-400 md:group-hover:rotate-180 ${isMenuOpen ? "rotate-180" : ""
+                  }`}
               />
             }
             className="relative z-10"
