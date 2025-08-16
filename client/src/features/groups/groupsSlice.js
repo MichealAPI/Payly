@@ -10,14 +10,16 @@ export const fetchGroups = createAsyncThunk(
 
       const order = await apiClient.get("/users/settings/groupOrder");
 
-      const orderedIds = order?.data || [];
+      const orderedIds = order?.data || null;
 
-      // Order groups based on their IDs
-      groups.data.sort((a, b) => {
-        const indexA = orderedIds.indexOf(a._id);
-        const indexB = orderedIds.indexOf(b._id);
-        return indexA - indexB; // Ascending order
-      });
+      if (orderedIds && !Array.isArray(orderedIds)) {
+        // Order groups based on their IDs
+        groups.data.sort((a, b) => {
+          const indexA = orderedIds.indexOf(a._id);
+          const indexB = orderedIds.indexOf(b._id);
+          return indexA - indexB; // Ascending order
+        });
+      }
 
       return groups.data;
     } catch (error) {
@@ -125,15 +127,15 @@ export const joinGroup = createAsyncThunk(
 );
 
 export const updateGroup = createAsyncThunk(
-    "groups/updateGroup",
-    async ({ groupId, groupData }, { rejectWithValue }) => {
-        try {
-            const response = await apiClient.put(`/${groupId}/update`, groupData);
-            return response.data; // Expect the updated group object back from the API
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
+  "groups/updateGroup",
+  async ({ groupId, groupData }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.put(`/${groupId}/update`, groupData);
+      return response.data; // Expect the updated group object back from the API
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
+  }
 );
 
 
@@ -192,8 +194,8 @@ const groupsSlice = createSlice({
         state.items = action.payload;
       })
       .addCase(fetchArchivedGroups.fulfilled, (state, action) => {
-  // store only archived IDs
-  state.archivedItems = action.payload;
+        // store only archived IDs
+        state.archivedItems = action.payload;
       })
       .addCase(createGroup.fulfilled, (state, action) => {
         state.isLoading = false;
