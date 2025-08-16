@@ -21,12 +21,12 @@ const HomePage = () => {
           <div className="flex flex-col gap-3 md:items-stretch items-center">
             <Logo />
 
-            <h1 className="text-4xl md:text-5xl font-bold text-white m-0">
+            <h1 className="text-4xl md:text-5xl font-bold text-secondary m-0">
               Who said counting
               <br className="hidden md:block" /> expenses wasn't easy?
             </h1>
 
-            <p className="text-lg text-white opacity-60">
+            <p className="text-lg text-secondary opacity-60">
               Discover our newest tracking features and simplify your expenses.
             </p>
           </div>

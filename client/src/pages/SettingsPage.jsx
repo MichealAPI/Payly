@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 
 const SettingsPage = () => {
   const { currentUser, isLoading } = useSelector((state) => state.auth);
+  const { items } = useSelector((state) => state.groups); {/* Todo: keep always up-to-date */}
 
   // Combine user data and settings for the AccountSettings component
   const accountSettingsProps = currentUser
@@ -16,13 +17,13 @@ const SettingsPage = () => {
         currentIsEmailVerified: currentUser.isEmailVerified,
         // Spread settings from the nested object
         settings: currentUser.settings || [],
-        groupsAmount: currentUser.groups?.length,
+        groupsAmount: items?.length,
         firstSeen: currentUser.createdAt,
       }
     : null;
 
   return (
-    <Wrapper>
+    <Wrapper className={"bg-primary"}>
       <Navbar title="Settings" goBackEndpoint={"/groups"} />
       <div className="flex w-full justify-center">
         <div className="p-4 w-full max-w-3xl flex justify-center items-center">

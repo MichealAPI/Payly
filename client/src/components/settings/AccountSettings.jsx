@@ -8,11 +8,12 @@ import { Switch } from "@headlessui/react";
 import { TrashIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
+import Spinner from "../ui/Spinner/Spinner";
 
 const UserInfoPill = ({ title, value }) => (
   <div className="flex flex-col border-r-1 border-white/20 pr-3 last:border-r-0">
-    <p className="text-white/70 text-xs">{title}</p>
-    <p className="text-white text-sm">{value}</p>
+    <p className="text-secondary/70 text-xs">{title}</p>
+    <p className="text-secondary text-sm">{value}</p>
   </div>
 );
 
@@ -42,6 +43,7 @@ const AccountSettings = (props) => {
     profilePicture: initialProfilePicture,
   } = props;
 
+  const [isLoading, setIsLoading] = useState(false);
   const cld = new Cloudinary({ cloud: { cloudName: "dzeah7jtd" } });
   const fileInputRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -125,7 +127,7 @@ const AccountSettings = (props) => {
   };
 
   const inputClasses =
-    "block w-full rounded-md bg-transparent border border-white/30 text-white sm:text-sm p-2 focus:ring-indigo-500 focus:border-indigo-500";
+    "block w-full rounded-md bg-transparent border dark:border-secondary/20 border-white/30 text-secondary sm:text-sm p-2 focus:ring-tertiary/50 focus:border-tertiary/50";
 
   // Build Cloudinary image with version for cache busting
   const buildCldImage = () => {
@@ -140,6 +142,7 @@ const AccountSettings = (props) => {
   };
 
   return (
+    <>
     <div className="flex flex-col gap-6 w-full max-w-3xl">
       {/* Profile Header */}
       <div className="flex items-center w-full gap-4">
@@ -173,11 +176,13 @@ const AccountSettings = (props) => {
           )}
         </div>
         <div className="flex flex-col">
-          <h1 className="text-white font-medium text-2xl">
+          <h1 className="text-secondary font-medium text-2xl">
             {lastName ? `${firstName} ${lastName}` : "Your Name"}
           </h1>
           <div className="flex items-center gap-2">
-            <p className="text-white/80">{email || "your.email@example.com"}</p>
+            <p className="text-secondary/80">
+              {email || "your.email@example.com"}
+            </p>
             <Label
               bgColor={isEmailVerified ? "bg-green-500/80" : "bg-red-500/80"}
               text={isEmailVerified ? "Verified" : "Unverified"}
@@ -197,7 +202,7 @@ const AccountSettings = (props) => {
 
       {/* Settings Form */}
       <div className="flex flex-col">
-        <h2 className="text-white font-medium text-lg mb-3">
+        <h2 className="text-secondary font-medium text-lg mb-3">
           Account Settings
         </h2>
         <SettingRow title="Name">
@@ -244,18 +249,19 @@ const AccountSettings = (props) => {
           />
         </SettingRow>
 
-        <h2 className="text-white font-medium text-lg mb-3 mt-10">
+        <h2 className="text-secondary font-medium text-lg mb-3 mt-10">
           Notifications
         </h2>
         <SettingRow
           title="Email Notifications"
           description="Receive notifications via email"
+          isSidePlaced={true}
         >
           <div className="flex w-full justify-end">
             <Switch
               checked={getLocalSetting("emailNotifications")}
               onChange={() => toggleLocalSetting("emailNotifications")}
-              className="group inline-flex h-6 w-11 items-center rounded-full bg-gray-700 transition data-checked:bg-[#BD9EFF]/80"
+              className="group inline-flex h-6 w-11 items-center rounded-full bg-gray-700 transition data-checked:bg-light-purple/80"
             >
               <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
             </Switch>
@@ -270,7 +276,7 @@ const AccountSettings = (props) => {
             <Switch
               checked={getLocalSetting("pushNotifications")}
               onChange={() => toggleLocalSetting("pushNotifications")}
-              className="group inline-flex h-6 w-11 items-center rounded-full bg-gray-700 transition data-checked:bg-[#BD9EFF]/80"
+              className="group inline-flex h-6 w-11 items-center rounded-full bg-gray-700 transition data-checked:bg-light-purple/80"
             >
               <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
             </Switch>
@@ -284,7 +290,7 @@ const AccountSettings = (props) => {
             <Switch
               checked={getLocalSetting("inAppAlerts")}
               onChange={() => toggleLocalSetting("inAppAlerts")}
-              className="group inline-flex h-6 w-11 items-center rounded-full bg-gray-700 transition data-checked:bg-[#BD9EFF]/80"
+              className="group inline-flex h-6 w-11 items-center rounded-full bg-gray-700 transition data-checked:bg-light-purple/80"
             >
               <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
             </Switch>
@@ -292,22 +298,38 @@ const AccountSettings = (props) => {
         </SettingRow>
       </div>
 
+      <div>
+        <h2 className="text-secondary font-medium text-lg mt-10 mb-0">
+          Danger Zone
+        </h2>
+        <p className="text-secondary/70 text-sm mb-3 mt-0">
+          Proceed with caution. These actions are irreversible.
+        </p>
+      </div>
+
+      <SettingRow title="Delete Account" description="Permanently delete your account and all associated data. This action cannot be undone.">
+        <div className="flex justify-end w-full">
+          <Button
+            onClick={handleDeleteAccount}
+            className={"bg-red-500 py-2.5 px-2.5 rounded-lg hover:bg-red-600 text-white font-normal"}
+            bgColor="radial-gradient(50%_50.01%_at_50%_51.16%,#FF1A1A_14.9%,#FF4D4D_100%)"
+            hoverBgColor="radial-gradient(50%_50.01%_at_50%_51.16%,#FF1A1A_14.9%,#FF4D4D_100%)"
+            shadowColor="0px_0px_6.6px 7px rgba(255, 26, 26, 0.25)"
+            borderColor="#FF8282"
+            iconVisibility={true}
+            style="fill"
+            size="small"
+            icon={<TrashIcon className="w-5" />}
+            text={"Delete Account"}
+          />
+        </div>
+      </SettingRow>
+
       {/* Actions */}
-      <div className="flex justify-between items-center border-t-1 border-white/20 pt-4">
-        <Button
-          onClick={handleDeleteAccount}
-          className={"bg-red-500 hover:bg-red-600"}
-          bgColor="radial-gradient(50%_50.01%_at_50%_51.16%,#FF1A1A_14.9%,#FF4D4D_100%)"
-          hoverBgColor="radial-gradient(50%_50.01%_at_50%_51.16%,#FF1A1A_14.9%,#FF4D4D_100%)"
-          shadowColor="0px_0px_6.6px 7px rgba(255, 26, 26, 0.25)"
-          borderColor="#FF8282"
-          iconVisibility={true}
-          style="fill"
-          icon={<TrashIcon className="w-6" />}
-          text={"Delete Account"}
-        />
+      <div className="flex justify-end items-center border-t-1 border-secondary/20 mt-5 pt-5">
         <Button
           onClick={async () => {
+            setIsLoading(true);
             const ok = await handleSaveChanges();
             if (ok) {
               // Clear file input & preview after success to avoid stale state
@@ -317,13 +339,20 @@ const AccountSettings = (props) => {
               }
               setImagePreview(null);
             }
+            setIsLoading(false);
           }}
+          className={"text-white font-semibold px-2.5 py-2.5 rounded-lg"}
+          size={"small"}
           text={"Save Changes"}
-          iconVisibility={true}
-          icon={<CheckIcon className="w-6" />}
         />
       </div>
     </div>
+    {isLoading && (
+      <div className="absolute inset-0 flex items-center justify-center">        
+        <Spinner />
+      </div>
+    )}
+    </>
   );
 };
 

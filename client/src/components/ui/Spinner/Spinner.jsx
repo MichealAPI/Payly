@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Spinner = ({ color="bg-[#BD9EFF]" }) => {
+const Spinner = ({ color="bg-light-purple" }) => {
   return (
     <div className="flex space-x-2 items-center">
       <div className={`w-2 h-2 rounded-full animate-pulse ${color}`}></div>

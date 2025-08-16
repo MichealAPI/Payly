@@ -78,7 +78,7 @@ const OverviewContent = ({
 
     if (sortedExpenses.length === 0) {
       return (
-        <p className="text-white text-center opacity-70">
+        <p className="text-secondary text-center opacity-70">
           {searchQuery
             ? "No expenses match your search."
             : "No expenses yet. Be the first to add one!"}
@@ -235,10 +235,10 @@ const OverviewContent = ({
             )}
           <Card className="hidden md:flex w-full">
             <div className="flex flex-col w-full gap-4">
-              <h3 className="text-lg text-white font-bold text-center border-b border-slate-600 pb-3">
+              <h3 className="text-lg text-secondary font-bold text-center border-b border-slate-600 pb-3">
                 Group Summary
               </h3>
-              <div className="flex flex-col gap-4 text-white">
+              <div className="flex flex-col gap-4 text-secondary">
                 {/* You Owe */}
                 <div className="flex items-center gap-4">
                   <div className="bg-red-500/20 p-2 rounded-lg">
@@ -301,14 +301,14 @@ const OverviewContent = ({
                         ([currency, amount]) => (
                           <p
                             key={currency}
-                            className="text-lg font-bold text-white"
+                            className="text-lg font-bold text-secondary"
                           >
                             {amount.toFixed(2)} {currency}
                           </p>
                         )
                       )
                     ) : (
-                      <p className="text-lg font-bold text-white">0.00</p>
+                      <p className="text-lg font-bold text-secondary">0.00</p>
                     )}
                   </div>
                 </div>

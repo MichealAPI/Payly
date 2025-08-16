@@ -110,7 +110,7 @@ export default function ExpenseModal({
                 <DialogPanel className="w-full md:min-w-md max-w-md transform overflow-hidden rounded-2xl bg-black shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] p-6 text-left align-middle transition-all">
                   <DialogTitle
                     as="h3"
-                    className="text-lg leading-6 text-white font-bold"
+                    className="text-lg leading-6 text-secondary font-bold"
                   >
                     {modalTitle}
                   </DialogTitle>
@@ -130,7 +130,7 @@ export default function ExpenseModal({
                     <div className="mt-4">
                       <label
                         htmlFor="groupName"
-                        className="block text-sm font-medium text-white"
+                        className="block text-sm font-medium text-secondary"
                       >
                         Movement Title
                       </label>
@@ -139,7 +139,7 @@ export default function ExpenseModal({
                         id="movementName"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="mt-1 block w-full rounded-md border border-white text-white sm:text-sm p-2"
+                        className="mt-1 block w-full rounded-md border border-white text-secondary sm:text-sm p-2"
                         placeholder="Enter movement title"
                         required
                       />
@@ -148,19 +148,19 @@ export default function ExpenseModal({
                     <div className="mt-4">
                       <div className="flex gap-2">
                         <Field className="flex-1">
-                          <Label className="text-sm font-medium text-white">
+                          <Label className="text-sm font-medium text-secondary">
                             Amount
                           </Label>
                           <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                              <span className="text-white sm:text-sm">
+                              <span className="text-secondary sm:text-sm">
                                 {currency?.symbol}
                               </span>
                             </div>
                             <Input
                               type="number"
                               className={clsx(
-                                "block w-full border-1 rounded-lg bg-black pl-8 pr-3 py-1.5 text-sm/6 text-white text-right",
+                                "block w-full border-1 rounded-lg bg-black pl-8 pr-3 py-1.5 text-sm/6 text-secondary text-right",
                                 "focus:outline-none"
                               )}
                               value={amount}
@@ -176,7 +176,7 @@ export default function ExpenseModal({
                           </div>
                         </Field>
                         <div className="flex flex-1 flex-col gap-1">
-                          <p className="text-sm font-medium text-white m-0">
+                          <p className="text-sm font-medium text-secondary m-0">
                             Currency
                           </p>
                           <CurrencySelector
@@ -191,7 +191,7 @@ export default function ExpenseModal({
                       <div className="flex flex-col flex-1/2 justify-center ">
                         <label
                           htmlFor="paidby"
-                          className="block text-sm font-medium text-white"
+                          className="block text-sm font-medium text-secondary"
                         >
                           Paid by
                         </label>
@@ -207,7 +207,7 @@ export default function ExpenseModal({
                       <div className="flex w-full flex-col flex-1/2">
                         <label
                           htmlFor="date"
-                          className="block text-sm font-medium text-white"
+                          className="block text-sm font-medium text-secondary"
                         >
                           Paid on
                         </label>
@@ -218,23 +218,23 @@ export default function ExpenseModal({
                     <div className="mt-4">
                       <label
                         htmlFor="description"
-                        className="block text-sm font-medium text-white"
+                        className="block text-sm font-medium text-secondary"
                       >
                         Description{" "}
-                        <span className="text-white/60">(optional)</span>
+                        <span className="text-secondary/60">(optional)</span>
                       </label>
                       <textarea
                         id="description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         rows={3}
-                        className="mt-1 block w-full rounded-md border border-white text-white p-2 sm:text-sm"
+                        className="mt-1 block w-full rounded-md border border-white text-secondary p-2 sm:text-sm"
                         placeholder="Enter movement description"
                       />
                     </div>
 
                     <div className="mt-4 flex gap-1 flex-col">
-                      <p className="text-sm font-medium text-white m-0">
+                      <p className="text-sm font-medium text-secondary m-0">
                         Split Method
                       </p>
                       <SplitMethodSelector
@@ -243,7 +243,7 @@ export default function ExpenseModal({
                       />
                     </div>
 
-                    <div className="mt-4 text-white">
+                    <div className="mt-4 text-secondary">
                       <SplitMenu
                         currencySymbol={currency?.symbol || ""}
                         splitMethod={splitMethod}

@@ -22,19 +22,19 @@ const Input = ({
         <div className={`flex flex-col w-full ${className}`}>
             <div className={`flex items-center mb-1 ${label ? 'justify-between' : 'justify-end'}`}>
                 {label && (
-                    <p className="text-md font-sans text-white/60 m-0 mb-1">
+                    <p className="text-md font-sans text-secondary/60 m-0 mb-1">
                         {label}
                     </p>
                 )}
                 {rightLabel}
             </div>
-            <div className="flex items-center outline-[1.5px] outline-white/50 bg-[#0a0a0a] rounded-[10px]">
+            <div className="flex items-center outline-[1.5px] outline-white/50 bg-primary rounded-[10px]">
                 {icon && (
-                    <div className="flex items-center justify-center px-3 text-white/60">
+                    <div className="flex items-center justify-center px-3 text-secondary/60">
                         {icon}
                     </div>
                 )}
-                <div className="flex-grow text-white">
+                <div className="flex-grow text-secondary">
                     <input
                         placeholder={placeholder}
                         type={currentType}
@@ -51,9 +51,9 @@ const Input = ({
                             className="btn outline-none cursor-pointer bg-transparent"
                         >
                             {currentType === 'password' ? (
-                                <EyeSlashIcon className="w-6 h-8 text-white/30" />
+                                <EyeSlashIcon className="w-6 h-8 text-secondary/30" />
                             ) : (
-                                <EyeIcon className="w-6 h-8 text-white/30" />
+                                <EyeIcon className="w-6 h-8 text-secondary/30" />
                             )}
                         </button>
                     </div>

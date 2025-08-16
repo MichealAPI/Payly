@@ -108,8 +108,8 @@ export const Group = ({
         defIcon={icon}
       />
 
-      <Card className={`${className} w-full md:h-55 cursor-pointer`} onClick={handleNavigate}>
-        <div className="flex w-full items-center h-full gap-4 md:items-start ">
+      <Card className={`${className} w-full md:h-55 bg-dark-gray cursor-pointer`} onClick={handleNavigate}>
+        <div className="flex w-full items-center h-full  gap-4 md:items-start">
           <div className="flex flex-row items-center gap-4 flex-1 min-w-0 h-full md:flex-col md:items-start md:gap-9">
             <div className="flex md:flex-col gap-2 md:gap-0 items-center md:items-stretch">
               <div className="m-0 text-3xl md:text-5xl select-none pointer-events-none">
@@ -117,11 +117,11 @@ export const Group = ({
               </div>
 
               <div className="mt-2 flex flex-col justify-center">
-                <div className="m-0 select-none md:select-auto text-xl md:text-2xl font-bold text-white">
+                <div className="m-0 select-none md:select-auto text-xl md:text-2xl font-bold text-secondary">
                   <h3 className="truncate max-w-[35vw]">{title}</h3>
                 </div>
 
-                <div className="text-xs md:text-sm font-normal text-white select-none">
+                <div className="text-xs md:text-sm font-normal text-secondary select-none">
                   <p>{formattedMembers}</p>
                 </div>
 
@@ -132,7 +132,7 @@ export const Group = ({
               </div>
             </div>
 
-            <div className="hidden w-full text-lg font-normal text-white md:block">
+            <div className="hidden w-full text-lg font-normal text-secondary md:block">
               <p className="m-0 overflow-hidden text-ellipsis whitespace-nowrap">
                 {description}
               </p>
@@ -151,14 +151,14 @@ export const Group = ({
                 onClick={handleSettingsClick}
               >
                 <Menu>
-                  <MenuButton className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold cursor-pointer text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-purple-400/20">
-                    <Cog6ToothIcon className="h-6 w-6 text-white" />
+                  <MenuButton className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold cursor-pointer text-secondary focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-purple-400/20">
+                    <Cog6ToothIcon className="h-6 w-6 text-secondary" />
                   </MenuButton>
 
                   <MenuItems
                     transition
                     anchor="bottom end"
-                    className="w-30 z-50 origin-top-right rounded-xl border border-purple-400/30 bg-[#121214] p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+                    className="w-30 z-50 origin-top-right rounded-xl border border-purple-400/30 bg-dark-gray p-1 text-sm/6 text-secondary transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
                   >
                     <MenuItem>
                       <button

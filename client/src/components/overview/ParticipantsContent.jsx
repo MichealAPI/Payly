@@ -81,7 +81,7 @@ const ParticipantsContent = ({
             );
           })
         ) : (
-          <p className="text-white text-center opacity-70">
+          <p className="text-secondary text-center opacity-70">
             {searchQuery
               ? "No participants match your search."
               : "No participants found. Invite some friends to get started!"}

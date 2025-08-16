@@ -141,7 +141,7 @@ const RegisterPage = () => {
                 className="w-12 h-12 bg-radial from-gray-700/60 to-black p-3 rounded-xl outline-1 outline-white/10"
                 onClickHomepageNavigate={false}
               />
-              <h1 className="text-white text-2xl font-medium mb-2">
+              <h1 className="text-secondary text-2xl font-medium mb-2">
                 {step === 0 ? "Create your Payly account" : "Let’s get to know you better"}
               </h1>
             </div>
@@ -232,12 +232,12 @@ const RegisterPage = () => {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <p className="text-md font-sans text-white/60 m-0">Date of birth</p>
+                      <p className="text-md font-sans text-secondary/60 m-0">Date of birth</p>
                       <DatePicker date={dob} setDate={setDob} labelDropdown={true}/>
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <p className="text-md font-sans text-white/60 m-0">Sex</p>
+                      <p className="text-md font-sans text-secondary/60 m-0">Sex</p>
                       <div className="grid grid-cols-3 gap-2">
                         {[
                           { key: "male", label: "Male" },
@@ -251,7 +251,7 @@ const RegisterPage = () => {
                               text={label}
                               size="full"
                               style={selected ? "fill" : "outline"}
-                              className={`py-2 ${selected ? "" : "border-white/40 text-white"}`}
+                              className={`py-2 ${selected ? "" : "border-white/40 text-secondary"}`}
                               onClick={(e) => {
                                 e.preventDefault();
                                 setSex(key);
@@ -267,7 +267,7 @@ const RegisterPage = () => {
                         text="Back"
                         size="medium"
                         style="outline"
-                        className="border-white/50 text-white"
+                        className="border-white/50 text-secondary"
                         onClick={(e) => {
                           e.preventDefault();
                           setStep(0);
@@ -288,7 +288,7 @@ const RegisterPage = () => {
     </motion.form>
 
             <div className="flex mt-10">
-              <p className="text-white text-lg">Already have an account?</p>
+              <p className="text-secondary text-lg">Already have an account?</p>
               <Link
                 to="/login"
                 className="text-[#9f74fc] text-lg cursor-pointer ml-1.5 hover:underline"
@@ -300,7 +300,7 @@ const RegisterPage = () => {
         </div>
 
         <p
-          className="absolute bottom-5 text-sm opacity-70 text-white"
+          className="absolute bottom-5 text-sm opacity-70 text-secondary"
           aria-label="Made with love in Italy"
         >
           Made with <span aria-hidden="true">❤️</span> in Italy

@@ -120,7 +120,7 @@ export default function GroupModal({
               <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-black shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] p-6 text-left align-middle transition-all">
                 <DialogTitle
                   as="h3"
-                  className="text-lg leading-6 text-white font-bold"
+                  className="text-lg leading-6 text-secondary font-bold"
                 >
                   {modalTitle}
                 </DialogTitle>
@@ -131,7 +131,7 @@ export default function GroupModal({
                     <div className="flex flex-col items-center">
                       <label
                         htmlFor="icon-button"
-                        className="block text-sm font-medium text-white mb-2"
+                        className="block text-sm font-medium text-secondary mb-2"
                       >
                         Icon
                       </label>
@@ -150,7 +150,7 @@ export default function GroupModal({
                       <div>
                         <label
                           htmlFor="groupName"
-                          className="block text-sm font-medium text-white"
+                          className="block text-sm font-medium text-secondary"
                         >
                           Group Name
                         </label>
@@ -159,7 +159,7 @@ export default function GroupModal({
                           id="groupName"
                           value={groupName}
                           onChange={(e) => setGroupName(e.target.value)}
-                          className="mt-1 block w-full rounded-md border-white/50 border-1 bg-transparent focus:border-white focus:ring-white text-white sm:text-sm p-2"
+                          className="mt-1 block w-full rounded-md border-white/50 border-1 bg-transparent focus:border-white focus:ring-white text-secondary sm:text-sm p-2"
                           placeholder="Enter group name"
                           required
                         />
@@ -167,7 +167,7 @@ export default function GroupModal({
                       <div className="mt-4">
                         <label
                           htmlFor="description"
-                          className="block text-sm font-medium text-white"
+                          className="block text-sm font-medium text-secondary"
                         >
                           Description
                         </label>
@@ -176,7 +176,7 @@ export default function GroupModal({
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
                           rows={3}
-                          className="mt-1 block w-full rounded-md border-1 border-white/50 bg-transparent focus:border-white focus:ring-white text-white p-2 sm:text-sm"
+                          className="mt-1 block w-full rounded-md border-1 border-white/50 bg-transparent focus:border-white focus:ring-white text-secondary p-2 sm:text-sm"
                           placeholder="Enter group description"
                           required
                         />

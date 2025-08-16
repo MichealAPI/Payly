@@ -73,10 +73,10 @@ const Participant = ({
               {image}
 
               <div className="flex flex-col">
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-secondary">
                   {participantName}
                 </h3>
-                <p className="text-white text-lg">
+                <p className="text-secondary text-lg">
                   {netBalanceMessage}{" "}
                   <span className={`font-bold ${netBalanceClass}`}>
                     {currency ? `${currency} ` : ""}

@@ -48,14 +48,14 @@ const ConfirmModal = ({ title, message, isOpen, setIsOpen, onConfirm, onCancel }
               <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-black shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] p-6 text-left align-middle transition-all">
                 <DialogTitle
                   as="h3"
-                  className="text-lg leading-6 text-white font-bold"
+                  className="text-lg leading-6 text-secondary font-bold"
                 >
                     {title}
                 </DialogTitle>
 
                 <div className="mt-2">
                     <span 
-                      className="text-sm text-white"
+                      className="text-sm text-secondary"
                       dangerouslySetInnerHTML={{ __html: message }}
                     />
                 </div>

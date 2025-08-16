@@ -6,12 +6,12 @@ export function CustomEmojiPicker({ onSelect }) {
       onEmojiSelect={(emoji) => onSelect(emoji.emoji)}
       className="isolate flex h-[368px] w-full flex-col bg-black rounded-lg border-1 border-white/10 shadow-lg shadow-black/50"
     >
-      <EmojiPicker.Search className="z-10 mx-2 mt-2 appearance-none rounded-md bg-black border-1 text-white border-white/30 px-2.5 py-2 text-sm" />
+      <EmojiPicker.Search className="z-10 mx-2 mt-2 appearance-none rounded-md bg-black border-1 text-secondary border-white/30 px-2.5 py-2 text-sm" />
       <EmojiPicker.Viewport className="mt-2 relative flex-1 outline-hidden [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
-        <EmojiPicker.Loading className="absolute inset-0 flex items-center justify-center text-sm text-white/60">
+        <EmojiPicker.Loading className="absolute inset-0 flex items-center justify-center text-sm text-secondary/60">
           Loading…
         </EmojiPicker.Loading>
-        <EmojiPicker.Empty className="absolute inset-0 flex items-center justify-center text-sm text-white/60">
+        <EmojiPicker.Empty className="absolute inset-0 flex items-center justify-center text-sm text-secondary/60">
           No emoji found.
         </EmojiPicker.Empty>
         <EmojiPicker.List
@@ -19,7 +19,7 @@ export function CustomEmojiPicker({ onSelect }) {
           components={{
             CategoryHeader: ({ category, ...props }) => (
               <div
-                className="bg-[#331670] px-3 pt-3 pb-1.5 font-medium text-white/80 text-xs"
+                className="bg-purple-950 px-3 pt-3 pb-1.5 font-medium text-secondary/80 text-xs"
                 {...props}
               >
                 {category.label}

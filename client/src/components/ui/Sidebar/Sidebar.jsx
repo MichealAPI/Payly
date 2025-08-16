@@ -34,7 +34,7 @@ const Sidebar = () => {
             <div
                 className="
                     fixed z-[1000] top-0 left-0 w-20 h-screen
-                    bg-white/10 backdrop-blur-xl border-r border-white/20 shadow-lg
+                    backdrop-blur-xl border-r dark:bg-white/20 bg-white/10 border-black/10 shadow-[0_8px_24px_rgba(17,24,39,0.08)]
                     hidden md:flex justify-center items-center
                     text-white/80
                 "

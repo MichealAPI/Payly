@@ -67,7 +67,7 @@ const LoginPage = () => {
             <div className="flex items-center flex-col gap-2">
               <Logo className="w-12 h-12 bg-radial from-gray-700/60 to-black p-3 rounded-xl outline-1 outline-white/10" onClickHomepageNavigate={false}/>
 
-              <h1 className="text-white text-2xl font-medium mb-2">
+              <h1 className="text-secondary text-2xl font-medium mb-2">
                 Log in to Payly
               </h1>
             </div>
@@ -143,7 +143,7 @@ const LoginPage = () => {
             </form>
 
             <div className="flex mt-10">
-              <p className="text-white text-lg">Don't have an account?</p>
+              <p className="text-secondary text-lg">Don't have an account?</p>
               <Link
                 to="/register"
                 className="text-[#9f74fc] text-lg cursor-pointer ml-1.5 hover:underline"
@@ -155,7 +155,7 @@ const LoginPage = () => {
         </div>
 
         <p
-          className="absolute bottom-5 text-sm opacity-70 text-white"
+          className="absolute bottom-5 text-sm opacity-70 text-secondary"
           aria-label="Made with love in Italy"
         >
           Made with <span aria-hidden="true">❤️</span> in Italy

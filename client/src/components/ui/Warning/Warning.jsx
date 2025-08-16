@@ -12,7 +12,7 @@ const Warning = ({ message, icon, className}) => {
                 </div>
 
                 <div className="flex flex-col">
-                    <h3 className="text-lg font-bold text-white">
+                    <h3 className="text-lg font-bold text-secondary">
                         {message}
                     </h3>
                     <p className="text-xs text-yellow-100 font-bold select-none">

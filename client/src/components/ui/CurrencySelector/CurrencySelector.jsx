@@ -28,7 +28,7 @@ const CurrencySelector = ({ setCurrency, currency }) => {
             <div className="relative">
                 <ComboboxInput
                     className={clsx(
-                        'w-full rounded-lg border-1 bg-black py-1.5 pr-8 pl-3 text-sm/6 text-white',
+                        'w-full rounded-lg border-1 bg-black py-1.5 pr-8 pl-3 text-sm/6 text-secondary',
                         'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
                     )}
                     displayValue={(c) => c?.name || c || ''}
@@ -52,10 +52,10 @@ const CurrencySelector = ({ setCurrency, currency }) => {
                     <ComboboxOption
                         key={currency.id}
                         value={currency.name}
-                        className="group flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-[#BD9EFF]/10"
+                        className="group flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-light-purple/10"
                     >
                         <CheckIcon className="invisible size-4 fill-white group-data-selected:visible" />
-                        <div className="text-sm/6 text-white font-bold flex w-full items-center">
+                        <div className="text-sm/6 text-secondary font-bold flex w-full items-center">
                             <img
                                 src={`https://flagpedia.net/data/${currency.section}/w20/${currency.countryCode}.webp`}
                                 className="h-3 w-5 mr-2"

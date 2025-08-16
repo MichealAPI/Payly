@@ -97,7 +97,7 @@ export default function SplitField({
   return (
     <Field
       className={`flex items-center gap-2 rounded-lg transition-colors duration-200 p-2 overflow-hidden ${
-        !isEnabled ? "bg-[#BD9EFF]/10" : " bg-[#BD9EFF]/20"
+        !isEnabled ? "bg-light-purple/10" : " bg-light-purple/20"
       }`}
     >
       <Checkbox
@@ -118,7 +118,7 @@ export default function SplitField({
       >
         <CheckIcon className="hidden w-4 text-black group-data-checked:block stroke-3" />
       </Checkbox>
-      <p className={`flex-1 text-sm text-white ${!isEnabled ? "opacity-50 select-none" : ""}`}>
+      <p className={`flex-1 text-sm text-secondary ${!isEnabled ? "opacity-50 select-none" : ""}`}>
         {participantName}
       </p>
 
@@ -134,7 +134,7 @@ export default function SplitField({
           >
             <div
               className={clsx(
-                "flex items-baseline justify-end rounded-lg border-none bg-white/5 py-1.5 pl-8 pr-3 text-right text-sm/6 text-white",
+                "flex items-baseline justify-end rounded-lg border-none bg-white/5 py-1.5 pl-8 pr-3 text-right text-sm/6 text-secondary",
                 "max-w-[200px] min-w-[70px] box-border"
               )}
             >
@@ -157,7 +157,7 @@ export default function SplitField({
                 "border-none focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25"
               )}
             />
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2 text-white/50">
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2 text-secondary/50">
               {splitMethod === "fixed" ? currencySymbol : "%"}
             </span>
           </motion.div>

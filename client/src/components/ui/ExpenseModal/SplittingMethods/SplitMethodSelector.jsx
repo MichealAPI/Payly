@@ -18,7 +18,7 @@ const SplitMethodSelector = ({ setSplitMethod, splitMethod }) => {
             <div className="relative">
                 <ListboxButton
                     className={clsx(
-                        'relative w-full cursor-default rounded-lg border-1 bg-black py-1.5 pr-10 pl-3 text-left text-sm/6 text-white',
+                        'relative w-full cursor-default rounded-lg border-1 bg-black py-1.5 pr-10 pl-3 text-left text-sm/6 text-secondary',
                         'focus:outline-none focus:ring-2 focus:ring-white/75'
                     )}
                 >
@@ -41,7 +41,7 @@ const SplitMethodSelector = ({ setSplitMethod, splitMethod }) => {
                             <ListboxOption
                                 key={method.id}
                                 className={({ active }) =>
-                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-gray-700 text-white' : 'text-gray-300'}`
+                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-gray-700 text-secondary' : 'text-gray-300'}`
                                 }
                                 value={method.value}
                             >
@@ -52,7 +52,7 @@ const SplitMethodSelector = ({ setSplitMethod, splitMethod }) => {
                                             {method.label}
                                         </span>
                                         {selected ? (
-                                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-secondary">
                                                 <CheckIcon className="h-5 w-5" aria-hidden="true" />
                                             </span>
                                         ) : null}

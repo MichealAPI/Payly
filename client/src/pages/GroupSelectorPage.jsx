@@ -200,7 +200,7 @@ const GroupSelectorPage = () => {
           actionsDropdown={true}
           onActionClick={setActiveAction}
         />
-        <div className="w-full flex h-full flex-grow">
+        <div className="w-full flex h-full flex-grow bg-primary">
           {isLoading ? (
             <>
               {/* Desktop loading cards */}
@@ -263,11 +263,11 @@ const GroupSelectorPage = () => {
                 className="w-1/3 mb-5 animate-translate select-none pointer-events-none"
               />
               {activeAction === "archived" ? (
-                <p className="text-white text-lg md:text-2xl">
+                <p className="text-secondary text-lg md:text-2xl">
                   No archived groups found.
                 </p>
               ) : (
-                <p className="text-white md:text-2xl text-lg text-center">
+                <p className="text-secondary md:text-2xl text-lg text-center">
                   No groups found, click on the "<b>+</b>" button
                   <br /> in the bottom-right menu to create one!
                 </p>
@@ -276,7 +276,7 @@ const GroupSelectorPage = () => {
           )}
         </div>
         {isLoading && (
-          <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black/30">
+          <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-primary/30">
             <Spinner />
           </div>
         )}
@@ -296,7 +296,7 @@ const GroupSelectorPage = () => {
         >
           {/* Join Group Button */}
           <div className="group/join flex justify-between w-full items-center">
-            <p className="whitespace-nowrap text-[#BD9EFF] mr-5 text-sm font-bold opacity-0 group-hover/join:opacity-100 transition-all duration-200 transform translate-x-[20px] group-hover/join:translate-x-0">
+            <p className="whitespace-nowrap text-light-purple mr-5 text-sm font-bold opacity-0 group-hover/join:opacity-100 transition-all duration-200 transform translate-x-[20px] group-hover/join:translate-x-0">
               Join Group
             </p>
             <Button
@@ -314,7 +314,7 @@ const GroupSelectorPage = () => {
 
           {/* Create Group Button */}
           <div className="group/create flex w-full items-center">
-            <p className="whitespace-nowrap text-[#BD9EFF] mr-5 text-sm font-bold opacity-0 group-hover/create:opacity-100 transition-all duration-200 transform translate-x-[20px] group-hover/create:translate-x-0">
+            <p className="whitespace-nowrap text-light-purple mr-5 text-sm font-bold opacity-0 group-hover/create:opacity-100 transition-all duration-200 transform translate-x-[20px] group-hover/create:translate-x-0">
               Create Group
             </p>
             <Button

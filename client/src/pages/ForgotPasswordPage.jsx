@@ -13,7 +13,7 @@ const ForgotPasswordPage = () => {
     const [email, setEmail] = useState('');
 
     return (
-        <div className="flex flex-col min-h-[100vh] bg-[#1A1A1E]">
+        <div className="flex flex-col min-h-[100vh] bg-dark-gray">
             <HomeNavbar />
 
             <div className="flex flex-col flex-1 mt-8 items-center justify-between">
@@ -22,8 +22,8 @@ const ForgotPasswordPage = () => {
                     <Logo className="w-10 h-auto mb-2" onClickHomepageNavigate={false}/>
 
                     <div className="flex flex-col justify-center items-center text-center">
-                        <h1 className="text-4xl font-bold text-white m-0">Password Reset</h1>
-                        <p className="text-2xl text-white m-0">We'll email you a reset link</p>
+                        <h1 className="text-4xl font-bold text-secondary m-0">Password Reset</h1>
+                        <p className="text-2xl text-secondary m-0">We'll email you a reset link</p>
                     </div>
 
                     <form className="flex flex-col gap-4 mt-8 w-sm" onSubmit={(e) => e.preventDefault()}>
@@ -51,11 +51,11 @@ const ForgotPasswordPage = () => {
                         />
                     </form>
 
-                    <ArrowLeftIcon onClick={() => navigate("/login")} className="mt-20 w-8 h-auto text-white cursor-pointer hover:text-purple-400 transition-colors" />
+                    <ArrowLeftIcon onClick={() => navigate("/login")} className="mt-20 w-8 h-auto text-secondary cursor-pointer hover:text-purple-400 transition-colors" />
 
                 </div>
 
-                <p className="items-end text-sm opacity-70 mb-5 text-white">Made with ❤️ in Italy</p>
+                <p className="items-end text-sm opacity-70 mb-5 text-secondary">Made with ❤️ in Italy</p>
             </div>
         </div>
     )

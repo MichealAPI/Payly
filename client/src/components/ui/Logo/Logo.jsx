@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const Logo = ({
     className = '',
     sideText = false,
-    textClassName = 'font-bold text-white text-xl hidden md:block',
+    textClassName = 'font-bold text-secondary text-xl hidden md:block',
     onClickHomepageNavigate = true,
     background = false
 }) => {

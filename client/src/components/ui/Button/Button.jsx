@@ -18,7 +18,7 @@ const Button = ({
   disabled = false,
 }) => {
   const baseStyles =
-    "font-bold text-base text-white relative overflow-hidden transition-transform duration-100 ease-linear cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.025] disabled:opacity-50 disabled:cursor-not-allowed";
+    "font-bold text-base text-secondary relative overflow-hidden transition-transform duration-100 ease-linear cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.025] disabled:opacity-50 disabled:cursor-not-allowed";
 
   const sizeStyles = {
     large: "py-2.5 px-[90px] rounded-[5px]",

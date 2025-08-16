@@ -11,29 +11,29 @@ import {
 const Header = ({ title, membersCount, description, icon, isOwner, onEdit }) => {
   return (
     <Card
-      className="mt-4 w-full md:mt-0 md:border-b-2 md:border-solid md:border-b-[#6928F3]"
+      className="mt-4 w-full md:mt-0 md:border-b-2 md:border-solid md:border-b-tertiary"
       bgHiddenSm={true}
     >
       <div className="flex w-full justify-center md:w-full md:justify-between">
         <div className="flex w-full flex-col items-center md:items-start">
           <div className="text-center md:text-left">
             <p className="text-[100px] md:text-[50px]">{icon}</p>
-            <h1 className="font-['Phantom_Sans',_sans-serif] m-0 text-5xl font-bold text-white">
+            <h1 className="font-['Phantom_Sans',_sans-serif] m-0 text-5xl font-bold text-secondary">
               {title}
             </h1>
           </div>
 
           <div className="hidden md:block">
-            <p className="font-['Phantom_Sans',_sans-serif] m-0 max-w-[600px] text-2xl font-light text-white opacity-70">
+            <p className="font-['Phantom_Sans',_sans-serif] m-0 max-w-[600px] text-2xl font-light text-secondary opacity-70">
               {description}
             </p>
           </div>
 
           <div className="flex">
             <div className="flex items-center">
-              <UserIcon className="h-[25px] w-[25px] text-white" />
+              <UserIcon className="h-[25px] w-[25px] text-secondary" />
               <div>
-                <p className="font-['Phantom_Sans',_sans-serif] m-0 text-3xl font-bold text-white">
+                <p className="font-['Phantom_Sans',_sans-serif] m-0 text-3xl font-bold text-secondary">
                   {membersCount}
                 </p>
               </div>
@@ -52,14 +52,14 @@ const Header = ({ title, membersCount, description, icon, isOwner, onEdit }) => 
 const HeaderSettingsMenu = ({ isOwner, onEdit }) => {
   return (
     <Menu>
-      <MenuButton className="absolute inline-flex items-center gap-2 text-sm/6 font-semibold text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:text-purple-400/20 md:relative">
-        <Cog6ToothIcon className="h-[25px] w-[25px] cursor-pointer text-white transition-colors duration-100 ease-in-out hover:text-[#9f74fc]" />
+      <MenuButton className="absolute inline-flex items-center gap-2 text-sm/6 font-semibold text-secondary focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:text-purple-400/20 md:relative">
+        <Cog6ToothIcon className="h-[25px] w-[25px] cursor-pointer text-secondary transition-colors duration-100 ease-in-out hover:text-[]" />
       </MenuButton>
 
       <MenuItems
         transition
         anchor="bottom end"
-        className="z-50 w-40 origin-top-right rounded-xl border border-purple-400/30 bg-[#121214] p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+        className="z-50 w-40 origin-top-right rounded-xl border border-purple-400/30 bg-dark-gray] p-1 text-sm/6 text-secondary transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
       >
         <MenuItem>
           <button

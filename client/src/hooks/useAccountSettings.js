@@ -37,6 +37,7 @@ export const useAccountSettings = ({
   const navigate = useNavigate();
 
   const handleSaveChanges = useCallback(async () => {
+    
     if (password && password !== confirmPassword) {
       toast.error("Passwords do not match!");
       return false;

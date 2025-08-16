@@ -94,7 +94,7 @@ const OverviewPage = () => {
           />
 
           <div className="mt-5 w-full">
-            <p className="text-base text-white opacity-70 mb-2 text-right m-0">
+            <p className="text-base text-secondary opacity-70 mb-2 text-right m-0">
               Need help?
             </p>
             <AnimatePresence mode="wait">

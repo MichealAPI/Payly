@@ -51,15 +51,15 @@ const ExpenseDetailModal = ({ isOpen, onClose, expense }) => {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
           >
-            <DialogPanel className="w-[90vw] md:min-w-md max-w-md transform overflow-hidden rounded-2xl bg-black border border-[#BD9EFF]/40 p-6 text-left align-middle shadow-xl transition-all">
+            <DialogPanel className="w-[90vw] md:min-w-md max-w-md transform overflow-hidden rounded-2xl bg-black border border-light-purple/40 p-6 text-left align-middle shadow-xl transition-all">
               <DialogTitle
                 as="h3"
-                className="text-2xl font-bold leading-6 text-white flex justify-between items-center"
+                className="text-2xl font-bold leading-6 text-secondary flex justify-between items-center"
               >
                 {expense.title}
                 <button
                   onClick={onClose}
-                  className="text-slate-400 cursor-poin hover:text-white"
+                  className="text-slate-400 cursor-poin hover:text-secondary"
                 >
                   <XMarkIcon className="w-6 h-6" />
                 </button>
@@ -67,7 +67,7 @@ const ExpenseDetailModal = ({ isOpen, onClose, expense }) => {
 
               <div className="mt-4 flex flex-col gap-4 text-slate-300">
                 {/* Amount */}
-                <div className="flex items-center gap-3 p-3 bg-[#BD9EFF]/15 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-light-purple/15 rounded-lg">
                   <CurrencyDollarIcon
                     className={`w-6 h-6 ${
                       expense.type === "deposit"
@@ -93,11 +93,11 @@ const ExpenseDetailModal = ({ isOpen, onClose, expense }) => {
 
                 {/* Description */}
                 {expense.description && (
-                  <div className="flex items-start gap-3 p-3 bg-[#BD9EFF]/15 rounded-lg">
+                  <div className="flex items-start gap-3 p-3 bg-light-purple/15 rounded-lg">
                     <DocumentTextIcon className="w-6 h-6 text-slate-400 mt-1 flex-shrink-0" />
                     <div>
                       <p className="text-sm text-slate-400">Description</p>
-                      <p className="text-white whitespace-pre-wrap break-words">
+                      <p className="text-secondary whitespace-pre-wrap break-words">
                         {expense.description}
                       </p>
                     </div>
@@ -105,11 +105,11 @@ const ExpenseDetailModal = ({ isOpen, onClose, expense }) => {
                 )}
 
                 {/* Paid By */}
-                <div className="flex items-center gap-3 p-3 bg-[#BD9EFF]/15 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-light-purple/15 rounded-lg">
                   <UserCircleIcon className="w-6 h-6 text-slate-400" />
                   <div>
                     <p className="text-sm text-slate-400">Paid by</p>
-                    <p className="text-white font-medium">
+                    <p className="text-secondary font-medium">
                       {expense.paidBy.firstName && expense.paidBy.lastName
                         ? `${expense.paidBy.firstName} ${expense.paidBy.lastName}`
                         : expense.paidBy.email}
@@ -118,16 +118,16 @@ const ExpenseDetailModal = ({ isOpen, onClose, expense }) => {
                 </div>
 
                 {/* Date */}
-                <div className="flex items-center gap-3 p-3 bg-[#BD9EFF]/15 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-light-purple/15 rounded-lg">
                   <CalendarIcon className="w-6 h-6 text-slate-400" />
                   <div>
                     <p className="text-sm text-slate-400">Date</p>
-                    <p className="text-white font-medium">{formattedDate}</p>
+                    <p className="text-secondary font-medium">{formattedDate}</p>
                   </div>
                 </div>
 
                 {/* Participants */}
-                <div className="flex flex-col gap-3 p-3 bg-[#BD9EFF]/15 rounded-lg">
+                <div className="flex flex-col gap-3 p-3 bg-light-purple/15 rounded-lg">
                   <div className="flex items-center gap-3">
                     <UsersIcon className="w-6 h-6 text-slate-400" />
                     <p className="text-sm text-slate-400">Participants</p>
@@ -143,7 +143,7 @@ const ExpenseDetailModal = ({ isOpen, onClose, expense }) => {
                           currentUser={p.user}
                           className="w-4 h-4 rounded-full"
                         />
-                        <span className="text-xs text-white">
+                        <span className="text-xs text-secondary">
                           {p.user.firstName} {p.user.lastName}
                         </span>
                       </div>

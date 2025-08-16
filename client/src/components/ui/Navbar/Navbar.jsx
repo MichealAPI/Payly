@@ -12,6 +12,7 @@ import { ArrowLeftIcon, HomeIcon, HomeModernIcon } from "@heroicons/react/24/sol
 import { useNavigate } from "react-router-dom";
 import ProfilePicture from "../ProfilePicture/ProfilePicture";
 import { useSelector } from "react-redux";
+import ThemeSwitcher from "../ThemeSwitcher/ThemeSwitcher";
 
 const Navbar = ({
   title,
@@ -53,7 +54,7 @@ const Navbar = ({
         }`}
         onClick={handleTitleClick}
       >
-        <div className="flex items-center gap-2 text-white">
+        <div className="flex items-center gap-2 text-secondary">
           {isBackButtonEnabled && (
             <div className="hidden md:block">
               <ArrowLeftIcon className="w-4 stroke-1 stroke-white" />
@@ -72,7 +73,7 @@ const Navbar = ({
           >
             <Menu>
               <MenuButton
-                className="flex group items-center gap-2 rounded-md bg-transparent px-4 py-2 text-sm/6 font-semibold text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-700 data-open:bg-gray-700"
+                className="flex group items-center gap-2 rounded-md bg-transparent px-4 py-2 text-sm/6 font-semibold text-secondary focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-700 data-open:bg-gray-700"
                 onClick={(e) => e.stopPropagation()}
               >
                 {getActiveActionLabel()}
@@ -82,7 +83,7 @@ const Navbar = ({
               <MenuItems
                 transition
                 anchor="bottom"
-                className="w-fit z-50 origin-top-right rounded-xl border border-purple-400/30 bg-[#121214] p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+                className="w-fit z-50 origin-top-right rounded-xl border border-purple-400/30 bg-dark-gray] p-1 text-sm/6 text-secondary transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
               >
                 {actions &&
                   actions.map((action) => (
@@ -119,14 +120,14 @@ const Navbar = ({
 
       <div className={`md:hidden w-30 md:w-full order-2 flex justify-end`}>
         <Menu>
-          <MenuButton className="cursor-pointer group inline-flex items-center gap-2 rounded-md outline-white outline-1 px-3 py-1.5 text-sm/6 font-semibold text-white">
+          <MenuButton className="cursor-pointer group inline-flex items-center gap-2 rounded-md outline-white outline-1 px-3 py-1.5 text-sm/6 font-semibold text-secondary">
             <Bars3Icon className="size-4 fill-white/60 transition-transform duration-150 group-data-[open]:rotate-90" />
           </MenuButton>
 
           <MenuItems
             transition
             anchor="bottom end"
-            className="w-32 z-50 origin-top-right rounded-xl border border-purple-400/30 bg-[#121214] p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+            className="w-32 z-50 origin-top-right rounded-xl border border-purple-400/30 bg-dark-gray p-1 text-sm/6 text-secondary transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
           >
             <MenuItem>
               <button
@@ -155,6 +156,8 @@ const Navbar = ({
         <div className={styles.notification}>
           <BellIcon className="w-6" />
         </div>
+
+        <ThemeSwitcher />
 
         <div className={styles.profile} onClick={() => navigate("/settings")}>
           <div className={styles.icon}>

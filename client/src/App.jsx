@@ -12,6 +12,7 @@ import LayoutWithSidebar from "./components/ui/Layout/LayoutWithSidebar";
 import SettingsPage from "./pages/SettingsPage";
 import { useSelector, useDispatch } from "react-redux";
 import { checkAuthStatus } from "./features/auth/authSlice";
+import './features/ui/themeSlice.js'
 import { useEffect } from "react";
 
 
@@ -38,6 +39,16 @@ function App() {
   useEffect(() => {
     dispatch(checkAuthStatus());
   }, [dispatch]);
+
+  const theme = useSelector((state) => state.theme?.theme ?? "light");
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
 
   return (
     <>

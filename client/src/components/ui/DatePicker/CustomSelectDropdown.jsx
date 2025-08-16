@@ -27,7 +27,7 @@ export function CustomSelectDropdown(props) {
         <ListboxButton
           {...rest}
           aria-label={props["aria-label"] || props.label}
-          className={`relative w-full cursor-default rounded-lg border bg-black py-1.5 pr-8 pl-3 text-left text-sm/6 text-white focus:outline-none focus:ring-2 focus:ring-white/75 ${className || ""}`}
+          className={`relative w-full cursor-default rounded-lg border bg-black py-1.5 pr-8 pl-3 text-left text-sm/6 text-secondary focus:outline-none focus:ring-2 focus:ring-white/75 ${className || ""}`}
         >
           <span className="block truncate">{selectedOption?.label ?? "Select"}</span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -43,7 +43,7 @@ export function CustomSelectDropdown(props) {
                 disabled={option.disabled}
                 className={({ active, disabled }) =>
                   `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                    active ? "bg-gray-800 text-white" : "text-gray-300"
+                    active ? "bg-gray-800 text-secondary" : "text-gray-300"
                   } ${disabled ? "opacity-50" : ""}`
                 }
               >
@@ -53,7 +53,7 @@ export function CustomSelectDropdown(props) {
                       {option.label}
                     </span>
                     {selected ? (
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-secondary">
                         <CheckIcon className="h-5 w-5" aria-hidden="true" />
                       </span>
                     ) : null}

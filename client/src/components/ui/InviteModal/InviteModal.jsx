@@ -39,10 +39,10 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <DialogPanel className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-black border-1 border-[#BD9EFF]/50 p-6 text-left align-middle shadow-xl transition-all">
+              <DialogPanel className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-black border-1 border-light-purple/50 p-6 text-left align-middle shadow-xl transition-all">
                 <DialogTitle
                   as="h3"
-                  className="text-lg font-medium leading-6 text-white"
+                  className="text-lg font-medium leading-6 text-secondary"
                 >
                   Share this invite code
                 </DialogTitle>
@@ -63,7 +63,7 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
                 </div>
 
                 <div className="mt-4 flex items-center justify-between rounded-lg bg-gray-900 p-4">
-                  <p className="text-2xl font-mono tracking-widest text-white">
+                  <p className="text-2xl font-mono tracking-widest text-secondary">
                     {inviteCode || 'Generating...'}
                   </p>
                   <Button

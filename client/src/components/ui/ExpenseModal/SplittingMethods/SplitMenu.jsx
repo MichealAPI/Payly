@@ -50,8 +50,8 @@ export default function SplitMenu({
   if (!members || members.length === 0) {
     return (
       <>
-        <p className="mb-2 text-sm font-medium text-white">{firstCapitalize(splitMethod)} Split</p>
-        <p className="text-sm text-white opacity-70">
+        <p className="mb-2 text-sm font-medium text-secondary">{firstCapitalize(splitMethod)} Split</p>
+        <p className="text-sm text-secondary opacity-70">
           No participants added yet. Please add participants to split the amount.
         </p>
       </>
@@ -73,7 +73,7 @@ export default function SplitMenu({
 
   return (
     <>
-      <p className="mb-2 text-sm font-medium text-white">{firstCapitalize(splitMethod)} Split</p>
+      <p className="mb-2 text-sm font-medium text-secondary">{firstCapitalize(splitMethod)} Split</p>
 
       <div className="flex flex-col gap-1 border-0 rounded-lg">
         <div className="flex flex-col gap-2">

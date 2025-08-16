@@ -1,6 +1,6 @@
 .navbar {
     height: 64px;
-    background-color: #121214;
+    background: var(--color-dark-gray);
     display: flex;
     align-items: center;
     /* Scollbar adapting */
@@ -12,7 +12,7 @@
 
 .navbar .title p {
     font-size: 18px;
-    color: white;
+    color: var(--color-secondary);
     font-family: 'Phantom Sans', sans-serif;
     font-weight: bold;   
 }
@@ -25,14 +25,14 @@
 }
 
 .navbar .actionWrapper .action p {
-    color: white;
+    color: var(--color-secondary);
     font-family: 'Phantom Sans', sans-serif;
     transition: color 0.2s ease-in-out, font-weight 0.1s ease-in-out;
     padding: 5px;
 }
 
 .navbar .actionWrapper .action:hover p {
-    color: #9f74fc;
+    color: var(--color-light-purple);
     font-weight: bold;
     cursor: pointer;
     transition: color 0.2s ease-in-out, font-weight 0.1s ease-in-out;
@@ -40,11 +40,11 @@
 
 .navbar .actionWrapper .action.active {
     transition: border-bottom 0.1s ease-in-out;
-    border-bottom: #6F2FF7 3px solid;
+    border-bottom: var(--color-tertiary) 3px solid;
 }
 
 .navbar .actionWrapper .action.active p {
-    color: #9f74fc;
+    color: var(--color-light-purple);
     font-weight: bold;
 }
 
@@ -52,7 +52,7 @@
 .navbar .profile .icon {
     width: 32px;
     height: 32px;
-    overflow:hidden;
+    overflow: hidden;
     border-radius: 5px;
 }
 
@@ -63,12 +63,12 @@
 }
 
 .navbar .notification svg {
-    color: white;
+    color: var(--color-secondary);
     transition: color 0.1s ease-in-out;
 }
 
 .navbar .notification:hover svg {
-    color: #cbb4ff;
+    color: var(--color-light-purple);
     cursor: pointer;
     transition: color 0.1s ease-in-out;
 }

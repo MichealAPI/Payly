@@ -57,12 +57,12 @@ export default function DatePicker({ date, setDate, labelDropdown=false}) {
               }}
               components={{ Dropdown: CustomSelectDropdown }}
               captionLayout={labelDropdown ? "dropdown" : "label"}
-              className="text-white justify-center"
+              className="text-secondary justify-center"
               classNames={{
-                today: "bg-[#BD9EFF]/60 rounded-full",
-                selected: "outline outline-[#BD9EFF] rounded-lg text-white",
+                today: "bg-light-purple/60 rounded-full",
+                selected: "outline outline-light-purple rounded-lg text-secondary",
                 root: `${defaultClassNames.root} p-3 rounded-xl flex shadow-2xl shadow-purple-500/20 bg-black/90 backdrop-blur-xl border border-white/10`,
-                chevron: "fill-[#BD9EFF]",
+                chevron: "fill-light-purple",
               }}
             />
           </motion.div>

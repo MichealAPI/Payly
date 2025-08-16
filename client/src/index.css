@@ -1,5 +1,30 @@
 @import "tailwindcss";
 
+@theme {
+  --color-dark-gray: #121214;
+  --color-primary: #000;
+  --color-secondary: #fff;
+  --color-tertiary: #9f74fc;
+  --color-light-purple: #bd9eff;
+}
+
+@layer theme {
+  .dark {
+  /* Light mode (when .dark is present in this setup) */
+  /* Softer, modern neutrals with readable contrast */
+  --color-primary: #f8fafc; /* page background */
+  --color-dark-gray: #ffffff; /* surface/cards */
+  --color-secondary: #0f172a; /* text color (slate-900) */
+  --color-tertiary: #7c3aed; /* purple-600 */
+  --color-light-purple: #a78bfa; /* purple-300/400 */
+  }
+}
+
+    
+/* stylelint-disable at-rule-no-unknown */
+@custom-variant dark (&:where(.dark, .dark *));
+/* stylelint-enable at-rule-no-unknown */
+
 @font-face {
   font-family: 'Phantom Sans';
   src: url('./fonts/phantom_regular.ttf') format('truetype');
@@ -107,4 +132,29 @@ input[type="number"]::-webkit-outer-spin-button {
 html {
   /* Prefer stable overlay if supported, else reserve gutter */
   scrollbar-gutter: stable both-edges;
+}
+
+/* ----------------------------- */
+/* Light mode polish and shadows */
+/* ----------------------------- */
+/* In this codebase, the `.dark` class maps to the light palette above. */
+.dark {
+  color-scheme: light;
+}
+
+/* Soften heavy purple glow shadows on light backgrounds */
+.dark [class*="shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)]"],
+.dark [class*="shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)]"]:hover {
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.08) !important; /* neutral, subtle */
+}
+
+/* Tone down colored 2xl shadows in light mode */
+.dark .shadow-purple-500\/20 {
+  --tw-shadow-color: rgba(17, 24, 39, 0.10) !important;
+}
+
+/* Lighter drop-shadows for media on light bg */
+.dark .globe-shadow {
+  filter: drop-shadow(0 16px 32px rgba(17, 24, 39, 0.12))
+          drop-shadow(0 4px 12px rgba(17, 24, 39, 0.08));
 }

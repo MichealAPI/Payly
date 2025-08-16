@@ -126,23 +126,23 @@ const Expense = ({
           {/* Text content */}
           <div className="flex flex-col justify-between">
             <div>
-              <h2 className="text-white text-xl md:text-2xl font-bold">
+              <h2 className="text-secondary text-xl md:text-2xl font-bold">
                 {title.slice(0, 30)}
               </h2>
               <h3
                 className={`${
-                  type === "deposit" ? "text-[#97FFCB]" : "text-[#F88]"
+                  type === "deposit" ? "text-green-300" : "text-red-300"
                 } text-xs md:text-sm font-bold md:font-semibold`}
               >
                 {type.toUpperCase()}
               </h3>
             </div>
 
-            <p className="text-white opacity-70 text-base md:text-lg hidden md:block">
+            <p className="text-secondary opacity-70 text-base md:text-lg hidden md:block">
               {description || "No description provided."}
             </p>
 
-            <p className="text-white opacity-40 text-base sm:text-lg md:text-sm">
+            <p className="text-secondary opacity-40 text-base sm:text-lg md:text-sm">
               {type === "deposit" ? "Transferred by" : "Paid by"}{" "}
               {paidBy.firstName && paidBy.lastName
                 ? `${paidBy.firstName} ${paidBy.lastName}`
@@ -154,7 +154,7 @@ const Expense = ({
           <div className="flex flex-col justify-between items-end">
             <h3
               className={`${
-                type === "deposit" ? "text-[#97FFCB]" : "text-[#F88]"
+                type === "deposit" ? "text-green-300" : "text-red-300"
               } text-xl md:text-2xl font-bold text-nowrap`}
             >
               {amountSign}
@@ -167,15 +167,15 @@ const Expense = ({
                 <MenuButton
                   as="div"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex md:hidden items-center gap-2 rounded-md text-sm/6 font-semibold cursor-pointer text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-purple-400/20"
+                  className="inline-flex md:hidden items-center gap-2 rounded-md text-sm/6 font-semibold cursor-pointer text-secondary focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-purple-400/20"
                 >
-                  <EllipsisHorizontalIcon className="h-6 w-6 text-white" />
+                  <EllipsisHorizontalIcon className="h-6 w-6 text-secondary" />
                 </MenuButton>
 
                 <MenuItems
                   transition
                   anchor="bottom end"
-                  className="w-30 z-50 origin-top-right rounded-xl border border-purple-400/30 bg-[#121214] p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+                  className="w-30 z-50 origin-top-right rounded-xl border border-purple-400/30 bg-dark-gray] p-1 text-sm/6 text-secondary transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
                 >
                   <MenuItem>
                     <button
@@ -241,7 +241,7 @@ const Expense = ({
               ))}
               {participants.length > 2 && (
                 <a
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-700 text-xs font-medium text-white hover:bg-gray-600"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-700 text-xs font-medium text-secondary hover:bg-gray-600"
                   href="#"
                 >
                   +{participants.length - 2}
