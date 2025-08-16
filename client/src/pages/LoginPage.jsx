@@ -63,7 +63,7 @@ const LoginPage = () => {
           />
 
           {/* Glass effect card */}
-          <div className="flex flex-col items-center bg-transparent md:bg-white/5 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40">
+          <div className="flex flex-col items-center w-[80vw] max-w-sm md:max-w-md bg-transparent md:bg-white/5 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40">
             <div className="flex items-center flex-col gap-2">
               <Logo className="w-12 h-12 bg-radial from-gray-700/60 to-black p-3 rounded-xl outline-1 outline-white/10" onClickHomepageNavigate={false}/>
 
@@ -73,7 +73,7 @@ const LoginPage = () => {
             </div>
 
             <form
-              className="flex flex-col gap-4 mt-8 w-full max-w-sm"
+              className="flex flex-col gap-4 mt-8 w-full max-w-sm relative"
               onSubmit={handleLogin}
               aria-describedby="login-instructions"
             >

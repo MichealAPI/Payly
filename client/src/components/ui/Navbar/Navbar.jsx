@@ -5,12 +5,12 @@ import {
   BellIcon,
   Bars3Icon,
   ChevronDownIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ArrowLeftIcon, HomeIcon, HomeModernIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import ProfilePicture from "../ProfilePicture/ProfilePicture";
-import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 
 const Navbar = ({
@@ -130,14 +130,22 @@ const Navbar = ({
           >
             <MenuItem>
               <button
-                onClick={() => {
-                  navigate("/groups");
-                }}
+                onClick={() => navigate("/groups")}
                 className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10"
               >
                 <HomeIcon className="size-4" />
                 Home
               </button>
+            </MenuItem>
+
+            <MenuItem>
+                <button
+                  onClick={() => navigate("/settings")}
+                  className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10"
+                >
+                  <Cog6ToothIcon className="size-4" />
+                  Settings
+                </button>
             </MenuItem>
           </MenuItems>
         </Menu>

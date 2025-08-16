@@ -53,7 +53,7 @@ const GroupSelectorPage = () => {
 
   // --- Keep ONLY local UI state ---
   const [activeGroup, setActiveGroup] = useState(null);
-  const [activeAction, setActiveAction] = useState("showall");
+  const [activeAction, setActiveAction] = useState("all");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
   const [isJoinerOpen, setIsJoinerOpen] = useState(false);
@@ -172,7 +172,7 @@ const GroupSelectorPage = () => {
         return allGroups.filter((g) => archivedIds.has(g._id?.toString()));
       case "running":
         return allGroups.filter((g) => !archivedIds.has(g._id?.toString()));
-      case "showall":
+      case "all":
       default:
         return [...allGroups];
     }
@@ -192,7 +192,7 @@ const GroupSelectorPage = () => {
           isBackButtonEnabled={false}
           title="Select a Group"
           actions={[
-            { id: "showall", label: "Show all" },
+            { id: "all", label: "All" },
             { id: "running", label: "Running" },
             { id: "archived", label: "Archived" },
           ]}
@@ -334,7 +334,7 @@ const GroupSelectorPage = () => {
         {/* Main Trigger Button */}
         <div className="flex">
           {isGroupsListEmpty() &&
-            (activeAction === "showall" || activeAction === "running") && (
+            (activeAction === "all" || activeAction === "running") && (
               <img
                 src="https://res.cloudinary.com/dzeah7jtd/image/upload/v1753265161/drawn_arrow_zxhhdw.png"
                 alt="No groups"

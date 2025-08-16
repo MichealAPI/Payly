@@ -111,17 +111,17 @@ export const Group = ({
       <Card className={`${className} w-full md:h-55 cursor-pointer`} onClick={handleNavigate}>
         <div className="flex w-full items-center h-full gap-4 md:items-start ">
           <div className="flex flex-row items-center gap-4 flex-1 min-w-0 h-full md:flex-col md:items-start md:gap-9">
-            <div className="flex md:flex-col items-center md:items-stretch">
-              <div className="m-0 text-5xl select-none pointer-events-none">
+            <div className="flex md:flex-col gap-2 md:gap-0 items-center md:items-stretch">
+              <div className="m-0 text-3xl md:text-5xl select-none pointer-events-none">
                 <p>{icon}</p>
               </div>
 
               <div className="mt-2 flex flex-col justify-center">
-                <div className="m-0 select-none md:select-auto overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold text-white">
-                  <h3>{title}</h3>
+                <div className="m-0 select-none md:select-auto text-xl md:text-2xl font-bold text-white">
+                  <h3 className="truncate max-w-[35vw]">{title}</h3>
                 </div>
 
-                <div className="text-sm font-normal text-white">
+                <div className="text-xs md:text-sm font-normal text-white select-none">
                   <p>{formattedMembers}</p>
                 </div>
 

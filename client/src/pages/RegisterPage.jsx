@@ -134,7 +134,7 @@ const RegisterPage = () => {
           <motion.div
             layout
             transition={{ layout: { duration: 0.3, ease: "easeInOut" } }}
-            className="flex flex-col items-center bg-transparent md:bg-white/5 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40 w-[90vw] max-w-sm md:max-w-md"
+            className="flex flex-col items-center bg-transparent md:bg-white/5 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40 w-[80vw] max-w-sm md:max-w-md"
           >
             <div className="flex items-center flex-col gap-2">
               <Logo
