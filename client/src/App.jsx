@@ -19,7 +19,11 @@ const ProtectedRoute = ({ children }) => {
   const { error, isAuthenticated, isLoading } = useSelector((state) => state.auth) || {};
 
   if (isLoading) {
-    return <Spinner />;
+    return (
+      <div className="absolute inset-0 flex items-center justify-center">
+        <Spinner />;
+      </div>
+    )
   }
 
   if (!isAuthenticated) {
