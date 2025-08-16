@@ -135,14 +135,32 @@ const GroupSelectorPage = () => {
 
   // Effect to handle clicks outside the menu to close it on mobile
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+    const isClickOutside = (event) => {
+      const el = menuRef.current;
+      if (!el) return false;
+  
+      const path = typeof event.composedPath === "function" ? event.composedPath() : [];
+      if (path.length > 0) {
+        return !path.includes(el);
+      }
+      return !el.contains(event.target);
+    };
+  
+    const handlePointerDown = (event) => {
+      if (isClickOutside(event)) {
         setIsMenuOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+  
+    // Pointer events cover mouse + touch. Capture phase improves reliability.
+    document.addEventListener("pointerdown", handlePointerDown, true);
+  
+    // Older Safari fallback
+    document.addEventListener("touchstart", handlePointerDown, true);
+  
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+      document.removeEventListener("touchstart", handlePointerDown, true);
     };
   }, []);
 
