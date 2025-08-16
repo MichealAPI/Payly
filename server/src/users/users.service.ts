@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -68,6 +69,39 @@ export class UsersService {
     }
 
     return user.settings;
+  }
+
+  async updateGroupOrder(
+    currentUser: User,
+    groupIds: string[],
+  ): Promise<any> {
+    const user = await this.userModel.findById(currentUser._id).exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const orderedIds = [...new Set(groupIds)].filter(Boolean);
+
+    if (orderedIds.length === 0) {
+      throw new BadRequestException('Invalid group order data');
+    }
+
+    user.settings = user.settings || [];
+    const orderSettingIndex = user.settings.findIndex(
+      (s) => s.key === 'groupOrder',
+    );
+
+    if (orderSettingIndex > -1) {
+      user.settings[orderSettingIndex].value = orderedIds;
+    } else {
+      user.settings.push({ key: 'groupOrder', value: orderedIds });
+    }
+    user.markModified('settings');
+    await user.save();
+    return {
+      message: 'Group order updated successfully',
+      orderedIds,
+    };
   }
 
   async toggleArchiveGroup(currentUser: User, groupIdAsString: string): Promise<any> {

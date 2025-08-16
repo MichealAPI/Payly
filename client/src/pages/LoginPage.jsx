@@ -55,7 +55,7 @@ const LoginPage = () => {
         role="main"
       >
         {/* Glow wrapper + glass card */}
-        <div className="relative md:mb-60">
+        <div className="relative md:mb-60 mb-20">
           {/* Purple glow behind the card */}
           <div
             className="hidden md:block absolute -inset-x-24 -inset-y-16 bg-gradient-to-br from-fuchsia-500/12 via-purple-500/5 to-transparent blur-3xl rounded-[2rem] pointer-events-none"

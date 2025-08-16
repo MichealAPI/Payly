@@ -36,6 +36,12 @@ export class UsersController {
     return this.usersService.updateUserSettings(currentUser, updates, profilePicture);
   }
 
+  @Put('order')
+  async updateGroupOrder(@Request() req, @Body() groupIds: any) {
+    return this.usersService.updateGroupOrder(req.user, groupIds);
+  }
+
+
   @Post(':groupId/toggleArchive')
   async toggleArchiveGroup(@Request() req, @Param('groupId') groupId: string) {
     const currentUser = req.user;

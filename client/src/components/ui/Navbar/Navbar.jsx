@@ -33,8 +33,6 @@ const Navbar = ({
 
   const { currentUser } = useSelector((state) => state.auth);
 
-  console.log("IsBackButtonEnabled:", isBackButtonEnabled);
-
   const handleTitleClick = () => {
     if (!isBackButtonEnabled) return;
     // Do not go back on small screens when the dropdown is shown

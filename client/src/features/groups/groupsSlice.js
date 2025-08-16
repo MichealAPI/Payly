@@ -6,10 +6,22 @@ export const fetchGroups = createAsyncThunk(
   "groups/fetchGroups",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get("/groups/list");
-      return response.data;
+      const groups = await apiClient.get("/groups/list");
+
+      const order = await apiClient.get("/users/settings/groupOrder");
+
+      const orderedIds = order?.data || [];
+
+      // Order groups based on their IDs
+      groups.data.sort((a, b) => {
+        const indexA = orderedIds.indexOf(a._id);
+        const indexB = orderedIds.indexOf(b._id);
+        return indexA - indexB; // Ascending order
+      });
+
+      return groups.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.groups.data);
     }
   }
 );
@@ -52,7 +64,7 @@ export const reorderGroups = createAsyncThunk(
     const orderedGroupIds = newOrderedGroups.map((g) => g._id);
 
     try {
-      await apiClient.put("/users/order", { orderedGroupIds });
+      await apiClient.put("/users/order", orderedGroupIds);
       // On success, return the new, correctly ordered array
       return newOrderedGroups;
     } catch (error) {
