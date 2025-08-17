@@ -28,7 +28,7 @@ const CurrencySelector = ({ setCurrency, currency }) => {
             <div className="relative">
                 <ComboboxInput
                     className={clsx(
-                        'w-full rounded-lg border-1 bg-black py-1.5 pr-8 pl-3 text-sm/6 text-secondary',
+                        'w-full rounded-lg border-1 border-secondary/60 bg-primary py-1.5 pr-8 pl-3 text-sm/6 text-secondary',
                         'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
                     )}
                     displayValue={(c) => c?.name || c || ''}
@@ -36,7 +36,7 @@ const CurrencySelector = ({ setCurrency, currency }) => {
                     placeholder="Select currency"
                 />
                 <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
-                    <ChevronDownIcon className="size-4 fill-white/60 group-data-hover:fill-white" />
+                    <ChevronDownIcon className="size-4 fill-secondary/60 group-data-hover:fill-white" />
                 </ComboboxButton>
             </div>
 
@@ -44,7 +44,7 @@ const CurrencySelector = ({ setCurrency, currency }) => {
                 anchor="bottom"
                 transition
                 className={clsx(
-                    'w-[var(--input-width)] max-h-60 overflow-y-auto rounded-xl border no-scrollbar shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] bg-black p-1 [--anchor-gap:--spacing(1)] empty:invisible',
+                    'w-[var(--input-width)] max-h-60 overflow-y-auto rounded-xl border no-scrollbar shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] bg-primary p-1 [--anchor-gap:--spacing(1)] empty:invisible',
                     'transition duration-100 ease-in data-leave:data-closed:opacity-0'
                 )}
             >

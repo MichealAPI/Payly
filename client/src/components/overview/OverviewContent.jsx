@@ -146,7 +146,7 @@ const OverviewContent = ({
         {/* Left Column: Expenses */}
         <div className="flex flex-col gap-10 flex-1">
           {/* Search Bar with Sorting */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <div className="w-full md:w-2/3 lg:w-1/2">
               <Input
                 type="text"
@@ -171,7 +171,7 @@ const OverviewContent = ({
               onClick={() =>
                 setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"))
               }
-              className={"flex-shrink-0"}
+              className={"flex-shrink-0 text-white"}
               style="fill"
             />
           </div>
@@ -194,7 +194,7 @@ const OverviewContent = ({
           <Button
             text="Add Expense"
             size="full"
-            className="hidden md:flex"
+            className="hidden md:flex text-white"
             icon={<PlusIcon className="w-6" />}
             onClick={() => setExpenseModalOpen(true)}
             style="fill"
@@ -235,7 +235,7 @@ const OverviewContent = ({
             )}
           <Card className="hidden md:flex w-full">
             <div className="flex flex-col w-full gap-4">
-              <h3 className="text-lg text-secondary font-bold text-center border-b border-slate-600 pb-3">
+              <h3 className="text-lg text-secondary font-bold text-center border-b-1 border-secondary/30 pb-3">
                 Group Summary
               </h3>
               <div className="flex flex-col gap-4 text-secondary">
@@ -245,7 +245,7 @@ const OverviewContent = ({
                     <ArrowTrendingUpIcon className="w-6 h-6 text-red-400" />
                   </div>
                   <div className="flex-grow">
-                    <p className="text-sm text-slate-300">You owe</p>
+                    <p className="text-sm text-secondary/80">You owe</p>
                     {balances &&
                     Object.keys(balances.totalUserOwes).length > 0 ? (
                       Object.entries(balances.totalUserOwes).map(
@@ -270,7 +270,7 @@ const OverviewContent = ({
                     <ArrowTrendingDownIcon className="w-6 h-6 text-green-400" />
                   </div>
                   <div className="flex-grow">
-                    <p className="text-sm text-slate-300">You're owed</p>
+                    <p className="text-sm text-secondary/80">You're owed</p>
                     {balances &&
                     Object.keys(balances.totalOwedToUser).length > 0 ? (
                       Object.entries(balances.totalOwedToUser).map(
@@ -292,10 +292,10 @@ const OverviewContent = ({
                 {/* Total Expenses */}
                 <div className="flex items-center gap-4">
                   <div className="bg-slate-500/20 p-2 rounded-lg">
-                    <ScaleIcon className="w-6 h-6 text-slate-300" />
+                    <ScaleIcon className="w-6 h-6 text-slate-300 dark:text-slate-500" />
                   </div>
                   <div className="flex-grow">
-                    <p className="text-sm text-slate-300">Total Expenses</p>
+                    <p className="text-sm text-secondary/80">Total Expenses</p>
                     {Object.keys(totalGroupExpensesByCurrency).length > 0 ? (
                       Object.entries(totalGroupExpensesByCurrency).map(
                         ([currency, amount]) => (

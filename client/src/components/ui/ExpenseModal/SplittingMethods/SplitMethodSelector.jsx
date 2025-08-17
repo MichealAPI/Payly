@@ -18,7 +18,7 @@ const SplitMethodSelector = ({ setSplitMethod, splitMethod }) => {
             <div className="relative">
                 <ListboxButton
                     className={clsx(
-                        'relative w-full cursor-default rounded-lg border-1 bg-black py-1.5 pr-10 pl-3 text-left text-sm/6 text-secondary',
+                        'relative w-full cursor-default rounded-lg border-1 border-secondary/60 bg-primary py-1.5 pr-10 pl-3 text-left text-sm/6 text-secondary',
                         'focus:outline-none focus:ring-2 focus:ring-white/75'
                     )}
                 >
@@ -27,7 +27,7 @@ const SplitMethodSelector = ({ setSplitMethod, splitMethod }) => {
                         <span className="block truncate">{selectedMethod.label}</span>
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                        <ChevronDownIcon className="size-4 fill-white/60" aria-hidden="true" />
+                        <ChevronDownIcon className="size-4 fill-secondary/60" aria-hidden="true" />
                     </span>
                 </ListboxButton>
                 <Transition
@@ -36,12 +36,12 @@ const SplitMethodSelector = ({ setSplitMethod, splitMethod }) => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <ListboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-black py-1 text-base shadow-lg ring-1 ring-white/10 focus:outline-none sm:text-sm">
+                    <ListboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-primary py-1 text-base shadow-lg ring-1 ring-white/10 focus:outline-none sm:text-sm">
                         {splitMethods.map((method) => (
                             <ListboxOption
                                 key={method.id}
                                 className={({ active }) =>
-                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-gray-700 text-secondary' : 'text-gray-300'}`
+                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-secondary/40 text-secondary' : 'text-secondary/80'}`
                                 }
                                 value={method.value}
                             >

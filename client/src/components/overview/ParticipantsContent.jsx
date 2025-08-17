@@ -14,7 +14,6 @@ const ParticipantsContent = ({
   groupId,
   ownerId,
   currencySymbol,
-  refreshBalances,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -36,7 +35,7 @@ const ParticipantsContent = ({
       className="flex flex-col gap-10"
     >
       <div className="flex justify-between gap-4">
-        <div className="flex-4">
+        <div className="flex-5">
           <Input
             type="text"
             placeholder="Search participants..."
@@ -48,9 +47,9 @@ const ParticipantsContent = ({
         <Button
           text="Invite"
           size="full"
-          className="flex-1"
+          className="flex-1 text-white"
           iconVisibility={true}
-          icon={<PlusIcon className="w-6" />}
+          icon={<PlusIcon className="w-5" />}
           onClick={onInviteClick}
           style="fill"
         />

@@ -11,7 +11,7 @@ import {
 const Header = ({ title, membersCount, description, icon, isOwner, onEdit }) => {
   return (
     <Card
-      className="mt-4 w-full md:mt-0 md:border-b-2 md:border-solid md:border-b-tertiary"
+      className="mt-4 w-full md:mt-0 md:border-b-2 md:border-solid md:border-b-tertiary bg-dark-gray"
       bgHiddenSm={true}
     >
       <div className="flex w-full justify-center md:w-full md:justify-between">

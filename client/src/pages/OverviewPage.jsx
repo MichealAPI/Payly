@@ -70,7 +70,7 @@ const OverviewPage = () => {
 
   return (
     <>
-      <Wrapper className="items-center">
+      <Wrapper className="items-center bg-primary">
         <Navbar
           title="Overview"
           actions={[

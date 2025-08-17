@@ -28,11 +28,11 @@ export default function DatePicker({ date, setDate, labelDropdown=false}) {
     <div ref={containerRef} className="w-full relative">
       <Button
         text={date ? date.toLocaleDateString() : "When"}
-        className="max-w-full mt-1 h-10"
+        className="max-w-full mt-1 h-10 text-white"
         onClick={() => setShowDatePicker(!showDatePicker)}
         style="fill"
         iconVisibility={true}
-        size="full"
+                size="full"
         icon={<ChevronDownIcon className="w-6" />}
       />
       <AnimatePresence mode="wait" initial={false}>
@@ -61,7 +61,7 @@ export default function DatePicker({ date, setDate, labelDropdown=false}) {
               classNames={{
                 today: "bg-light-purple/60 rounded-full",
                 selected: "outline outline-light-purple rounded-lg text-secondary",
-                root: `${defaultClassNames.root} p-3 rounded-xl flex shadow-2xl shadow-purple-500/20 bg-black/90 backdrop-blur-xl border border-white/10`,
+                root: `${defaultClassNames.root} p-3 rounded-xl flex shadow-2xl shadow-purple-500/20 dark:outline-1 dark:outline-secondary/20 dark:shadow-lg bg-dark-gray/90 backdrop-blur-xl border border-white/10`,
                 chevron: "fill-light-purple",
               }}
             />

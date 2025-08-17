@@ -113,10 +113,10 @@ export default function SplitField({
           setIsEnabled(val);
         }}
         disabled={paidById === participantId}
-        className={`group size-6 rounded-md bg-white/10 p-1 ring-1 ring-white/15 ring-inset focus:not-data-focus:outline-none data-checked:bg-white data-focus:outline data-focus:outline-offset-2 data-focus:outline-white
+        className={`group size-6 rounded-md bg-tertiary/40 p-1 ring-1 ring-white/15 ring-inset focus:not-data-focus:outline-none data-checked:bg-tertiary data-focus:outline data-focus:outline-offset-2 data-focus:outline-white
           ${paidById === participantId ? "cursor-not-allowed opacity-30" : ""}`}
       >
-        <CheckIcon className="hidden w-4 text-black group-data-checked:block stroke-3" />
+        <CheckIcon className="hidden w-4 text-primary group-data-checked:block stroke-4" />
       </Checkbox>
       <p className={`flex-1 text-sm text-secondary ${!isEnabled ? "opacity-50 select-none" : ""}`}>
         {participantName}
@@ -153,7 +153,7 @@ export default function SplitField({
               value={displayValue}
               onChange={handleInputChange}
               className={clsx(
-                "absolute inset-0 block w-full h-full rounded-lg bg-transparent text-transparent caret-white pr-3 pl-8 text-right", // Make input invisible but functional
+                "absolute inset-0 block w-full h-full rounded-lg bg-primary outline-[1.5px] outline-secondary/20 text-secondary caret-white pr-3 pl-8 text-right", // Make input invisible but functional
                 "border-none focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25"
               )}
             />

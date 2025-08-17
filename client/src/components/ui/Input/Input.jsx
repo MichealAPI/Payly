@@ -28,7 +28,7 @@ const Input = ({
                 )}
                 {rightLabel}
             </div>
-            <div className="flex items-center outline-[1.5px] outline-white/50 bg-primary rounded-[10px]">
+            <div className="flex items-center outline-[1.5px] outline-gray-500/50 bg-dark-gray rounded-[10px]">
                 {icon && (
                     <div className="flex items-center justify-center px-3 text-secondary/60">
                         {icon}

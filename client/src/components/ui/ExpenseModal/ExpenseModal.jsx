@@ -107,7 +107,7 @@ export default function ExpenseModal({
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.2 }}
               >
-                <DialogPanel className="w-full md:min-w-md max-w-md transform overflow-hidden rounded-2xl bg-black shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] p-6 text-left align-middle transition-all">
+                <DialogPanel className="w-full md:min-w-md max-w-md transform overflow-hidden rounded-2xl bg-dark-gray shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] p-6 text-left align-middle transition-all">
                   <DialogTitle
                     as="h3"
                     className="text-lg leading-6 text-secondary font-bold"
@@ -139,7 +139,7 @@ export default function ExpenseModal({
                         id="movementName"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="mt-1 block w-full rounded-md border border-white text-secondary sm:text-sm p-2"
+                        className="mt-1 block w-full rounded-md  bg-primary border border-secondary/60 text-secondary sm:text-sm p-2"
                         placeholder="Enter movement title"
                         required
                       />
@@ -160,7 +160,7 @@ export default function ExpenseModal({
                             <Input
                               type="number"
                               className={clsx(
-                                "block w-full border-1 rounded-lg bg-black pl-8 pr-3 py-1.5 text-sm/6 text-secondary text-right",
+                                "block w-full border-1 border-secondary/60 rounded-lg bg-primary pl-8 pr-3 py-1.5 text-sm/6 text-secondary text-right",
                                 "focus:outline-none"
                               )}
                               value={amount}
@@ -228,7 +228,7 @@ export default function ExpenseModal({
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         rows={3}
-                        className="mt-1 block w-full rounded-md border border-white text-secondary p-2 sm:text-sm"
+                        className="mt-1 block w-full rounded-md border bg-primary border-secondary/60 text-secondary p-2 sm:text-sm"
                         placeholder="Enter movement description"
                       />
                     </div>
@@ -260,6 +260,7 @@ export default function ExpenseModal({
                       <Button
                         text="Cancel"
                         style="outline"
+                        className={"text-secondary"}
                         onClick={closeModal}
                         disabled={isLoading}
                       />
@@ -268,6 +269,7 @@ export default function ExpenseModal({
                         text={submitButtonText}
                         iconVisibility={true}
                         icon={submitButtonIcon}
+                        className={"text-white"}
                         type="submit"
                         disabled={isLoading}
                       />

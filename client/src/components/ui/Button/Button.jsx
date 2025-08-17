@@ -42,7 +42,7 @@ const Button = ({
     before:transition-opacity before:duration-100 before:ease-linear before:z-10
     hover:before:opacity-100
   `,
-    outline: `bg-transparent border-2 border-white`,
+    outline: `bg-transparent border-2 border-secondary`,
   };
   return (
     <button
