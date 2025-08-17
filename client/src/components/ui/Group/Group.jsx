@@ -165,11 +165,11 @@ export const Group = ({
                         onClick={() => setIsEditModalOpen(true)}
                         className="group flex w-full items-center gap-2 cursor-pointer rounded-lg px-3 py-1.5 data-focus:bg-purple-400/20"
                       >
-                        <PencilIcon className="size-4 fill-white/30" />
+                        <PencilIcon className="size-4 fill-secondary/30" />
                         Edit
                       </button>
                     </MenuItem>
-                    <div className="my-1 h-px bg-white/5" />
+                    <div className="my-1 h-px bg-secondary/5" />
                     <MenuItem>
                       <button
                         onClick={() => {
@@ -184,9 +184,9 @@ export const Group = ({
                         className="group flex w-full items-center gap-2 cursor-pointer rounded-lg px-3 py-1.5 data-focus:bg-purple-400/20"
                       >
                         {isArchived ? (
-                          <ArchiveBoxXMarkIcon className="size-4 fill-white/30" />
+                          <ArchiveBoxXMarkIcon className="size-4 fill-secondary/30" />
                         ) : (
-                          <ArchiveBoxIcon className="size-4 fill-white/30" />
+                          <ArchiveBoxIcon className="size-4 fill-secondary/30" />
                         )}
                         {isArchived ? "Unarchive" : "Archive"}
                       </button>
@@ -204,7 +204,7 @@ export const Group = ({
                         }}
                         className="group flex w-full items-center gap-2 cursor-pointer rounded-lg px-3 py-1.5 data-focus:bg-red-500/30"
                       >
-                        <TrashIcon className="size-4 fill-white/30" />
+                        <TrashIcon className="size-4 fill-secondary/30" />
                         Delete
                       </button>
                     </MenuItem>
@@ -214,7 +214,8 @@ export const Group = ({
               <Button
                 size="minimal"
                 iconVisibility={true}
-                icon={<ArrowRightIcon className="w-6" />}
+                className="text-white"
+                icon={<ArrowRightIcon className="w-6 stroke-2 fill-secondary" />}
                 onClick={handleNavigate}
                 style="fill"
               />

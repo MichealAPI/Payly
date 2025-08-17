@@ -92,7 +92,7 @@ export default function ExpenseModal({
         >
           {/* The backdrop, rendered as a fixed sibling to the panel container */}
           <motion.div
-            className="fixed inset-0 bg-black/80"
+            className="fixed inset-0 bg-black/60"
             initial
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

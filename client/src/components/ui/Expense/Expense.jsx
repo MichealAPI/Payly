@@ -182,7 +182,7 @@ const Expense = ({
                       onClick={handleEditClick}
                       className="group flex w-full items-center gap-2 cursor-pointer rounded-lg px-3 py-1.5 data-focus:bg-blue-500/30"
                     >
-                      <PencilIcon className="size-4 fill-white/30" />
+                      <PencilIcon className="size-4 fill-secondary/30" />
                       Edit
                     </button>
                   </MenuItem>
@@ -191,14 +191,14 @@ const Expense = ({
                       onClick={handleDeleteClick}
                       className="group flex w-full items-center gap-2 cursor-pointer rounded-lg px-3 py-1.5 data-focus:bg-red-500/30"
                     >
-                      <TrashIcon className="size-4 fill-white/30" />
+                      <TrashIcon className="size-4 fill-secondary/30" />
                       Delete
                     </button>
                   </MenuItem>
                 </MenuItems>
               </Menu>
               <Button
-                className="hidden z-20 md:flex bg-red-500 hover:bg-red-600"
+                className="hidden z-20 md:flex bg-red-500 hover:bg-red-600 text-white"
                 text=""
                 size="minimal"
                 bgColor="radial-gradient(50%_50.01%_at_50%_51.16%,#FF1A1A_14.9%,#FF4D4D_100%)"
@@ -213,7 +213,7 @@ const Expense = ({
               />
 
               <Button
-                className="hidden z-20 md:flex"
+                className="hidden z-20 md:flex text-white"
                 text=""
                 size="minimal"
                 textVisibility={false}

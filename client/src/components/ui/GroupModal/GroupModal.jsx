@@ -117,7 +117,7 @@ export default function GroupModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-black shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] p-6 text-left align-middle transition-all">
+              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-primary shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] p-6 text-left align-middle transition-all">
                 <DialogTitle
                   as="h3"
                   className="text-lg leading-6 text-secondary font-bold"
@@ -139,7 +139,7 @@ export default function GroupModal({
                         id="icon-button"
                         type="button"
                         onClick={togglePicker}
-                        className="text-4xl p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                        className="text-4xl p-3 rounded-full cursor-pointer hover:py-2.5 transition-all duration-100 bg-white/10 hover:bg-white/20"
                       >
                         {icon}
                       </button>
@@ -159,7 +159,7 @@ export default function GroupModal({
                           id="groupName"
                           value={groupName}
                           onChange={(e) => setGroupName(e.target.value)}
-                          className="mt-1 block w-full rounded-md border-white/50 border-1 bg-transparent focus:border-white focus:ring-white text-secondary sm:text-sm p-2"
+                          className="mt-1 block w-full rounded-md border-secondary/50 border-1 bg-transparent focus:border-secondary focus:ring-white text-secondary sm:text-sm p-2"
                           placeholder="Enter group name"
                           required
                         />
@@ -176,7 +176,7 @@ export default function GroupModal({
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
                           rows={3}
-                          className="mt-1 block w-full rounded-md border-1 border-white/50 bg-transparent focus:border-white focus:ring-white text-secondary p-2 sm:text-sm"
+                          className="mt-1 block w-full rounded-md border-1 border-secondary/50 bg-transparent focus:border-secondary focus:ring-white text-secondary p-2 sm:text-sm"
                           placeholder="Enter group description"
                           required
                         />
@@ -215,6 +215,7 @@ export default function GroupModal({
                       iconVisibility={true}
                       icon={submitButtonIcon}
                       type="submit"
+                      className={'text-white'}
                       disabled={isLoading}
                     />
                   </div>

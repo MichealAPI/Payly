@@ -25,7 +25,7 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/80" />
+          <div className="fixed inset-0 bg-black/60" />
         </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -39,7 +39,7 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <DialogPanel className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-black border-1 border-light-purple/50 p-6 text-left align-middle shadow-xl transition-all">
+              <DialogPanel className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-primary border-1 border-light-purple/50 p-6 text-left align-middle shadow-xl transition-all">
                 <DialogTitle
                   as="h3"
                   className="text-lg font-medium leading-6 text-secondary"
@@ -49,7 +49,7 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
                 <div className="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
                     <button
                         type="button"
-                        className="rounded-md cursor-pointer bg-gray-800 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="rounded-md cursor-pointer bg-dark-gray text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         onClick={onClose}
                     >
                         <span className="sr-only">Close</span>
@@ -62,7 +62,7 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
                   </p>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between rounded-lg bg-gray-900 p-4">
+                <div className="mt-4 flex items-center justify-between rounded-lg bg-dark-gray dark:outline-[1.5px] dark:outline-secondary/20 p-4">
                   <p className="text-2xl font-mono tracking-widest text-secondary">
                     {inviteCode || 'Generating...'}
                   </p>
@@ -81,6 +81,7 @@ export default function InviteModal({ isOpen, onClose, inviteCode }) {
                     text="Done"
                     onClick={onClose}
                     style="fill"
+                    className={"text-white"}
                     size="full"
                   />
                 </div>

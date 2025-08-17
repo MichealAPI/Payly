@@ -4,9 +4,9 @@ export function CustomEmojiPicker({ onSelect }) {
   return (
     <EmojiPicker.Root
       onEmojiSelect={(emoji) => onSelect(emoji.emoji)}
-      className="isolate flex h-[368px] w-full flex-col bg-black rounded-lg border-1 border-white/10 shadow-lg shadow-black/50"
+      className="isolate flex h-[368px] w-full flex-col bg-dark-gray rounded-lg border-1 border-secondary/10 shadow-lg shadow-black/50"
     >
-      <EmojiPicker.Search className="z-10 mx-2 mt-2 appearance-none rounded-md bg-black border-1 text-secondary border-white/30 px-2.5 py-2 text-sm" />
+      <EmojiPicker.Search className="z-10 mx-2 mt-2 appearance-none rounded-md bg-primary border-1 text-secondary border-white/30 px-2.5 py-2 text-sm" />
       <EmojiPicker.Viewport className="mt-2 relative flex-1 outline-hidden [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         <EmojiPicker.Loading className="absolute inset-0 flex items-center justify-center text-sm text-secondary/60">
           Loading…
@@ -19,7 +19,7 @@ export function CustomEmojiPicker({ onSelect }) {
           components={{
             CategoryHeader: ({ category, ...props }) => (
               <div
-                className="bg-purple-950 px-3 pt-3 pb-1.5 font-medium text-secondary/80 text-xs"
+                className="bg-purple-950 px-3 pt-3 pb-1.5 font-medium text-white/80 text-xs"
                 {...props}
               >
                 {category.label}
@@ -32,7 +32,7 @@ export function CustomEmojiPicker({ onSelect }) {
             ),
             Emoji: ({ emoji, ...props }) => (
               <button
-                className="flex size-9 items-center justify-center rounded-md text-lg data-[active]:bg-neutral-100 dark:data-[active]:bg-neutral-800"
+                className="flex size-9 items-center justify-center rounded-md text-lg cursor-pointer dark:data-[active]:bg-neutral-100 data-[active]:bg-neutral-800"
                 {...props}
               >
                 {emoji.emoji}

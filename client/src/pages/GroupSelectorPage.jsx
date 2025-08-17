@@ -248,7 +248,7 @@ const GroupSelectorPage = () => {
                 <DragOverlay className="cursor-pointer">
                   {activeGroup ? (
                     <Group
-                      className="shadow-lg transform scale-105 transition-transform duration-100"
+                      className="shadow-lg transform scale-105 transition-transform duration-100 "
                       groupData={activeGroup}
                     />
                   ) : null}
@@ -303,7 +303,7 @@ const GroupSelectorPage = () => {
               size="minimal"
               iconVisibility={true}
               icon={<UserPlusIcon className="w-6" />}
-              className="relative z-10"
+              className="relative z-10 text-white"
               onClick={() => {
                 setIsMenuOpen(false);
                 setIsJoinerOpen(true)
@@ -321,7 +321,7 @@ const GroupSelectorPage = () => {
               size="minimal"
               iconVisibility={true}
               icon={<PlusIcon className="w-6" />}
-              className="relative z-10"
+              className="relative z-10 text-white"
               onClick={() => {
                 setIsMenuOpen(false);
                 setIsCreatorOpen(true)
@@ -348,7 +348,7 @@ const GroupSelectorPage = () => {
             onClick={handlePrimaryButtonClick}
             icon={
               <ChevronUpIcon
-                className={`w-6 transition-transform duration-400 md:group-hover:rotate-180 ${isMenuOpen ? "rotate-180" : ""
+                className={`w-6 text-white transition-transform duration-400 md:group-hover:rotate-180 ${isMenuOpen ? "rotate-180" : ""
                   }`}
               />
             }

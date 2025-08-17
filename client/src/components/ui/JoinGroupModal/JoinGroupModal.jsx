@@ -26,7 +26,7 @@ export default function JoinGroupModal({ isOpen, onClose, onJoin, isJoining }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/80" />
+          <div className="fixed inset-0 bg-black/60" />
         </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -40,7 +40,7 @@ export default function JoinGroupModal({ isOpen, onClose, onJoin, isJoining }) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-black border-1 border-light-purple/40 p-6 text-left align-middle shadow-xl transition-all">
+              <DialogPanel className="w-full relative max-w-md transform overflow-hidden rounded-2xl bg-primary border-1 border-light-purple/40 p-6 text-left align-middle shadow-xl transition-all">
                 <DialogTitle
                   as="h3"
                   className="text-lg font-medium leading-6 text-secondary"
@@ -50,7 +50,7 @@ export default function JoinGroupModal({ isOpen, onClose, onJoin, isJoining }) {
                  <div className="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
                     <button
                         type="button"
-                        className="rounded-md bg-gray-800 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="rounded-md bg-dark-gray text-secondary/70 cursor-pointer hover:text-gray-500 focus:text-secondary"
                         onClick={onClose}
                     >
                         <span className="sr-only">Close</span>
@@ -81,6 +81,7 @@ export default function JoinGroupModal({ isOpen, onClose, onJoin, isJoining }) {
                             text={isJoining ? "Joining..." : "Join"}
                             type="submit"
                             style="fill"
+                            className={"text-white"}
                             disabled={!inviteCode.trim() || isJoining}
                         />
                     </div>
