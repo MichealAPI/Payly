@@ -194,7 +194,7 @@ const OverviewPage = () => {
           onClick={() => setExpenseModalOpen(true)}
           style="fill"
           icon={<PlusIcon className="w-6" />}
-          className="relative"
+          className="relative text-white"
         />
       </div>
     </>

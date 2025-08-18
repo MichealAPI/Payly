@@ -127,7 +127,7 @@ const AccountSettings = (props) => {
   };
 
   const inputClasses =
-    "block w-full rounded-md bg-transparent border dark:border-secondary/20 border-white/30 text-secondary sm:text-sm p-2 focus:ring-tertiary/50 focus:border-tertiary/50";
+    "block w-full rounded-md bg-transparent outline-1 outline-secondary/20 border-white/30 text-secondary sm:text-sm p-2 focus:ring-tertiary/50 focus:border-tertiary/50";
 
   // Build Cloudinary image with version for cache busting
   const buildCldImage = () => {
@@ -308,10 +308,10 @@ const AccountSettings = (props) => {
       </div>
 
       <SettingRow title="Delete Account" description="Permanently delete your account and all associated data. This action cannot be undone.">
-        <div className="flex justify-end w-full">
+        <div className="flex w-full justify-end items-center">
           <Button
             onClick={handleDeleteAccount}
-            className={"bg-red-500 py-2.5 px-2.5 rounded-lg hover:bg-red-600 text-white font-normal"}
+            className={"bg-red-500 py-2.5 px-2.5 rounded-lg hover:bg-red-600 text-white font-normal text-nowrap"}
             bgColor="radial-gradient(50%_50.01%_at_50%_51.16%,#FF1A1A_14.9%,#FF4D4D_100%)"
             hoverBgColor="radial-gradient(50%_50.01%_at_50%_51.16%,#FF1A1A_14.9%,#FF4D4D_100%)"
             shadowColor="0px_0px_6.6px 7px rgba(255, 26, 26, 0.25)"

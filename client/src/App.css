@@ -4,8 +4,8 @@ body {
 }
 
 .content-with-sidebar {
-  margin-left: 80px;
-  width: calc(100% - 80px);
+  margin-left: 60px;
+  width: calc(100% - 60px);
 }
 
 /* --- Hero/Globe subtle entrance and floating cards --- */
@@ -73,11 +73,4 @@ body {
 /* Soft drop shadow for the transparent globe canvas */
 .globe-shadow {
   filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.5)) drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
-}
-
-@media (max-width: 768px) {
-  .content-with-sidebar {
-    margin-left: 0;
-    width: 100%;
-  }
 }

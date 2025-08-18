@@ -1,8 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
 import Button from "../Button/Button.jsx";
 import { useNavigate } from "react-router-dom";
-import { ArrowRightIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon, Cog6ToothIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import Card from "../Card/Card.jsx";
 import Label from "../Label/Label.jsx";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
@@ -12,7 +10,10 @@ import {
   ArchiveBoxIcon,
   TrashIcon,
 } from "@heroicons/react/24/solid";
-import { deleteGroup, toggleArchiveGroup } from "../../../features/groups/groupsSlice.js";
+import {
+  deleteGroup,
+  toggleArchiveGroup,
+} from "../../../features/groups/groupsSlice.js";
 import { useState } from "react";
 import ConfirmModal from "../ConfirmModal/ConfirmModal.jsx";
 import GroupModal from "../GroupModal/GroupModal.jsx";
@@ -20,7 +21,6 @@ import { useDispatch } from "react-redux";
 
 // members is an array of objects with a name property
 function formatMembers(members) {
-
   if (!members || members.length === 0) {
     return "No members";
   }
@@ -32,29 +32,20 @@ function formatMembers(members) {
   }
 
   if (members.length === 2) {
-    return `${members[0].firstName || members[0].email} and ${members[1].firstName || members[1].email}`;
+    return `${members[0].firstName || members[0].email} and ${
+      members[1].firstName || members[1].email
+    }`;
   }
 
   if (members.length > 2) {
-    return `${members[0].firstName || members[0].email}, ${members[1].firstName || members[1].email} and ${
-      members.length - 2
-    } others`;
+    return `${members[0].firstName || members[0].email}, ${
+      members[1].firstName || members[1].email
+    } and ${members.length - 2} others`;
   }
 }
 
-export const Group = ({
-  className,
-  groupData,
-  isArchived,
-}) => {
-
-  const {
-    _id: groupId,
-    name: title,
-    description,
-    icon,
-    members,
-  } = groupData;
+export const Group = ({ className, groupData, isArchived }) => {
+  const { _id: groupId, name: title, description, icon, members } = groupData;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -108,7 +99,11 @@ export const Group = ({
         defIcon={icon}
       />
 
-      <Card className={`${className} w-full md:h-55 bg-dark-gray cursor-pointer`} onClick={handleNavigate}>
+      <Card
+        dropShadow={false}
+        className={`${className} outline-1 outline-secondary/20 w-full md:h-55 bg-dark-gray cursor-pointer`}
+        onClick={handleNavigate}
+      >
         <div className="flex w-full items-center h-full  gap-4 md:items-start">
           <div className="flex flex-row items-center gap-4 flex-1 min-w-0 h-full md:flex-col md:items-start md:gap-9">
             <div className="flex md:flex-col gap-2 md:gap-0 items-center md:items-stretch">
@@ -117,18 +112,17 @@ export const Group = ({
               </div>
 
               <div className="mt-2 flex flex-col justify-center">
-                <div className="m-0 select-none md:select-auto text-xl md:text-2xl font-bold text-secondary">
+                <div className="m-0 select-none flex items-center gap-2 md:select-auto text-xl md:text-2xl font-bold text-secondary">
                   <h3 className="truncate max-w-[35vw]">{title}</h3>
+
+                  {/* Labels */}
+                  <div className=" gap-2 flex">{Labels()}</div>
                 </div>
 
                 <div className="text-xs md:text-sm font-normal text-secondary select-none">
                   <p>{formattedMembers}</p>
                 </div>
 
-                {/* Labels */}
-                <div className="items-end mt-2 mr-2 gap-2 flex md:hidden">
-                  {Labels()}
-                </div>
               </div>
             </div>
 
@@ -139,11 +133,6 @@ export const Group = ({
             </div>
           </div>
           <div className="flex h-full flex-shrink-0 md:items-stretch items-center">
-            {/* Labels */}
-            <div className="items-end mr-2 mb-2 gap-2 hidden md:flex">
-              {Labels()}
-            </div>
-
             {/* Action Buttons */}
             <div className="flex flex-col justify-center md:justify-between">
               <div
@@ -152,7 +141,7 @@ export const Group = ({
               >
                 <Menu>
                   <MenuButton className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold cursor-pointer text-secondary focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-purple-400/20">
-                    <Cog6ToothIcon className="h-6 w-6 text-secondary" />
+                    <EllipsisHorizontalIcon className="h-6 w-6 text-secondary" />
                   </MenuButton>
 
                   <MenuItems
@@ -175,9 +164,17 @@ export const Group = ({
                         onClick={() => {
                           handleConfirmModal(
                             isArchived ? "Unarchive Group" : "Archive Group",
-                            `Are you sure you want to ${isArchived ? "unarchive" : "archive"} this group? You can ${isArchived ? "archive it again later" : "restore it later"}.`,
+                            `Are you sure you want to ${
+                              isArchived ? "unarchive" : "archive"
+                            } this group? You can ${
+                              isArchived
+                                ? "archive it again later"
+                                : "restore it later"
+                            }.`,
                             async () => {
-                              await dispatch(toggleArchiveGroup(groupData)).unwrap();
+                              await dispatch(
+                                toggleArchiveGroup(groupData)
+                              ).unwrap();
                             }
                           );
                         }}
@@ -214,8 +211,10 @@ export const Group = ({
               <Button
                 size="minimal"
                 iconVisibility={true}
-                className="text-white"
-                icon={<ArrowRightIcon className="w-6 stroke-2 fill-secondary" />}
+                className="text-white flex md:hidden"
+                icon={
+                  <ArrowRightIcon className="w-6 stroke-2 fill-secondary" />
+                }
                 onClick={handleNavigate}
                 style="fill"
               />

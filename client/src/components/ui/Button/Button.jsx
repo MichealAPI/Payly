@@ -33,7 +33,7 @@ const Button = ({
 
     [border-color:var(--border-color)]  
 
-    shadow-[var(--shadow-color)]  
+    md:shadow-[var(--shadow-color)]  
 
     [background-image:var(--bg-color)]  
 

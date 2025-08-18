@@ -10,6 +10,18 @@ import OverviewPage from "./pages/OverviewPage";
 import Spinner from "./components/ui/Spinner/Spinner";
 import LayoutWithSidebar from "./components/ui/Layout/LayoutWithSidebar";
 import SettingsPage from "./pages/SettingsPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import PricingPage from "./pages/PricingPage";
+import DownloadPage from "./pages/DownloadPage";
+import HelpPage from "./pages/HelpPage";
+import ChangelogPage from "./pages/ChangelogPage";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import CookiesPage from "./pages/CookiesPage";
+import StatusPage from "./pages/StatusPage";
+import SecurityPage from "./pages/SecurityPage";
+import BrandPage from "./pages/BrandPage";
+import InstallPrompt from "./components/pwa/InstallPrompt";
 import { useSelector, useDispatch } from "react-redux";
 import { checkAuthStatus } from "./features/auth/authSlice";
 import './features/ui/themeSlice.js'
@@ -58,6 +70,18 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot" element={<ForgotPasswordPage />} />
+        {/* Marketing/Informational Routes */}
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/download" element={<DownloadPage />} />
+        <Route path="/help" element={<HelpPage />} />
+        <Route path="/changelog" element={<ChangelogPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/cookies" element={<CookiesPage />} />
+        <Route path="/status" element={<StatusPage />} />
+        <Route path="/security" element={<SecurityPage />} />
+        <Route path="/brand" element={<BrandPage />} />
 
         {/* Protected Routes with Sidebar */}
         <Route
@@ -73,6 +97,7 @@ function App() {
         </Route>
       </Routes>
       <Toaster />
+  <InstallPrompt />
     </>
   );
 }

@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Card = ({ children, className, bgHiddenSm, onClick }) => {
+const Card = ({ children, className, bgHiddenSm, onClick, dropShadow=true }) => {
     
-    const baseClasses = "bg-dark-gray shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)]";
-    const responsiveClasses = "md:bg-dark-gray md:shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)]";
+    const baseClasses = "bg-dark-gray";
+    const responsiveClasses = "md:bg-dark-gray";
 
     return (
-        <div onClick={onClick} className={`${className} rounded-[18px] p-5 ${bgHiddenSm ? responsiveClasses : baseClasses}`}>
+        <div onClick={onClick} className={`${className} rounded-[18px] p-5 ${bgHiddenSm ? responsiveClasses : baseClasses} ${dropShadow ? "shadow-[0px_0px_10px_6px_rgba(198,172,255,0.15)]" : ""}`}>
             {children}
         </div>
     );

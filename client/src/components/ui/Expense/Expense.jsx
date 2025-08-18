@@ -120,7 +120,8 @@ const Expense = ({
 
       <Card
         onClick={onView}
-        className={`${className} relative md:p-10 w-full cursor-pointer transition-transform hover:scale-101`}
+        dropShadow={false}
+        className={`${className} relative md:p-10 w-full outline-1 outline-secondary/20 cursor-pointer transition-transform hover:scale-101`}
       >
         <div className="flex justify-between">
           {/* Text content */}
@@ -138,11 +139,11 @@ const Expense = ({
               </h3>
             </div>
 
-            <p className="text-secondary opacity-70 text-base md:text-lg hidden md:block">
+            <p className="text-secondary/70 text-base md:text-lg hidden md:block">
               {description || "No description provided."}
             </p>
 
-            <p className="text-secondary opacity-40 text-base sm:text-lg md:text-sm">
+            <p className="text-secondary/60 text-base sm:text-lg md:text-sm">
               {type === "deposit" ? "Transferred by" : "Paid by"}{" "}
               {paidBy.firstName && paidBy.lastName
                 ? `${paidBy.firstName} ${paidBy.lastName}`

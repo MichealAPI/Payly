@@ -21,7 +21,7 @@ const Sidebar = () => {
             <div
                 aria-hidden
                 className="
-                    fixed z-[950] top-0 left-0 h-screen w-20 pointer-events-none select-none overflow-hidden
+                    fixed z-[950] top-0 left-0 h-screen w-15 pointer-events-none select-none overflow-hidden
                     hidden md:block
                 "
             >
@@ -33,23 +33,23 @@ const Sidebar = () => {
             {/* Glass sidebar panel */}
             <div
                 className="
-                    fixed z-[1000] top-0 left-0 w-20 h-screen
-                    backdrop-blur-xl border-r dark:bg-white/20 bg-white/10 border-black/10 shadow-[0_8px_24px_rgba(17,24,39,0.08)]
+                    fixed z-[1000] top-0 left-0 w-15 h-screen
+                    backdrop-blur-xl border-r bg-white/20 dark:bg-white/10 border-black/10 shadow-[0_8px_24px_rgba(17,24,39,0.08)]
                     hidden md:flex justify-center items-center
                     text-white/80
                 "
             >
                 <ul className="list-none p-0 m-0">
-                    <li className="my-5">
+                    <li className="my-4">
                         <SidebarItem
-                            icon={<HomeIcon />}
+                            icon={<HomeIcon className='w-7'/>}
                             isActive={mainBranch === "groups"}
                             onClick={() => { navigate('/groups') }}
                         />
                     </li>
-                    <li className="my-5">
+                    <li className="my-4">
                         <SidebarItem
-                            icon={<Cog6ToothIcon />}
+                            icon={<Cog6ToothIcon className='w-7' />}
                             isActive={mainBranch === "settings"}
                             onClick={() => { navigate('/settings') }}
                         />

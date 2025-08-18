@@ -8,6 +8,7 @@ import earthTextureImg from "./textures/earth_map_purple_texture.png";
 function Earth() {
   const meshRef = useRef();
   const { gl } = useThree();
+
   const earthTexture = useLoader(TextureLoader, earthTextureImg);
 
   // Configure texture for proper globe mapping

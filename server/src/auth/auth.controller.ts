@@ -1,5 +1,4 @@
 import {Controller, Post, UseGuards, Request, Get, Session, Body} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { AuthenticatedGuard } from './guards/authenticated.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
@@ -33,6 +32,13 @@ export class AuthController {
     @Get('profile')
     getProfile(@Request() req) {
         return req.user;
+    }
+
+    @UseGuards(AuthenticatedGuard)
+    @Post("signout")
+    signout(@Session() session) {
+        session.destroy();
+        return { message: 'Signed out successfully' };
     }
 
 }

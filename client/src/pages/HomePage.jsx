@@ -1,22 +1,24 @@
-import React from "react";
 import Button from "../components/ui/Button/Button";
-import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { ArrowDownIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import HomeNavbar from "../components/ui/HomeNavbar/HomeNavbar";
-import heroImage from "../assets/hero-image.png";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/ui/Logo/Logo";
 import Globe from "../components/ui/Globe/Globe";
 import nfSampleOne from "../assets/nf-sample-1.png";
 import nfSampleTwo from "../assets/nf-sample-2.png";
+import LearnMoreContent from "../components/homepage/LearnMoreContent";
 
 const HomePage = () => {
   const navigate = useNavigate();
 
+  const dotsBackground = "dark:bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] bg-[length:30px_30px] bg-[radial-gradient(circle_at_10px_10px,_rgba(0,0,0,0.15)_1px,_transparent_0)] dark:bg-[length:30px_30px]";
+
   return (
-    <div className="flex flex-col min-h-[100vh] bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] bg-[length:30px_30px]">
+    <>
+    <div className={`flex flex-col min-h-[100vh] bg-primary ${dotsBackground}`}>
       <HomeNavbar />
 
-      <main className="flex flex-1 justify-center md:justify-between items-center md:p-20 p-5">
+      <main className="flex flex-1 justify-center  md:justify-between items-center md:p-20 p-5">
         <div className="flex flex-col gap-8 text-center md:text-left">
           <div className="flex flex-col gap-3 md:items-stretch items-center">
             <Logo />
@@ -38,7 +40,7 @@ const HomePage = () => {
               textVisibility={true}
               onClick={() => navigate("/register")}
               style="fill"
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto text-white"
             />
 
             <Button
@@ -46,8 +48,8 @@ const HomePage = () => {
               size="medium"
               textVisibility={true}
               iconVisibility={true}
-              icon={<ArrowRightIcon className="w-6" />}
-              onClick={() => alert("Learn More clicked!")}
+              icon={<ArrowRightIcon className="w-5" />}
+              onClick={() => window.scrollTo({ top: document.getElementById("learn-more").offsetTop, behavior: 'smooth' })}
               style="outline"
               className="w-full sm:w-auto"
             />
@@ -86,6 +88,12 @@ const HomePage = () => {
         </div>
       </main>
     </div>
+
+    <ArrowDownIcon className="absolute bottom-5 left-1/2 transform -translate-x-1/2 w-6 stroke-3 text-secondary/30 animate-bounce cursor-pointer" onClick={() => window.scrollTo({ top: document.getElementById("learn-more").offsetTop, behavior: 'smooth' })} />
+
+    <LearnMoreContent/>
+
+  </>
   );
 };
 

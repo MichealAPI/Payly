@@ -118,15 +118,17 @@ const RegisterPage = () => {
     exit: { opacity: 0, y: -16, scale: 0.98 },
   };
 
+  const dotsBackground = "dark:bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] bg-[length:30px_30px] bg-[radial-gradient(circle_at_10px_10px,_rgba(0,0,0,0.15)_1px,_transparent_0)] dark:bg-[length:30px_30px]";
+
   return (
-    <div className="flex flex-col min-h-[100vh] bg-black md:bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] md:bg-[length:30px_30px]">
+    <div className={`flex flex-col min-h-[100vh] dark:bg-primary bg-dark-gray ${dotsBackground}`}>
       <HomeNavbar />
 
       <main className="flex flex-col flex-1 items-center justify-center relative" role="main">
         <div className="relative md:mb-60 mb-20">
           {/* Purple glow behind the card */}
           <div
-            className="hidden md:block absolute -inset-x-24 -inset-y-16 bg-gradient-to-br from-fuchsia-500/12 via-purple-500/5 to-transparent blur-3xl rounded-[2rem] pointer-events-none"
+            className="hidden md:block absolute -inset-x-24 -inset-y-16 bg-gradient-to-br from-fuchsia-500/12 via-purple-500/5 to-transparent  blur-3xl rounded-[2rem] pointer-events-none"
             aria-hidden="true"
           />
 
@@ -134,13 +136,11 @@ const RegisterPage = () => {
           <motion.div
             layout
             transition={{ layout: { duration: 0.3, ease: "easeInOut" } }}
-            className="flex flex-col items-center bg-transparent md:bg-white/5 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40 w-[80vw] max-w-sm md:max-w-md"
+            className="flex flex-col items-center bg-transparent outline-1 outline-secondary/30 dark:md:bg-white/5 md:bg-dark-gray/20 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40 w-[80vw] max-w-sm md:max-w-md"
           >
             <div className="flex items-center flex-col gap-2">
-              <Logo
-                className="w-12 h-12 bg-radial from-gray-700/60 to-black p-3 rounded-xl outline-1 outline-white/10"
-                onClickHomepageNavigate={false}
-              />
+              <Logo className="w-12 h-12 bg-radial from-dark-gray/60 to-primary outline-1 outline-secondary/10 p-3 rounded-xl dark:outline-white/10" onClickHomepageNavigate={false}/>
+
               <h1 className="text-secondary text-2xl font-medium mb-2">
                 {step === 0 ? "Create your Payly account" : "Let’s get to know you better"}
               </h1>
@@ -193,7 +193,7 @@ const RegisterPage = () => {
                       text={"Continue"}
                       size="full"
                       disabled={isContinueDisabled || password !== confirmPassword}
-                      className="mt-4"
+                      className="mt-4 text-white"
                       iconVisibility={true}
                       textVisibility={true}
                       icon={<ArrowRightIcon className="w-5" />}

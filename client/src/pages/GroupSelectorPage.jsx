@@ -248,7 +248,7 @@ const GroupSelectorPage = () => {
                 <DragOverlay className="cursor-pointer">
                   {activeGroup ? (
                     <Group
-                      className="shadow-lg transform scale-105 transition-transform duration-100 "
+                      className="transform scale-105 transition-transform duration-100 "
                       groupData={activeGroup}
                     />
                   ) : null}
@@ -347,8 +347,8 @@ const GroupSelectorPage = () => {
             iconVisibility={true}
             onClick={handlePrimaryButtonClick}
             icon={
-              <ChevronUpIcon
-                className={`w-6 text-white transition-transform duration-400 md:group-hover:rotate-180 ${isMenuOpen ? "rotate-180" : ""
+              <PlusIcon
+                className={`w-6 text-white transition-transform duration-400 md:group-hover:rotate-45 ${isMenuOpen ? "rotate-45" : ""
                   }`}
               />
             }

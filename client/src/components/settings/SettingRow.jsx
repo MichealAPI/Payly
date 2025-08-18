@@ -1,7 +1,5 @@
-import React from 'react';
-
 const SettingRow = ({ title, description, children, }) => (
-  <div className="flex flex-row border-t-1 border-secondary/20 pt-3 pb-4 justify-between sm:items-center">
+  <div className="flex flex-row border-t-1 border-secondary/20 pt-3 pb-4 justify-between items-center">
     <div className="flex flex-col">
         <p className="text-secondary text-sm mb-2 sm:mb-0 sm:w-1/4">{title}</p>
         {description && <p className="text-secondary text-xs opacity-70">{description}</p>}

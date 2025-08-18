@@ -92,7 +92,7 @@ export default function GroupModal({
   
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-30" onClose={closeModal}>
+      <Dialog as="div" className="relative z-60" onClose={closeModal}>
         {/* The backdrop, rendered as a fixed sibling to the panel container */}
         <TransitionChild
           as={Fragment}
@@ -103,7 +103,7 @@ export default function GroupModal({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/30" />
+          <div className="fixed inset-0 bg-black/60" />
         </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -117,7 +117,7 @@ export default function GroupModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-primary shadow-[0px_0px_10px_2px_rgba(198,172,255,0.25)] p-6 text-left align-middle transition-all">
+              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl border-1 border-light-purple/40 bg-primary p-6 text-left align-middle transition-all">
                 <DialogTitle
                   as="h3"
                   className="text-lg leading-6 text-secondary font-bold"

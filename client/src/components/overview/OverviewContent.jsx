@@ -233,7 +233,7 @@ const OverviewContent = ({
                 );
               }
             )}
-          <Card className="hidden md:flex w-full">
+          <Card dropShadow={false} className="hidden md:flex w-full outline-1 outline-secondary/20">
             <div className="flex flex-col w-full gap-4">
               <h3 className="text-lg text-secondary font-bold text-center border-b-1 border-secondary/30 pb-3">
                 Group Summary
@@ -292,7 +292,7 @@ const OverviewContent = ({
                 {/* Total Expenses */}
                 <div className="flex items-center gap-4">
                   <div className="bg-slate-500/20 p-2 rounded-lg">
-                    <ScaleIcon className="w-6 h-6 text-slate-300 dark:text-slate-500" />
+                    <ScaleIcon className="w-6 h-6 dark:text-slate-500" />
                   </div>
                   <div className="flex-grow">
                     <p className="text-sm text-secondary/80">Total Expenses</p>

@@ -36,7 +36,7 @@ const CurrencySelector = ({ setCurrency, currency }) => {
                     placeholder="Select currency"
                 />
                 <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
-                    <ChevronDownIcon className="size-4 fill-secondary/60 group-data-hover:fill-white" />
+                    <ChevronDownIcon className="size-4 fill-secondary/60 group-data-hover:fill-secondary/30" />
                 </ComboboxButton>
             </div>
 

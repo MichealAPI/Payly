@@ -1,5 +1,11 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+  { "source": "/sw.js", "destination": "/sw.js" },
+  { "source": "/manifest.webmanifest", "destination": "/manifest.webmanifest" },
+  { "source": "/assets/:path*", "destination": "/assets/:path*" },
+  { "source": "/pwa-:size(192x192|512x512).png", "destination": "/pwa-:size.png" },
+  { "source": "/pwa-maskable-:size(192x192|512x512).png", "destination": "/pwa-maskable-:size.png" },
+  { "source": "/apple-touch-icon.png", "destination": "/apple-touch-icon.png" },
+  { "source": "/:path*", "destination": "/index.html" }
   ]
 }

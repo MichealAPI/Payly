@@ -52,8 +52,8 @@
 .navbar .profile .icon {
     width: 32px;
     height: 32px;
-    overflow: hidden;
-    border-radius: 5px;
+    overflow: visible; /* allow popover panel to escape */
+    border-radius: 50%;
 }
 
 .navbar .profile .icon img {

@@ -46,8 +46,10 @@ const LoginPage = () => {
     navigate("/groups", { replace: true });
   }
 
+  const dotsBackground = "dark:bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] bg-[length:30px_30px] bg-[radial-gradient(circle_at_10px_10px,_rgba(0,0,0,0.15)_1px,_transparent_0)]";
+
   return (
-    <div className="flex flex-col min-h-[100vh] bg-black md:bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] md:bg-[length:30px_30px]">
+    <div className={`flex flex-col min-h-[100vh] dark:bg-primary bg-dark-gray ${dotsBackground}`}>
       <HomeNavbar />
 
       <main
@@ -63,9 +65,9 @@ const LoginPage = () => {
           />
 
           {/* Glass effect card */}
-          <div className="flex flex-col items-center w-[80vw] max-w-sm md:max-w-md bg-transparent md:bg-white/5 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40">
+          <div className="flex flex-col items-center w-[80vw] outline-1 outline-secondary/30 max-w-sm md:max-w-md bg-transparent md:bg-white/20 dark:md:bg-white/5 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40">
             <div className="flex items-center flex-col gap-2">
-              <Logo className="w-12 h-12 bg-radial from-gray-700/60 to-black p-3 rounded-xl outline-1 outline-white/10" onClickHomepageNavigate={false}/>
+              <Logo className="w-12 h-12 bg-radial from-dark-gray/60 to-primary outline-secondary/10 p-3 rounded-xl outline-1 dark:outline-white/10" onClickHomepageNavigate={false}/>
 
               <h1 className="text-secondary text-2xl font-medium mb-2">
                 Log in to Payly
@@ -110,7 +112,7 @@ const LoginPage = () => {
                 required
                 rightLabel={
                   <Link
-                    className="hover:text-blue-400 transition-colors font-medium text-[#9f74fc] text-base"
+                    className="hover:text-blue-400 transition-colors font-medium text-tertiary text-base"
                     to="/forgot"
                     aria-label="Forgot your password?"
                   >
@@ -134,7 +136,7 @@ const LoginPage = () => {
                 text={isLoading ? "Logging in..." : "Sign In"}
                 size="full"
                 disabled={isSubmitDisabled}
-                className="mt-5"
+                className="mt-5 text-white"
                 textVisibility={true}
                 style="fill"
                 type="submit"

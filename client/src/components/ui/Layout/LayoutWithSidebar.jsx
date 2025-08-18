@@ -5,7 +5,7 @@ const LayoutWithSidebar = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <main className="content-with-sidebar">
+      <main className="md:ml-[60px] md:w-[calc(100%-60px)] w-full m-0">
         <Outlet />
       </main>
     </div>

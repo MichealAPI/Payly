@@ -125,7 +125,7 @@ export class UsersService {
 
     if (currentlyArchivedGroups) {
       const groupIndex = currentlyArchivedGroups.value.findIndex(
-        (id: mongoose.Types.ObjectId) => id.equals(groupId),
+        (id: mongoose.Types.ObjectId) => id === groupId,
       );
 
       if (groupIndex > -1) {

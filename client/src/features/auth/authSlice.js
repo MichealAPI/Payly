@@ -21,7 +21,8 @@ export const loginUser = createAsyncThunk(
         email: email,
         password: password,
       });
-      return response.data.user;
+  // Server returns the user object directly (not under a `user` key)
+  return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }

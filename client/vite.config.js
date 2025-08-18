@@ -2,6 +2,7 @@ import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import compression from 'vite-plugin-compression'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -10,10 +11,18 @@ export default defineConfig(({ mode }) => {
   const apiOrigin = new URL(api).origin;
 
   return {
-    plugins: [react(), tailwindcss(), sentryVitePlugin({
-      org: "mikeslaboratory",
-      project: "payly"
-    })],
+    plugins: [
+      react(),
+      tailwindcss(),
+      // Generate compressed assets for production (gzip + brotli)
+      compression({ algorithm: 'gzip' }),
+      compression({ algorithm: 'brotliCompress', ext: '.br' }),
+  // PWA handled via static manifest and public/sw.js
+      sentryVitePlugin({
+        org: "mikeslaboratory",
+        project: "payly"
+      })
+    ],
 
 
     server: {
@@ -24,11 +33,11 @@ export default defineConfig(({ mode }) => {
         "Referrer-Policy": "no-referrer",
         "Content-Security-Policy": `
           default-src 'self';
-          img-src 'self' data: https://res.cloudinary.com https://placehold.co https://flagpedia.net;
+          img-src 'self' data: https://res.cloudinary.com https://placehold.co https://flagpedia.net https://cdn.jsdelivr.net;
           script-src 'self' 'unsafe-inline' 'unsafe-eval';
           style-src 'self' 'unsafe-inline';
-          connect-src 'self' ${apiOrigin} ws: wss:;
-        `.replace(/\s{2,}/g, '').trim(),
+          connect-src 'self' ${apiOrigin} ws: wss: data: https://cdn.jsdelivr.net https://api.github.com;
+        `.replace(/\s+/g, ' ').trim(),
       },
       proxy: {
         '/api': {

@@ -11,7 +11,7 @@ const SidebarItem = ({ icon, isActive, onClick }) => {
             className={`${baseClasses} ${hoverClasses} ${isActive ? activeClasses : inactiveClasses}`} 
             onClick={onClick}
         >
-            <div className={`w-10 h-10 flex items-center justify-center`}>
+            <div className={`w-9 h-9 flex items-center justify-center`}>
                 {icon} 
             </div>
         </div>
