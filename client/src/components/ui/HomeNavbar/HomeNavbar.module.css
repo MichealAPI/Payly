@@ -1,0 +1,5 @@
+.navbarPadding {
+  padding: calc(10px + env(safe-area-inset-top)) 10px 10px 10px;
+
+  min-height: calc(100% + env(safe-area-inset-top));
+}

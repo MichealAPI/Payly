@@ -111,12 +111,12 @@ const ProfilePicture = ({ className = "w-full h-full", currentUser }) => {
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
-                className="absolute top-full left-1/2 md:-translate-x-9/10 -translate-x-15 mt-4 z-50  w-64 flex-col rounded-md outline-1 outline-secondary/20 bg-primary shadow-md ring-1 ring-black/5"
+                className="absolute top-full left-1/2 -translate-x-9/10 mt-4 z-50  w-64 flex-col rounded-md outline-1 outline-secondary/20 bg-primary shadow-md ring-1 ring-black/5"
               >
                 {/* top arrow */}
                 <span
                   aria-hidden="true"
-                  className="absolute -top-1.5 md:right-1/14 max-md:left-12 max-md:translate-x-1/2 w-3 h-3 bg-primary border-l border-t border-secondary/30 transform rotate-45"
+                  className="absolute -top-1.5 right-1/14 w-3 h-3 bg-primary border-l border-t border-secondary/30 transform rotate-45"
                 />
 
                 <div className="px-4 py-3 flex items-center gap-3">

@@ -16,6 +16,7 @@ import {
   DevicePhoneMobileIcon,
   BanknotesIcon,
 } from "@heroicons/react/24/outline";
+import styles from "./HomeNavbar.module.css";
 
 const IconHamburger = (props) => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
@@ -40,7 +41,7 @@ const HomeNavbar = () => {
 
   return (
     <>
-      <nav className="flex justify-between items-center p-4 md:bg-transparent bg-dark-gray/10">
+      <nav className={`flex justify-between items-center ${styles.navbarPadding} md:bg-transparent bg-dark-gray/10`}>
         {/* Logo and Desktop Title */}
         <Logo className="hidden md:block w-8" onClickHomepageNavigate={true} />
 

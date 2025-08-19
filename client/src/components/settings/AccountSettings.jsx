@@ -11,7 +11,7 @@ import { AdvancedImage } from "@cloudinary/react";
 import Spinner from "../ui/Spinner/Spinner";
 
 const UserInfoPill = ({ title, value }) => (
-  <div className="flex flex-col border-r-1 border-white/20 pr-3 last:border-r-0">
+  <div className="flex flex-col border-r-1 border-secondary/20 pr-3 last:border-r-0">
     <p className="text-secondary/70 text-xs">{title}</p>
     <p className="text-secondary text-sm">{value}</p>
   </div>

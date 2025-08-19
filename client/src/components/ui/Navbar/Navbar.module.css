@@ -1,90 +1,84 @@
 .navbar {
-    background: var(--color-dark-gray);
-    display: flex;
-    align-items: center;
-    /* Scollbar adapting */
-    width: 100%;
-    top: 0;
-    z-index: 50;
-    padding: env(safe-area-inset-top) 10px 10px 10px; /* in this order: top right bottom left */
-    min-height: calc(100% + env(safe-area-inset-top));
+  position: sticky;
+  top: 0;
+  background: var(--color-dark-gray);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  z-index: 50;
+  padding-top: env(safe-area-inset-top);
+  height: calc(61px + env(safe-area-inset-bottom));
+
 }
 
 .navbar .title p {
-    font-size: 18px;
-    color: var(--color-secondary);
-    font-family: 'Phantom Sans', sans-serif;
-    font-weight: bold;   
+  font-size: 18px;
+  color: var(--color-secondary);
+  font-family: "Phantom Sans", sans-serif;
+  font-weight: bold;
 }
 
 .navbar .actionWrapper {
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    gap: 20px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  gap: 16px;
 }
 
-.navbar .actionWrapper .action p {
-    color: var(--color-secondary);
-    font-family: 'Phantom Sans', sans-serif;
-    transition: color 0.2s ease-in-out, font-weight 0.1s ease-in-out;
-    padding: 5px;
+.navbar .actionWrapper .action p, .navbar .actionWrapper .action span {
+  color: var(--color-secondary);
+  font-family: "Phantom Sans", sans-serif;
+  transition: color 0.2s ease-in-out, font-weight 0.1s ease-in-out;
+  padding: 5px;
 }
 
 .navbar .actionWrapper .action:hover p {
-    color: var(--color-light-purple);
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.2s ease-in-out, font-weight 0.1s ease-in-out;
+  color: var(--color-light-purple);
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out, font-weight 0.1s ease-in-out;
 }
 
 .navbar .actionWrapper .action.active {
-    transition: border-bottom 0.1s ease-in-out;
-    border-bottom: var(--color-tertiary) 3px solid;
+  transition: border-color 0.15s ease-in-out;
 }
 
 .navbar .actionWrapper .action.active p {
-    color: var(--color-light-purple);
-    font-weight: bold;
+  color: var(--color-light-purple);
+  font-weight: bold;
 }
 
-
 .navbar .profile .icon {
-    width: 32px;
-    height: 32px;
-    overflow: visible; /* allow popover panel to escape */
-    border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  overflow: visible; /* allow popover panel to escape */
+  border-radius: 50%;
 }
 
 .navbar .profile .icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .navbar .notification svg {
-    color: var(--color-secondary);
-    transition: color 0.1s ease-in-out;
+  color: var(--color-secondary);
+  transition: color 0.1s ease-in-out;
 }
 
 .navbar .notification:hover svg {
-    color: var(--color-light-purple);
-    cursor: pointer;
-    transition: color 0.1s ease-in-out;
+  color: var(--color-light-purple);
+  cursor: pointer;
+  transition: color 0.1s ease-in-out;
 }
-
 
 /* Mobile styles */
 @media (max-width: 768px) {
-    .navbar {
-        justify-content: space-between;
-    }
+  .navbar .title p {
+    margin-left: 0;
+  }
 
-    .navbar .title p {
-        margin-left: 0;
-    }
-
-    .navbar .profile .icon {
-        border-radius: 50%;
-    }
+  .navbar .profile .icon {
+    border-radius: 50%;
+  }
 }

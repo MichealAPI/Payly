@@ -53,7 +53,7 @@ const Header = ({ title, membersCount, description, icon, isOwner, onEdit }) => 
 const HeaderSettingsMenu = ({ isOwner, onEdit }) => {
   return (
     <Menu>
-      <MenuButton className="absolute inline-flex items-center gap-2 text-sm/6 font-semibold text-secondary focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:text-purple-400/20 md:relative">
+      <MenuButton className="absolute left-6/7 md:left-0 inline-flex items-center gap-2 text-sm/6 font-semibold text-secondary focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:text-purple-400/20 md:relative">
         <EllipsisHorizontalIcon className="h-[25px] w-[25px] cursor-pointer text-secondary transition-colors duration-100 ease-in-out hover:text-[]" />
       </MenuButton>
 

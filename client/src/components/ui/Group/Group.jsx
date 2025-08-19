@@ -101,13 +101,13 @@ export const Group = ({ className, groupData, isArchived }) => {
 
       <Card
         dropShadow={false}
-        className={`${className} outline-1 outline-secondary/20 w-full md:h-55 bg-dark-gray cursor-pointer`}
+        className={`${className} outline-1 outline-secondary/20 w-full h-20 md:h-55 bg-dark-gray cursor-pointer`}
         onClick={handleNavigate}
       >
         <div className="flex w-full items-center h-full gap-4 md:items-start">
           <div className="flex flex-row items-center gap-4 flex-1 min-w-0 h-full md:flex-col md:items-start md:gap-9">
             <div className="flex md:flex-col gap-2 md:gap-0 items-center md:items-stretch">
-              <div className="m-0 text-4xl md:text-5xl select-none pointer-events-none">
+              <div className="m-0 text-5xl select-none pointer-events-none">
                 <p>{icon}</p>
               </div>
 
@@ -116,10 +116,10 @@ export const Group = ({ className, groupData, isArchived }) => {
                   <h3 className="truncate max-w-[35vw]">{title}</h3>
 
                   {/* Labels */}
-                  <div className=" gap-2 flex">{Labels()}</div>
+                  <div className="gap-2 flex">{Labels()}</div>
                 </div>
 
-                <div className="text-sm font-normal text-secondary select-none">
+                <div className="text-sm font-normal text-secondary/70 select-none">
                   <p>{formattedMembers}</p>
                 </div>
 
