@@ -111,7 +111,7 @@ export const Group = ({ className, groupData, isArchived }) => {
                 <p>{icon}</p>
               </div>
 
-              <div className="mt-2 flex flex-col justify-center">
+              <div className="md:mt-2 flex flex-col justify-center">
                 <div className="m-0 select-none flex items-center gap-2 md:select-auto text-xl md:text-2xl font-bold text-secondary">
                   <h3 className="truncate max-w-[35vw]">{title}</h3>
 

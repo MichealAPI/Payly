@@ -3,12 +3,18 @@ import Input from "../components/ui/Input/Input";
 import Button from "../components/ui/Button/Button";
 import Logo from "../components/ui/Logo/Logo";
 import { useState } from "react";
-import { ArrowRightIcon, EnvelopeIcon, KeyIcon, UserIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowRightIcon,
+  EnvelopeIcon,
+  KeyIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import DatePicker from "../components/ui/DatePicker/DatePicker";
 import apiClient from "../api/axiosConfig";
+import CopyrightNotice from "../components/ui/CopyrightNotice/CopyrightNotice";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -40,28 +46,28 @@ const RegisterPage = () => {
     setIsLoading(true);
 
     // Client-side validation
-  if (!firstName.trim() || !lastName.trim()) {
+    if (!firstName.trim() || !lastName.trim()) {
       toast.error("Please enter your first and last name.", {
         position: "bottom-center",
       });
       setIsLoading(false);
       return;
     }
-  if (!isValidEmail(email)) {
+    if (!isValidEmail(email)) {
       toast.error("Please enter a valid email address.", {
         position: "bottom-center",
       });
       setIsLoading(false);
       return;
     }
-  if (password.length < 6) {
+    if (password.length < 6) {
       toast.error("Password must be at least 6 characters.", {
         position: "bottom-center",
       });
       setIsLoading(false);
       return;
     }
-  if (password !== confirmPassword) {
+    if (password !== confirmPassword) {
       toast.error("Passwords do not match!", { position: "bottom-center" });
       setIsLoading(false);
       return;
@@ -72,7 +78,7 @@ const RegisterPage = () => {
         firstName,
         lastName,
         email,
-        password
+        password,
       });
 
       toast.success("Registration successful! Please log in.", {
@@ -118,13 +124,19 @@ const RegisterPage = () => {
     exit: { opacity: 0, y: -16, scale: 0.98 },
   };
 
-  const dotsBackground = "dark:bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] bg-[length:30px_30px] bg-[radial-gradient(circle_at_10px_10px,_rgba(0,0,0,0.15)_1px,_transparent_0)] dark:bg-[length:30px_30px]";
+  const dotsBackground =
+    "dark:md:bg-[radial-gradient(circle_at_10px_10px,_rgba(255,255,255,0.15)_1px,_transparent_0)] md:bg-[length:30px_30px] md:bg-[radial-gradient(circle_at_10px_10px,_rgba(0,0,0,0.15)_1px,_transparent_0)] dark:md:bg-[length:30px_30px]";
 
   return (
-    <div className={`flex flex-col min-h-[100vh] dark:bg-primary bg-dark-gray ${dotsBackground}`}>
+    <div
+      className={`flex flex-col min-h-[100vh] dark:bg-primary bg-dark-gray ${dotsBackground}`}
+    >
       <HomeNavbar />
 
-      <main className="flex flex-col flex-1 items-center justify-center relative" role="main">
+      <main
+        className="flex flex-col flex-1 items-center justify-center relative"
+        role="main"
+      >
         <div className="relative md:mb-60 mb-20">
           {/* Purple glow behind the card */}
           <div
@@ -136,13 +148,18 @@ const RegisterPage = () => {
           <motion.div
             layout
             transition={{ layout: { duration: 0.3, ease: "easeInOut" } }}
-            className="flex flex-col items-center bg-transparent outline-1 outline-secondary/30 dark:md:bg-white/5 md:bg-dark-gray/20 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40 w-[80vw] max-w-sm md:max-w-md"
+            className="flex flex-col items-center bg-transparent md:outline-1 outline-secondary/30 dark:md:bg-white/5 md:bg-dark-gray/20 md:backdrop-blur-xl md:pb-[2.5vw] md:pt-[2.5vw] md:pl-[2vw] md:pr-[2vw] md:border md:border-white/20 md:rounded-2xl md:shadow-2xl md:shadow-purple-500/20 md:focus-within:ring-2 md:focus-within:ring-purple-400/40 w-[80vw] max-w-sm md:max-w-md"
           >
             <div className="flex items-center flex-col gap-2">
-              <Logo className="w-12 h-12 bg-radial from-dark-gray/60 to-primary outline-1 outline-secondary/10 p-3 rounded-xl dark:outline-white/10" onClickHomepageNavigate={false}/>
+              <Logo
+                className="w-12 h-12 bg-radial from-dark-gray/60 to-primary outline-1 outline-secondary/10 p-3 rounded-xl dark:outline-white/10"
+                onClickHomepageNavigate={false}
+              />
 
               <h1 className="text-secondary text-2xl font-medium mb-2">
-                {step === 0 ? "Create your Payly account" : "Let’s get to know you better"}
+                {step === 0
+                  ? "Create your Payly account"
+                  : "Let’s get to know you better"}
               </h1>
             </div>
 
@@ -153,10 +170,10 @@ const RegisterPage = () => {
               transition={{ layout: { duration: 0.3, ease: "easeInOut" } }}
             >
               <AnimatePresence mode="popLayout" initial={false}>
-        {step === 0 ? (
+                {step === 0 ? (
                   <motion.div
                     key="step-credentials"
-          layout
+                    layout
                     variants={cardVariants}
                     initial="initial"
                     animate="animate"
@@ -192,7 +209,9 @@ const RegisterPage = () => {
                     <Button
                       text={"Continue"}
                       size="full"
-                      disabled={isContinueDisabled || password !== confirmPassword}
+                      disabled={
+                        isContinueDisabled || password !== confirmPassword
+                      }
                       className="mt-4 text-white"
                       iconVisibility={true}
                       textVisibility={true}
@@ -201,10 +220,10 @@ const RegisterPage = () => {
                       type="submit"
                     />
                   </motion.div>
-        ) : (
+                ) : (
                   <motion.div
                     key="step-profile"
-          layout
+                    layout
                     variants={cardVariants}
                     initial="initial"
                     animate="animate"
@@ -232,12 +251,20 @@ const RegisterPage = () => {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <p className="text-md font-sans text-secondary/60 m-0">Date of birth</p>
-                      <DatePicker date={dob} setDate={setDob} labelDropdown={true}/>
+                      <p className="text-md font-sans text-secondary/60 m-0">
+                        Date of birth
+                      </p>
+                      <DatePicker
+                        date={dob}
+                        setDate={setDob}
+                        labelDropdown={true}
+                      />
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <p className="text-md font-sans text-secondary/60 m-0">Sex</p>
+                      <p className="text-md font-sans text-secondary/60 m-0">
+                        Sex
+                      </p>
                       <div className="grid grid-cols-3 gap-2">
                         {[
                           { key: "male", label: "Male" },
@@ -251,7 +278,9 @@ const RegisterPage = () => {
                               text={label}
                               size="full"
                               style={selected ? "fill" : "outline"}
-                              className={`py-2 ${selected ? "" : "border-white/40 text-secondary"}`}
+                              className={`py-2 ${
+                                selected ? "" : "border-white/40 text-secondary"
+                              }`}
                               onClick={(e) => {
                                 e.preventDefault();
                                 setSex(key);
@@ -282,10 +311,10 @@ const RegisterPage = () => {
                         type="submit"
                       />
                     </div>
-      </motion.div>
+                  </motion.div>
                 )}
               </AnimatePresence>
-    </motion.form>
+            </motion.form>
 
             <div className="flex mt-10">
               <p className="text-secondary text-lg">Already have an account?</p>
@@ -299,12 +328,7 @@ const RegisterPage = () => {
           </motion.div>
         </div>
 
-        <p
-          className="absolute bottom-5 text-sm opacity-70 text-secondary"
-          aria-label="Made with love in Italy"
-        >
-          Made with <span aria-hidden="true">❤️</span> in Italy
-        </p>
+        <CopyrightNotice />
       </main>
     </div>
   );
