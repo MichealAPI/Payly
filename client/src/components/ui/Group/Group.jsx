@@ -1,6 +1,6 @@
 import Button from "../Button/Button.jsx";
 import { useNavigate } from "react-router-dom";
-import { ArrowRightIcon, Cog6ToothIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon, Cog6ToothIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import Card from "../Card/Card.jsx";
 import Label from "../Label/Label.jsx";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
@@ -104,22 +104,22 @@ export const Group = ({ className, groupData, isArchived }) => {
         className={`${className} outline-1 outline-secondary/20 w-full md:h-55 bg-dark-gray cursor-pointer`}
         onClick={handleNavigate}
       >
-        <div className="flex w-full items-center h-full  gap-4 md:items-start">
+        <div className="flex w-full items-center h-full gap-4 md:items-start">
           <div className="flex flex-row items-center gap-4 flex-1 min-w-0 h-full md:flex-col md:items-start md:gap-9">
             <div className="flex md:flex-col gap-2 md:gap-0 items-center md:items-stretch">
-              <div className="m-0 text-3xl md:text-5xl select-none pointer-events-none">
+              <div className="m-0 text-4xl md:text-5xl select-none pointer-events-none">
                 <p>{icon}</p>
               </div>
 
               <div className="md:mt-2 flex flex-col justify-center">
-                <div className="m-0 select-none flex items-center gap-2 md:select-auto text-xl md:text-2xl font-bold text-secondary">
+                <div className="m-0 select-none flex items-center gap-2 md:select-auto text-2xl font-bold text-secondary">
                   <h3 className="truncate max-w-[35vw]">{title}</h3>
 
                   {/* Labels */}
                   <div className=" gap-2 flex">{Labels()}</div>
                 </div>
 
-                <div className="text-xs md:text-sm font-normal text-secondary select-none">
+                <div className="text-sm font-normal text-secondary select-none">
                   <p>{formattedMembers}</p>
                 </div>
 
@@ -208,16 +208,12 @@ export const Group = ({ className, groupData, isArchived }) => {
                   </MenuItems>
                 </Menu>
               </div>
-              <Button
-                size="minimal"
-                iconVisibility={true}
-                className="text-white flex md:hidden"
-                icon={
-                  <ArrowRightIcon className="w-6 stroke-2 fill-secondary" />
-                }
+              <button
+                className="text-secondary/50 flex md:hidden"
                 onClick={handleNavigate}
-                style="fill"
-              />
+              >
+                <ChevronRightIcon className="w-4 stroke-3" />
+              </button>
             </div>
           </div>
         </div>

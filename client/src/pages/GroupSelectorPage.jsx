@@ -229,7 +229,7 @@ const GroupSelectorPage = () => {
                   disabled={isCreatorOpen || allGroups.length < 2}
                   strategy={rectSortingStrategy}
                 >
-                  <div className="grid p-10 items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-5 md:gap-y-10 gap-x-25 h-full w-full">
+                  <div className="grid p-5 mt-2 md:mt-0 md:p-10 items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-5 md:gap-y-10 gap-x-25 h-full w-full">
                     {filteredGroups.map((group) => (
                       <SortableGroup
                         key={group._id}
