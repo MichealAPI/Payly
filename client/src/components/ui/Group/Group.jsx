@@ -119,7 +119,7 @@ export const Group = ({ className, groupData, isArchived }) => {
                   <div className="gap-2 flex">{Labels()}</div>
                 </div>
 
-                <div className="text-sm font-normal text-secondary/70 select-none">
+                <div className="text-base font-normal text-secondary/70 select-none">
                   <p>{formattedMembers}</p>
                 </div>
 

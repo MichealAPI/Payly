@@ -34,7 +34,7 @@ const Header = ({ title, membersCount, description, icon, isOwner, onEdit }) => 
             <div className="flex items-center">
               <UserIcon className="w-5 text-secondary" />
               <div>
-                <p className="font-['Phantom_Sans',_sans-serif] m-0 text-2xl font-bold text-secondary">
+                <p className="m-0 text-2xl font-bold text-secondary">
                   {membersCount}
                 </p>
               </div>

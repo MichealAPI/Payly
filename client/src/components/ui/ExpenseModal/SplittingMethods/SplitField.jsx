@@ -118,7 +118,7 @@ export default function SplitField({
       >
         <CheckIcon className="hidden w-4 text-primary group-data-checked:block stroke-4" />
       </Checkbox>
-      <p className={`flex-1 text-sm text-secondary ${!isEnabled ? "opacity-50 select-none" : ""}`}>
+      <p className={`flex-1 text-base text-secondary ${!isEnabled ? "opacity-50 select-none" : ""}`}>
         {participantName}
       </p>
 

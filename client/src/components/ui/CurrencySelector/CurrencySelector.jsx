@@ -28,14 +28,15 @@ const CurrencySelector = ({ setCurrency, currency }) => {
             <div className="relative">
                 <ComboboxInput
                     className={clsx(
-                        'w-full rounded-lg border-1 border-secondary/60 bg-primary py-1.5 pr-8 pl-3 text-sm/6 text-secondary',
+                        // Make this input match the amount input sizing so both controls share the same height
+                        'block w-full rounded-lg border-1 border-secondary/60 bg-primary pl-3 pr-8 py-1.5 text-base/6 text-secondary',
                         'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
                     )}
                     displayValue={(c) => c?.name || c || ''}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Select currency"
                 />
-                <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
+                <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5 flex items-center h-full">
                     <ChevronDownIcon className="size-4 fill-secondary/60 group-data-hover:fill-secondary/30" />
                 </ComboboxButton>
             </div>
@@ -55,7 +56,7 @@ const CurrencySelector = ({ setCurrency, currency }) => {
                         className="group flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-light-purple/10"
                     >
                         <CheckIcon className="invisible size-4 fill-white group-data-selected:visible" />
-                        <div className="text-sm/6 text-secondary font-bold flex w-full items-center">
+                        <div className="text-base/6 text-secondary font-bold flex w-full items-center">
                             <img
                                 src={`https://flagpedia.net/data/${currency.section}/w20/${currency.countryCode}.webp`}
                                 className="h-3 w-5 mr-2"

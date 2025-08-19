@@ -55,7 +55,7 @@ const ConfirmModal = ({ title, message, isOpen, setIsOpen, onConfirm, onCancel }
 
                 <div className="mt-2">
                     <span 
-                      className="text-sm text-secondary"
+                      className="text-base text-secondary"
                       dangerouslySetInnerHTML={{ __html: message }}
                     />
                 </div>

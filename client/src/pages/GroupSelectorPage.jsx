@@ -58,6 +58,7 @@ const GroupSelectorPage = () => {
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
   const [isJoinerOpen, setIsJoinerOpen] = useState(false);
   const [isJoining, setIsJoining] = useState(false); // For local button spinner
+  const [showFabHint, setShowFabHint] = useState(false); // One-time mobile hint
   const menuRef = useRef(null);
 
   // initial fetch
@@ -164,6 +165,22 @@ const GroupSelectorPage = () => {
     };
   }, []);
 
+  // One-time hint for mobile to make FAB actions discoverable
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth < 768) {
+      const seen = localStorage.getItem("seenFabHint");
+      if (!seen) setShowFabHint(true);
+    }
+  }, []);
+
+  // Auto-hide hint after a short delay
+  useEffect(() => {
+    if (!showFabHint) return;
+    const t = setTimeout(() => setShowFabHint(false), 5000);
+    return () => clearTimeout(t);
+  }, [showFabHint]);
+
   const filteredGroups = useMemo(() => {
     const archivedIds = new Set((archivedItems || []).map((id) => id.toString()));
 
@@ -182,6 +199,13 @@ const GroupSelectorPage = () => {
     // Only toggle on smaller screens, larger screens are handled by hover
     if (window.innerWidth < 768) {
       setIsMenuOpen(!isMenuOpen);
+    }
+    // Hide the hint once the user interacts
+    if (showFabHint) {
+      setShowFabHint(false);
+      try {
+        localStorage.setItem("seenFabHint", "1");
+      } catch {}
     }
   };
 
@@ -286,17 +310,29 @@ const GroupSelectorPage = () => {
       <div
         ref={menuRef}
         className="group fixed z-50 bottom-10 right-10 flex flex-col items-end gap-4"
+        role="region"
+        aria-label="Group actions"
       >
         {/* Secondary Action Buttons */}
         <div
-          className={`flex flex-col-reverse items-center gap-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 ${isMenuOpen
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-2 pointer-events-none md:pointer-events-auto"
-            }`}
+          id="fab-actions"
+          role="menu"
+          aria-hidden={!isMenuOpen}
+          className={`flex flex-col-reverse items-center gap-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 ${
+            isMenuOpen
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-2 pointer-events-none md:pointer-events-auto"
+          }`}
         >
           {/* Join Group Button */}
           <div className="group/join flex justify-between w-full items-center">
-            <p className="whitespace-nowrap text-light-purple mr-5 text-sm font-bold opacity-0 group-hover/join:opacity-100 transition-all duration-200 transform translate-x-[20px] group-hover/join:translate-x-0">
+            <p
+              className={`whitespace-nowrap text-light-purple mr-5 text-sm font-bold transition-all duration-200 transform ${
+                isMenuOpen
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 translate-x-[20px]"
+              } md:opacity-0 md:group-hover/join:opacity-100 md:translate-x-[20px] md:group-hover/join:translate-x-0`}
+            >
               Join Group
             </p>
             <Button
@@ -304,6 +340,8 @@ const GroupSelectorPage = () => {
               iconVisibility={true}
               icon={<UserPlusIcon className="w-6" />}
               className="relative z-10 text-white"
+              aria-label="Join Group"
+              role="menuitem"
               onClick={() => {
                 setIsMenuOpen(false);
                 setIsJoinerOpen(true)
@@ -314,7 +352,13 @@ const GroupSelectorPage = () => {
 
           {/* Create Group Button */}
           <div className="group/create flex w-full items-center">
-            <p className="whitespace-nowrap text-light-purple mr-5 text-sm font-bold opacity-0 group-hover/create:opacity-100 transition-all duration-200 transform translate-x-[20px] group-hover/create:translate-x-0">
+            <p
+              className={`whitespace-nowrap text-light-purple mr-5 text-sm font-bold transition-all duration-200 transform ${
+                isMenuOpen
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 translate-x-[20px]"
+              } md:opacity-0 md:group-hover/create:opacity-100 md:translate-x-[20px] md:group-hover/create:translate-x-0`}
+            >
               Create Group
             </p>
             <Button
@@ -322,6 +366,8 @@ const GroupSelectorPage = () => {
               iconVisibility={true}
               icon={<PlusIcon className="w-6" />}
               className="relative z-10 text-white"
+              aria-label="Create Group"
+              role="menuitem"
               onClick={() => {
                 setIsMenuOpen(false);
                 setIsCreatorOpen(true)
@@ -348,12 +394,40 @@ const GroupSelectorPage = () => {
             onClick={handlePrimaryButtonClick}
             icon={
               <PlusIcon
-                className={`w-6 text-white transition-transform duration-400 md:group-hover:rotate-45 ${isMenuOpen ? "rotate-45" : ""
-                  }`}
+                className={`w-6 text-white transition-transform duration-400 md:group-hover:rotate-45 ${
+                  isMenuOpen ? "rotate-45" : ""
+                }`}
               />
             }
+            aria-label={isMenuOpen ? "Close actions" : "Open actions"}
+            aria-haspopup="menu"
+            aria-controls="fab-actions"
+            aria-expanded={isMenuOpen}
             className="relative z-10"
           />
+
+          {/* One-time mobile coachmark hint */}
+          {showFabHint && (
+            <div className="md:hidden absolute right-16 bottom-16 max-w-[220px] rounded-xl bg-white/95 shadow-lg ring-1 ring-black/5 px-3 py-2 text-xs text-primary flex items-start gap-3">
+              <div className="flex-1">
+                <p className="font-semibold">Create or join a group</p>
+                <p className="text-secondary mt-0.5">Tap the plus to see actions.</p>
+              </div>
+              <button
+                type="button"
+                className="text-secondary/70 hover:text-secondary"
+                aria-label="Dismiss hint"
+                onClick={() => {
+                  setShowFabHint(false);
+                  try {
+                    localStorage.setItem("seenFabHint", "1");
+                  } catch {}
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          )}
         </div>
 
         <GroupModal isOpen={isCreatorOpen} setIsOpen={setIsCreatorOpen} />

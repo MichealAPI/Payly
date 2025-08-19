@@ -127,13 +127,13 @@ const Expense = ({
           {/* Text content */}
           <div className="flex flex-col justify-between">
             <div>
-              <h2 className="text-secondary text-xl md:text-2xl font-bold">
+              <h2 className="text-secondary text-2xl font-bold">
                 {title.slice(0, 30)}
               </h2>
               <h3
                 className={`${
                   type === "deposit" ? "text-green-300" : "text-red-300"
-                } text-xs md:text-sm font-bold md:font-semibold`}
+                } text-sm font-semibold`}
               >
                 {type.toUpperCase()}
               </h3>
@@ -143,7 +143,7 @@ const Expense = ({
               {description || "No description provided."}
             </p>
 
-            <p className="text-secondary/60 text-base sm:text-lg md:text-sm">
+            <p className="text-secondary/60 text-base md:text-sm">
               {type === "deposit" ? "Transferred by" : "Paid by"}{" "}
               {paidBy.firstName && paidBy.lastName
                 ? `${paidBy.firstName} ${paidBy.lastName}`

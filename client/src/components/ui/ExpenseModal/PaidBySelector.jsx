@@ -22,7 +22,7 @@ export default function PaidBySelector({
         value={paidBy?._id || ""}
         onChange={handleSelection}
         className={clsx(
-          "block w-full appearance-none rounded-lg border-1 border-secondary/60 bg-primary py-1.5 pr-8 pl-3 text-sm/6 text-secondary",
+          "block w-full appearance-none rounded-lg border-1 border-secondary/60 bg-primary py-1.5 pr-8 pl-3 text-base/6 text-secondary",
           "focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25",
           "*:text-secondary"
         )}

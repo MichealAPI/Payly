@@ -105,7 +105,7 @@ const Navbar = ({
             >
               <Menu>
                 <MenuButton
-                  className="flex group items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-sm font-semibold text-secondary hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+                  className="flex group items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-lg font-semibold text-secondary hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
                   onClick={(e) => e.stopPropagation()}
                   aria-label="Open actions"
                 >
@@ -124,7 +124,7 @@ const Navbar = ({
                 >
                   <MenuItems
                     anchor="bottom"
-                    className="w-48 z-50 origin-top rounded-xl border border-purple-400/30 bg-dark-gray p-2 text-sm text-secondary shadow-xl"
+                    className="w-48 z-50 origin-top rounded-xl border border-purple-400/30 bg-dark-gray p-2 text-base text-secondary shadow-xl"
                   >
                     {actions &&
                       actions.map((action) => (
@@ -174,14 +174,14 @@ const Navbar = ({
         </div>
 
         {/* Right: Quick actions */}
-        <div className="col-span-4 sm:col-span-6 md:col-span-3 flex items-center justify-end gap-2">
+        <div className="col-span-4 sm:col-span-6 md:col-span-3 flex items-center justify-end gap-3 md:gap-2">
           {/* Notification bell */}
           <button
             type="button"
             className={`${styles.notification} relative inline-flex items-center justify-center h-9 w-9 rounded-full hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary`}
             aria-label="Notifications"
           >
-            <BellIcon className="w-5 h-5" />
+            <BellIcon className="w-7 md:w-5" />
             <span className="sr-only">Open notifications</span>
             <span className="absolute top-0 right-0 inline-block h-2 w-2 translate-x-1/4 -translate-y-1/4 rounded-full bg-tertiary ring-2 ring-dark-gray" aria-hidden="true"></span>
           </button>
@@ -238,17 +238,20 @@ const Navbar = ({
               leaveFrom="translate-x-0"
               leaveTo="translate-x-full"
             >
-              <DialogPanel className="w-[88%] max-w-sm h-full bg-dark-gray border-l border-white/10 shadow-2xl p-4 flex flex-col gap-4">
+              <DialogPanel
+                style={{ paddingTop: "calc(env(safe-area-inset-top) + 16px)" }} /* iOS notch issue fix */
+                className="w-[88%] max-w-sm h-full bg-dark-gray border-l border-white/10 shadow-2xl p-4 flex flex-col gap-4"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="h-9 w-9 overflow-hidden rounded-full ring-1 ring-white/10">
                       <ProfilePicture currentUser={currentUser} />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-secondary text-sm font-semibold truncate">
-                        {currentUser?.name || currentUser?.displayName || "Account"}
+                      <p className="text-secondary text-base font-semibold truncate">
+                        {currentUser?.firstName + " " + currentUser?.lastName}
                       </p>
-                      <p className="text-white/50 text-xs truncate">{currentUser?.email || ""}</p>
+                      <p className="text-white/50 text-sm truncate">{currentUser?.email || ""}</p>
                     </div>
                   </div>
                   <button
@@ -272,7 +275,7 @@ const Navbar = ({
                     }`}
                   >
                     <HomeIcon className="size-4" />
-                    <span className="flex-1">Home</span>
+                    <span className="flex-1 text-base">Home</span>
                     {isPathActive("/groups") && <CheckIcon className="w-4 h-4 text-secondary" />}
                   </button>
 
@@ -286,14 +289,14 @@ const Navbar = ({
                     }`}
                   >
                     <Cog6ToothIcon className="size-4" />
-                    <span className="flex-1">Settings</span>
+                    <span className="flex-1 text-base">Settings</span>
                     {isPathActive("/settings") && <CheckIcon className="w-4 h-4 text-secondary" />}
                   </button>
                 </div>
 
                 {actions && actions.length > 0 && (
                   <div className="mt-2 border-t border-white/10 pt-3">
-                    <p className="px-1 pb-1 text-xs uppercase tracking-wide text-white/50">Actions</p>
+                    <p className="px-1 pb-1 text-sm uppercase tracking-wide text-white/50">Actions</p>
                     <div className="space-y-1 text-secondary">
                       {actions.map((action) => (
                         <button
@@ -306,7 +309,7 @@ const Navbar = ({
                             activeAction === action.id ? "bg-white/5" : ""
                           }`}
                         >
-                          <span className="flex-1 truncate">{action.label}</span>
+                          <span className="flex-1 truncate text-base">{action.label}</span>
                           {activeAction === action.id && (
                             <CheckIcon className="w-4 h-4 text-secondary" />
                           )}
@@ -317,8 +320,8 @@ const Navbar = ({
                 )}
 
                 <div className="mt-auto flex items-center justify-between">
-                  <span className="text-xs text-white/40">Appearance</span>
-                  <ThemeSwitcher />
+                  <span className="text-base text-white/40">Appearance</span>
+                  <ThemeSwitcher className={"outline-1 outline-secondary/20"}/>
                 </div>
               </DialogPanel>
             </TransitionChild>

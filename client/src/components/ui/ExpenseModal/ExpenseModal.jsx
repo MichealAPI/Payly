@@ -19,6 +19,7 @@ import SelectorButton from "../SelectorButton/SelectorButton";
 import DatePicker from "../DatePicker/DatePicker";
 import PaidBySelector from "./PaidBySelector";
 import { useExpenseForm } from "./expenseModalUtil";
+import currencies from "../../../assets/currencies.json"
 
 export default function ExpenseModal({
   isOpen,
@@ -130,7 +131,7 @@ export default function ExpenseModal({
                     <div className="mt-4">
                       <label
                         htmlFor="groupName"
-                        className="block text-sm font-medium text-secondary"
+                        className="block text-base font-medium text-secondary"
                       >
                         Movement Title
                       </label>
@@ -139,28 +140,30 @@ export default function ExpenseModal({
                         id="movementName"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="mt-1 block w-full rounded-md  bg-primary border border-secondary/60 text-secondary sm:text-sm p-2"
+                        className="mt-1 block w-full rounded-md  bg-primary border border-secondary/60 text-secondary sm:text-base p-2"
                         placeholder="Enter movement title"
                         required
                       />
                     </div>
 
                     <div className="mt-4">
-                      <div className="flex gap-2">
-                        <Field className="flex-1">
-                          <Label className="text-sm font-medium text-secondary">
+                      <div className="flex gap-2 items-center">
+                        <Field className="flex flex-col gap-1">
+                          <Label className="text-base font-medium text-secondary">
                             Amount
                           </Label>
                           <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                              <span className="text-secondary sm:text-sm">
-                                {currency?.symbol}
+                              <span className="text-secondary text-base">
+                                {currencies.find(c => c.name === currency)?.symbol || ""}
                               </span>
                             </div>
-                            <Input
+                            <input
                               type="number"
+                              inputMode="decimal"
+                              pattern="[0-9]*\.?[0-9]*"
                               className={clsx(
-                                "block w-full border-1 border-secondary/60 rounded-lg bg-primary pl-8 pr-3 py-1.5 text-sm/6 text-secondary text-right",
+                                "block w-full border-1 border-secondary/60 rounded-lg bg-primary pl-8 pr-3 py-1.5 text-base/6 text-secondary text-right",
                                 "focus:outline-none"
                               )}
                               value={amount}
@@ -169,21 +172,22 @@ export default function ExpenseModal({
                               max="1000000"
                               step="0.1"
                               required
-                              onChange={(e) =>
-                                setAmount(parseFloat(e.target.value))
-                              }
+                              onChange={(e) => {
+                                const v = e.target.value;
+                                setAmount(v === '' ? '' : parseFloat(v));
+                              }}
                             />
                           </div>
                         </Field>
-                        <div className="flex flex-1 flex-col gap-1">
-                          <p className="text-sm font-medium text-secondary m-0">
+                        <Field className="flex flex-col gap-1">
+                          <Label className="text-base font-medium text-secondary m-0">
                             Currency
-                          </p>
+                          </Label>
                           <CurrencySelector
                             setCurrency={setCurrency}
                             currency={currency}
                           />
-                        </div>
+                        </Field>
                       </div>
                     </div>
 
@@ -191,7 +195,7 @@ export default function ExpenseModal({
                       <div className="flex flex-col flex-1/2 justify-center ">
                         <label
                           htmlFor="paidby"
-                          className="block text-sm font-medium text-secondary"
+                          className="block text-base font-medium text-secondary"
                         >
                           Paid by
                         </label>
@@ -207,7 +211,7 @@ export default function ExpenseModal({
                       <div className="flex w-full flex-col flex-1/2">
                         <label
                           htmlFor="date"
-                          className="block text-sm font-medium text-secondary"
+                          className="block text-base font-medium text-secondary"
                         >
                           Paid on
                         </label>
@@ -218,7 +222,7 @@ export default function ExpenseModal({
                     <div className="mt-4">
                       <label
                         htmlFor="description"
-                        className="block text-sm font-medium text-secondary"
+                        className="block text-base font-medium text-secondary"
                       >
                         Description{" "}
                         <span className="text-secondary/60">(optional)</span>
@@ -228,13 +232,13 @@ export default function ExpenseModal({
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         rows={3}
-                        className="mt-1 block w-full rounded-md border bg-primary border-secondary/60 text-secondary p-2 sm:text-sm"
+                        className="mt-1 block w-full rounded-md border bg-primary border-secondary/60 text-secondary p-2 sm:text-base"
                         placeholder="Enter movement description"
                       />
                     </div>
 
                     <div className="mt-4 flex gap-1 flex-col">
-                      <p className="text-sm font-medium text-secondary m-0">
+                      <p className="text-base font-medium text-secondary m-0">
                         Split Method
                       </p>
                       <SplitMethodSelector

@@ -18,7 +18,7 @@ const SplitMethodSelector = ({ setSplitMethod, splitMethod }) => {
             <div className="relative">
                 <ListboxButton
                     className={clsx(
-                        'relative w-full cursor-default rounded-lg border-1 border-secondary/60 bg-primary py-1.5 pr-10 pl-3 text-left text-sm/6 text-secondary',
+                        'relative w-full cursor-default rounded-lg border-1 border-secondary/60 bg-primary py-1.5 pr-10 pl-3 text-left text-base/6 text-secondary',
                         'focus:outline-none focus:ring-2 focus:ring-white/75'
                     )}
                 >
