@@ -111,7 +111,7 @@ const ProfilePicture = ({ className = "w-full h-full", currentUser }) => {
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
-                className="absolute top-full left-1/2 -translate-x-9/10 mt-4 z-50  w-64 flex-col rounded-md outline-1 outline-secondary/20 bg-primary shadow-md ring-1 ring-black/5"
+                className="absolute top-full left-1/2 -translate-x-9/10 mt-4 z-50 w-64 flex-col rounded-md outline-1 outline-secondary/20 shadow-md ring-1 ring-black/5 backdrop-blur-md bg-primary/50 border border-white/10"
               >
                 {/* top arrow */}
                 <span

@@ -406,28 +406,6 @@ const GroupSelectorPage = () => {
             className="relative z-10"
           />
 
-          {/* One-time mobile coachmark hint */}
-          {showFabHint && (
-            <div className="md:hidden absolute right-16 bottom-16 max-w-[220px] rounded-xl bg-white/95 shadow-lg ring-1 ring-black/5 px-3 py-2 text-xs text-primary flex items-start gap-3">
-              <div className="flex-1">
-                <p className="font-semibold">Create or join a group</p>
-                <p className="text-secondary mt-0.5">Tap the plus to see actions.</p>
-              </div>
-              <button
-                type="button"
-                className="text-secondary/70 hover:text-secondary"
-                aria-label="Dismiss hint"
-                onClick={() => {
-                  setShowFabHint(false);
-                  try {
-                    localStorage.setItem("seenFabHint", "1");
-                  } catch {}
-                }}
-              >
-                ✕
-              </button>
-            </div>
-          )}
         </div>
 
         <GroupModal isOpen={isCreatorOpen} setIsOpen={setIsCreatorOpen} />
