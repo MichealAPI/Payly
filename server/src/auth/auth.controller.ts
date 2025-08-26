@@ -1,4 +1,4 @@
-import {Controller, Post, UseGuards, Request, Get, Session, Body} from '@nestjs/common';
+import {Controller, Post, UseGuards, Request, Get, Session, Body, Req} from '@nestjs/common';
 import { AuthenticatedGuard } from './guards/authenticated.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
@@ -13,7 +13,11 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('login')
     login(@Request() req) {
-        return req.user;
+        return {
+            user: req.user,
+            sessionId: req.sessionID,
+            expiresAt: req.session.cookie.expires
+        }; 
     }
 
     @Post('register')

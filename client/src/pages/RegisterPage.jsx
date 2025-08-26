@@ -79,7 +79,7 @@ const RegisterPage = () => {
         lastName,
         email,
         password,
-      });
+      }); // TODO: Extract to authSlice
 
       toast.success("Registration successful! Please log in.", {
         position: "bottom-center",

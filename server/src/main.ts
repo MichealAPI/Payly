@@ -129,6 +129,7 @@ async function bootstrap() {
       secret: sessionSecret,
       resave: false,
       saveUninitialized: false,
+      rolling: true,
       proxy: true, // critical behind proxies for secure cookies
       cookie: {
         maxAge: 1000 * 60 * 60 * 24,
