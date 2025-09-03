@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer, Persistor } from "redux-persist";
 import authReducer from "@/features/auth/authSlice";
+import currencySelectorReducer from "@/features/modal/currencySelectorSlice";
 import secureStorage from "./storage";
 
 const persistConfig = {
@@ -11,7 +12,8 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-    auth: authReducer
+    auth: authReducer,
+    currencySelector: currencySelectorReducer,
     // ... other reducers can go here
 });
 

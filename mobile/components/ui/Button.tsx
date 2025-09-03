@@ -1,188 +1,122 @@
-import React from "react";
-import {
-  Pressable,
-  View,
-  GestureResponderEvent,
-  StyleProp,
-  ViewStyle,
-  useColorScheme,
-} from "react-native";
-import Text from "@/global-components/Text";
-import { LinearGradient } from "expo-linear-gradient";
-import { BlurView } from "expo-blur";
+import { TextClassContext } from '@/components/ui/text';
+import { cn } from '@/lib/utils';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { Platform, Pressable } from 'react-native';
 
-type Size = "minimal" | "medium" | "large" | "full";
-type StyleType = "fill" | "outline" | "glass";
+const buttonVariants = cva(
+  cn(
+    'group shrink-0 flex-row items-center justify-center gap-2 rounded-md shadow-none',
+    Platform.select({
+      web: "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+    })
+  ),
+  {
+    variants: {
+      variant: {
+        default: cn(
+          'bg-primary active:bg-primary/90 pressed:bg-primary/90 shadow-sm shadow-black/5',
+          Platform.select({ web: 'hover:bg-primary/90' })
+        ),
+        destructive: cn(
+          'bg-destructive active:bg-destructive/90 pressed:bg-destructive/90 dark:bg-destructive/60 shadow-sm shadow-black/5',
+          Platform.select({
+            web: 'hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40',
+          })
+        ),
+        outline: cn(
+          'border-border bg-background active:bg-accent pressed:bg-accent dark:bg-input/30 dark:border-input dark:active:bg-input/50 dark:pressed:bg-input/50 border shadow-sm shadow-black/5',
+          Platform.select({
+            web: 'hover:bg-accent dark:hover:bg-input/50',
+          })
+        ),
+        secondary: cn(
+          'bg-secondary active:bg-secondary/80 pressed:bg-secondary/80 shadow-sm shadow-black/5',
+          Platform.select({ web: 'hover:bg-secondary/80' })
+        ),
+        ghost: cn(
+          'active:bg-accent pressed:bg-accent dark:active:bg-accent/50 dark:pressed:bg-accent/50',
+          Platform.select({ web: 'hover:bg-accent dark:hover:bg-accent/50' })
+        ),
+        borderSecondary: cn(
+          'border border-2 bg-transparent border-black dark:border-white active:bg-accent pressed:bg-accent dark:active:bg-input/50 dark:pressed:bg-input/50',
+          Platform.select({
+            web: 'hover:bg-accent dark:hover:bg-input/50',
+          })
+        ),
+        link: '',
+      },
+      size: {
+        default: cn('h-10 px-4 py-2 sm:h-9', Platform.select({ web: 'has-[>svg]:px-3' })),
+        sm: cn('h-9 gap-1.5 rounded-md px-3 sm:h-8', Platform.select({ web: 'has-[>svg]:px-2.5' })),
+        lg: cn('h-11 rounded-md px-6 sm:h-10', Platform.select({ web: 'has-[>svg]:px-4' })),
+        xl: cn('h-14 rounded-lg px-7 sm:h-12', Platform.select({ web: 'has-[>svg]:px-5' })),
+        icon: 'h-10 w-10 sm:h-9 sm:w-9',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+);
 
-interface ButtonProps {
-  text?: string;
-  className?: string;
-  onPress?: (e: GestureResponderEvent) => void;
-  size?: Size;
-  style?: StyleType;
-  bgColors?: [string, string, ...string[]];
-  hoverBgColors?: [string, string, ...string[]];
-  shadowColor?: string;
-  borderColor?: string;
-  textVisibility?: boolean;
-  iconVisibility?: boolean;
-  icon?: React.ReactNode;
-  disabled?: boolean;
-  containerStyle?: StyleProp<ViewStyle>;
+const buttonTextVariants = cva(
+  cn(
+    'text-foreground text-sm font-medium',
+    Platform.select({ web: 'pointer-events-none transition-colors' })
+  ),
+  {
+    variants: {
+      variant: {
+        default: 'text-primary-foreground',
+        destructive: 'text-white',
+        outline: cn(
+          'group-active:text-accent-foreground group-pressed:text-accent-foreground',
+          Platform.select({ web: 'group-hover:text-accent-foreground' })
+        ),
+        secondary: 'text-secondary-foreground',
+        ghost: 'group-active:text-accent-foreground group-pressed:text-accent-foreground',
+        borderSecondary: 'text-foreground',
+        link: cn(
+          'text-primary group-active:underline group-pressed:underline',
+          Platform.select({ web: 'underline-offset-4 hover:underline group-hover:underline' })
+        ),
+      },
+      size: {
+        default: '',
+        sm: '',
+        lg: '',
+        xl: '',
+        icon: '',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+);
+
+type ButtonProps = React.ComponentProps<typeof Pressable> &
+  React.RefAttributes<typeof Pressable> &
+  VariantProps<typeof buttonVariants>;
+
+function Button({ className, variant, size, ...props }: ButtonProps) {
+  return (
+    <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
+      <Pressable
+        android_ripple={{ color: 'rgba(0,0,0,0.08)', borderless: false }}
+        className={cn(
+          props.disabled && 'opacity-50',
+          buttonVariants({ variant, size }),
+          className
+        )}
+        role="button"
+        {...props}
+      />
+    </TextClassContext.Provider>
+  );
 }
 
-const sizeClasses: Record<Size, string> = {
-  large: "py-3 px-20 rounded-2xl",
-  medium: "py-2.5 px-10 rounded-xl",
-  full: "w-full py-4 px-7 rounded-xl",
-  minimal: "justify-center items-center rounded-full w-12 h-12 p-0",
-};
-
-const Button: React.FC<ButtonProps> = ({
-  text,
-  className,
-  onPress,
-  size = "medium",
-  style = "fill",
-  bgColors = ["#7c3aed", "#a78bfa"],
-  hoverBgColors = ["#9f74fc", "#bd9eff"],
-  shadowColor = "#7c3aed",
-  borderColor = "#7c3aed",
-  textVisibility = true,
-  iconVisibility = false,
-  icon,
-  disabled = false,
-  containerStyle,
-}) => {
-  const scheme = useColorScheme();
-
-  const handlePress = (e: GestureResponderEvent) => {
-    if (disabled) return;
-    onPress?.(e);
-  };
-
-  const shadowStyle: StyleProp<ViewStyle> = {
-    shadowColor,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 6,
-  };
-
-  const textEl = (
-    <Text
-      className={`font-bold text-lg text-secondary ${
-        disabled ? "opacity-70" : ""
-      }`}
-    >
-      {text}
-    </Text>
-  );
-
-  const content = (
-    <View className="flex-row items-center justify-center gap-2">
-      {textVisibility && size !== "minimal" && textEl}
-      {iconVisibility && icon && <View>{icon}</View>}
-    </View>
-  );
-
-  // OUTLINE — wrapper has ONLY rounding/overflow/shadow; size on inner
-  if (style === "outline") {
-    return (
-      <Pressable
-        onPress={handlePress}
-        disabled={disabled}
-        android_ripple={{ color: "rgba(124,58,237,0.15)", borderless: false }}
-        style={[
-          shadowStyle,
-          disabled && { opacity: 0.5 },
-          size === "full" ? { width: "100%" } : {},
-          containerStyle,
-        ]}
-        className={`rounded-xl overflow-hidden ${className || ""}`}
-      >
-        <View className={`${sizeClasses[size]} items-center justify-center border-2 border-tertiary bg-transparent`}>
-          {content}
-        </View>
-      </Pressable>
-    );
-  }
-
-  // GLASS — no size on wrapper; all size on BlurView
-  if (style === "glass") {
-    return (
-      <Pressable
-        onPress={handlePress}
-        disabled={disabled}
-        android_ripple={{ color: "rgba(255,255,255,0.15)", borderless: false }}
-        style={[
-          shadowStyle,
-          disabled && { opacity: 0.6 },
-          size === "full" ? { width: "100%" } : {},
-          containerStyle,
-        ]}
-        className={`rounded-2xl overflow-hidden ${className || ""}`}
-      >
-        {({ pressed }) => (
-          <BlurView
-            intensity={50}
-            tint={scheme === "dark" ? "dark" : "light"}
-            className={`${sizeClasses[size]} items-center justify-center`}
-            style={{
-              backgroundColor:
-                scheme === "dark" ? "rgba(0,0,0,0.28)" : "rgba(255,255,255,0.20)",
-              borderWidth: 1,
-              borderColor:
-                scheme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.06)",
-              transform: [{ scale: pressed ? 0.97 : 1 }],
-              opacity: pressed ? 0.96 : 1,
-            }}
-          >
-            {content}
-          </BlurView>
-        )}
-      </Pressable>
-    );
-  }
-
-  // FILL — no size on wrapper; all size on LinearGradient
-  return (
-    <Pressable
-      onPress={handlePress}
-      disabled={disabled}
-      android_ripple={{ color: hoverBgColors[0], borderless: false }}
-      style={[
-        shadowStyle,
-        disabled && { opacity: 0.6 },
-        size === "full" ? { width: "100%" } : {},
-        containerStyle,
-      ]}
-      className={`rounded-2xl overflow-hidden ${className || ""}`}
-    >
-      {({ pressed }) => (
-        <LinearGradient
-          colors={bgColors}
-          start={[0, 0]}
-          end={[1, 1]}
-          //className=${sizeClasses[size]}: linear gradient doesn't support classNames sadly
-          style={{
-            transform: [{ scale: pressed ? 0.97 : 1 }],
-            opacity: pressed ? 0.96 : 1,
-            paddingTop: 16,
-            paddingBottom: 16,
-            paddingLeft: 8,
-            paddingRight: 8,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {content}
-        </LinearGradient>
-      )}
-    </Pressable>
-
-  );
-};
-
-
-export default Button;
+export { Button, buttonTextVariants, buttonVariants };
+export type { ButtonProps };

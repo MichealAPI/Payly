@@ -35,7 +35,7 @@ export function useLogin() {
         setFailedAttempts((s) => s + 1);
 
         const message = err.message || error || "An error occurred";
-
+        console.log("[useLogin] login error:", message);
         setLoginError(message);
         // stronger haptic feedback for error
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

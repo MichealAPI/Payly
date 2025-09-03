@@ -4,7 +4,6 @@ import * as mongoose from 'mongoose';
 
 @Schema()
 export class User extends Document {
-
   @Prop({ required: true, unique: true })
   email: string;
 
@@ -14,8 +13,19 @@ export class User extends Document {
   @Prop({ required: true })
   firstName: string;
 
-  @Prop({ required: true })
-  password: string;
+  // Password is optional to allow password-less (social) accounts
+  @Prop({ required: false })
+  password?: string;
+
+  // Provider specific identifiers (expandable later for apple/facebook)
+  @Prop({ required: false, unique: false })
+  googleId?: string;
+
+  @Prop({ required: false, unique: false })
+  appleId?: string;
+
+  @Prop({ required: false, unique: false })
+  facebookId?: string;
 
   @Prop({ default: Date.now })
   createdAt: Date;

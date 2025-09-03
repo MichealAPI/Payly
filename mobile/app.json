@@ -34,7 +34,18 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "${EXPO_PUBLIC_FACEBOOK_APP_ID}",
+          "displayName": "Payly"
+        }
+      ],
+      [
+        "expo-apple-authentication",
+        {}
+      ]
     ],
     "experiments": {
       "typedRoutes": true

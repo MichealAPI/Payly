@@ -10,7 +10,7 @@
 
 @layer theme {
   .dark {
-    --color-dark-gray: #121214;
+    --color-dark-gray: #181818;
     --color-primary: #000;
     --color-secondary: #fff;
     --color-tertiary: #9f74fc;

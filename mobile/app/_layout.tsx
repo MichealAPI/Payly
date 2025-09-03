@@ -1,6 +1,9 @@
 import { Redirect, router, Stack } from "expo-router";
 import "@/global.css";
-import { setAuthInitialized, verifyAuthStatus } from "@/features/auth/authSlice";
+import {
+  setAuthInitialized,
+  verifyAuthStatus,
+} from "@/features/auth/authSlice";
 import { useFonts } from "expo-font";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
@@ -17,6 +20,9 @@ import { ThemeProvider as AppThemeProvider } from "@/providers/ThemeProviders"; 
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Toast from "react-native-toast-message";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {PortalHost} from "@rn-primitives/portal"
 
 function RootNavigator() {
   console.log("[RootNavigator] render");
@@ -26,7 +32,6 @@ function RootNavigator() {
   );
 
   const colorScheme = useColorScheme();
-
 
   const [loaded] = useFonts({
     PhantomRegular: require("@/assets/fonts/phantom_regular.ttf"),
@@ -114,10 +119,15 @@ export default function RootLayout() {
                 </View>
               }
             >
-              <ErrorBoundary>
-                <RootNavigator />
-                <Toast />
-              </ErrorBoundary>
+              <GestureHandlerRootView>
+                <BottomSheetModalProvider>
+                  <ErrorBoundary>
+                    <RootNavigator />
+                    <PortalHost />
+                    <Toast />
+                  </ErrorBoundary>
+                </BottomSheetModalProvider>
+              </GestureHandlerRootView>
             </PersistGate>
           </Provider>
         </NavThemeProvider>

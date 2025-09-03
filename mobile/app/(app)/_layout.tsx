@@ -10,7 +10,15 @@ export default function AppLayout() {
         animationDuration: 200,
       }}
     >
-        <Stack.Screen name="groups" options={{headerShown: false}} />
+      <Stack.Screen name="groups" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="(modal)/groupCreator"
+        options={{ presentation: "modal" }}
+      />
+      <Stack.Screen
+        name="(modal)/currencySelector"
+        options={{ presentation: "modal", title: "Select Currency" }}
+      />
     </Stack>
   );
 }

@@ -25,25 +25,112 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    {
-      const existingUser = await this.userModel
-        .findOne({ email: createUserDto.email })
-        .exec();
-      if (existingUser) {
-        throw new ConflictException('A user with this email already exists');
+    const existingUser = await this.userModel
+      .findOne({ email: createUserDto.email })
+      .exec();
+    if (existingUser) {
+      throw new ConflictException('A user with this email already exists');
+    }
+
+    let hashedPassword: string | undefined = undefined;
+    if (createUserDto.password) {
+      hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    }
+
+    const newUser = new this.userModel({
+      ...createUserDto,
+      password: hashedPassword,
+    });
+    const savedUser = await newUser.save();
+
+    const { password, __v, ...result } = savedUser.toObject();
+    return result;
+  }
+
+  async findOrCreateGoogle(profile: { sub: string; email: string; given_name?: string; family_name?: string; }): Promise<UserResponseDto> {
+    const { sub, email, given_name, family_name } = profile;
+    let user = await this.userModel.findOne({ googleId: sub }).exec();
+    if (!user && email) {
+      user = await this.userModel.findOne({ email }).exec();
+    }
+    if (user) {
+      // Ensure googleId stored
+      if (!user.googleId) {
+        (user as any).googleId = sub;
+        await user.save();
       }
-
-      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-
-      const newUser = new this.userModel({
-        ...createUserDto,
-        password: hashedPassword,
-      });
-      const savedUser = await newUser.save();
-
-      const { password, __v, ...result } = savedUser.toObject();
+      const { password, __v, ...result } = user.toObject();
       return result;
     }
+    // Create new user with random placeholder names if missing
+    const firstName = given_name || 'User';
+    const lastName = family_name || 'Google';
+    const created = new this.userModel({
+      email,
+      firstName,
+      lastName,
+      googleId: sub,
+      password: undefined,
+    });
+    await created.save();
+    const { password, __v, ...result } = created.toObject();
+    return result;
+  }
+
+  async findOrCreateApple(profile: { sub: string; email?: string; given_name?: string; family_name?: string; }): Promise<UserResponseDto> {
+    const { sub, email, given_name, family_name } = profile;
+    let user = await this.userModel.findOne({ appleId: sub }).exec();
+    if (!user && email) {
+      user = await this.userModel.findOne({ email }).exec();
+    }
+    if (user) {
+      if (!user.appleId) {
+        (user as any).appleId = sub;
+        await user.save();
+      }
+      const { password, __v, ...result } = user.toObject();
+      return result;
+    }
+    const firstName = given_name || 'User';
+    const lastName = family_name || 'Apple';
+    const created = new this.userModel({
+      email: email || `${sub}@appleid.local`,
+      firstName,
+      lastName,
+      appleId: sub,
+      password: undefined,
+    });
+    await created.save();
+    const { password, __v, ...result } = created.toObject();
+    return result;
+  }
+
+  async findOrCreateFacebook(profile: { id: string; email?: string; first_name?: string; last_name?: string; }): Promise<UserResponseDto> {
+    const { id, email, first_name, last_name } = profile;
+    let user = await this.userModel.findOne({ facebookId: id }).exec();
+    if (!user && email) {
+      user = await this.userModel.findOne({ email }).exec();
+    }
+    if (user) {
+      if (!user.facebookId) {
+        (user as any).facebookId = id;
+        await user.save();
+      }
+      const { password, __v, ...result } = user.toObject();
+      return result;
+    }
+    const firstName = first_name || 'User';
+    const lastName = last_name || 'Facebook';
+    const created = new this.userModel({
+      email: email || `${id}@facebook.local`,
+      firstName,
+      lastName,
+      facebookId: id,
+      password: undefined,
+    });
+    await created.save();
+    const { password, __v, ...result } = created.toObject();
+    return result;
   }
 
   async getUserSettings(

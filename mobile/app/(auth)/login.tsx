@@ -1,49 +1,32 @@
 import { useLogin } from "@/hooks/useLogin";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import {
-  View,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Image,
-  TouchableOpacity,
-} from "react-native";
+import { useCallback, useState } from "react";
+import { View, Pressable, TouchableOpacity, Keyboard } from "react-native";
 import Text from "@/global-components/Text";
 import GlassCard from "@/components/ui/GlassCard";
 import Logo from "@/components/ui/Logo";
-import Button from "@/components/ui/Button";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import { Button } from "@/components/ui/Button";
+import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import SocialSignIn from "@/components/ui/SocialSignIn";
-import {
-  ArrowLeftIcon,
-  ChevronLeftIcon,
-  Eye,
-  EyeOff,
-} from "lucide-react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { ChevronLeftIcon, Loader2 } from "lucide-react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { loginUser } from "@/features/auth/authSlice";
-import Toast from "react-native-toast-message";
 import * as Haptics from "expo-haptics";
+import { Icon } from "@/components/ui/icon";
+import { Input } from "@/components/ui/input";
+import { useColorScheme } from "react-native";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, currentUser, isLoading, loginError, failedAttempts } =
-    useLogin();
+  const { login, currentUser, isLoading, loginError, failedAttempts } = useLogin();
   const insets = useSafeAreaInsets();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<string | null>(null);
-
-  const [error, setError] = useState<string | null>(null);
+  const [touchedEmail, setTouchedEmail] = useState(false);
+  const [touchedPassword, setTouchedPassword] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const isValidEmail = (v: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
@@ -52,154 +35,236 @@ export default function LoginPage() {
     return isValidEmail(email) && password.trim().length > 0;
   }
 
-  function handleLogin(email: string, password: string) {
-    if (validCredentials(email, password)) {
-      login(email, password);
-    } else {
-      setError("Please enter valid email and password.");
-      // haptics
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    }
-  }
+  const handleLogin = useCallback(
+    (emailValue: string, passwordValue: string) => {
+      Keyboard.dismiss();
+      if (validCredentials(emailValue, passwordValue)) {
+        setLocalError(null);
+        login(emailValue, passwordValue);
+      } else {
+        const problem = !isValidEmail(emailValue)
+          ? "Please enter a valid email address."
+          : "Password can't be empty.";
+        setLocalError(problem);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+    },
+    [login]
+  );
+
+  const scheme = useColorScheme();
+  const isDark = scheme === "dark";
+  const bgColor: string = isDark ? "#050505" : "#f8f9fb";
+
+  const goBack = () => {
+    router.back();
+  };
 
   return (
-    <LinearGradient
-      colors={["#1e1b4b", "#0f172a"]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 1 }}
-      style={{ flex: 1 }}
+    <SafeAreaView
+      className="flex-1"
+      edges={["bottom", "left", "right"]}
+      style={{ backgroundColor: bgColor }}
+      testID="login-screen"
     >
-      <SafeAreaView className="flex-1" edges={["bottom", "left", "right"]}>
-        <KeyboardAwareScrollView
-          className="flex-1"
-          contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
-        >
-          <TouchableOpacity
-            onPress={() => router.push("/home" as any)}
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Decorative gradient header */}
+        <LinearGradient
+          colors={isDark ? ["#1e1b4b", "#312e81", "#1e1b4b"] : ["#ede9fe", "#ddd6fe", "#fafafa"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ position: "absolute", top: 0, left: 0, right: 0, height: 320 }}
+        />
+        <TouchableOpacity
+          onPress={goBack}
             style={{
               position: "absolute",
               left: 16,
-              top: insets.top + 6, // small offset below the safe area
-              width: 56,
-              height: 56,
+              top: insets.top + 10,
+              width: 46,
+              height: 46,
               borderRadius: 999,
-              backgroundColor: "rgba(255,255,255,0.8)",
+              backgroundColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)",
               justifyContent: "center",
               alignItems: "center",
-              zIndex: 10,
+              zIndex: 20,
             }}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          testID="back-button"
+          hitSlop={8}
+        >
+          <ChevronLeftIcon size={24} color={isDark ? "#fff" : "#1e1b4b"} />
+        </TouchableOpacity>
+
+        <View className="flex-1 items-center justify-center px-4 pb-10">
+          <Animated.View
+            entering={FadeIn.delay(50).springify()}
+            className="w-full max-w-md"
+            style={{ gap: 20 }}
           >
-            <ChevronLeftIcon size={24} color="#1e1b4b" />
-          </TouchableOpacity>
+            <View className="items-center">
+              <Logo className="w-16 h-16 mb-3" />
+              <Animated.View entering={FadeInDown.delay(120).springify()}>
+                <Text className="text-4xl font-semibold tracking-tight text-secondary dark:text-white text-center">
+                  Welcome back
+                </Text>
+                <Text className="mt-1 text-base text-secondary dark:text-white/70 text-center">
+                  Sign in to continue budgeting smarter
+                </Text>
+              </Animated.View>
+            </View>
 
-          <View className="flex-1 text-center items-center justify-center">
             <Animated.View
-              entering={FadeInDown.duration(900).springify()}
-              className="w-full max-w-sm"
+              entering={FadeInDown.delay(180).springify()}
+              className="w-full"
             >
-              <Logo className="w-14 h- mx-auto mb-6" />
-              <Text className="text-4xl font-semibold text-white text-center">
-                Sign in now
-              </Text>
-              <Text className="text-xl text-white text-center mt-2">
-                Please sign in to continue
-              </Text>
-
-              <View className="mt-6">
-                <TextInput
-                  className="bg-white/20 text-white text-lg/6 rounded-xl p-6 mb-4"
-                  placeholder="Email"
-                  placeholderTextColor="#ffffff"
-                  value={email}
-                  onChangeText={setEmail}
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                />
-                <View className="relative">
-                  <TextInput
-                    className="bg-white/20 text-lg/6 text-white rounded-xl p-6 mb-4"
-                    placeholder="Password"
-                    placeholderTextColor="#ffffff"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry={!showPassword}
-                    style={{ paddingRight: 56 }} // make room for the left-side toggle
-                  />
-                  <Pressable
-                    onPress={() => setShowPassword((prev) => !prev)}
-                    style={{
-                      position: "absolute",
-                      right: 12,
-                      top: "50%",
-                      transform: [{ translateY: -24 }],
-                      zIndex: 10,
-                      padding: 8,
-                    }}
-                  >
-                    <Text className="text-white text-sm font-medium">
-                      {showPassword ? (
-                        <EyeOff size={20} color={"#fff"} />
-                      ) : (
-                        <Eye size={20} color={"#fff"} />
-                      )}
+              <GlassCard>
+                <View className="w-full" style={{ rowGap: 14 }}>
+                  {/* Email */}
+                  <View>
+                    <Text className="text-xs font-medium mb-1 text-secondary dark:text-white/80">
+                      Email
                     </Text>
-                  </Pressable>
-                </View>
-                <Pressable onPress={() => router.push("/forgot")}>
-                  <Text className="text-white font-bold text-right text-base">
-                    Forgot Password?
-                  </Text>
-                </Pressable>
-
-                <Button
-                  text={isLoading ? "Signing in..." : "Sign In"}
-                  disabled={isLoading}
-                  size="full"
-                  style="fill"
-                  className="rounded-2xl mt-8"
-                  onPress={() => handleLogin(email, password)}
-                />
-
-                {/* Inline error area: stays on page when credentials are wrong */}
-                {loginError || error ? (
-                  <Text className="text-red-300 text-center mt-4">
-                    {loginError || error}
-                  </Text>
-                ) : null}
-
-                <View className="mt-10 flex gap-2 items-center">
-                  <View className="flex-row items-center justify-center">
-                    <Text className="text-white font-light text-lg">
-                      Don't have an account?{" "}
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => router.push("/register")}
-                    >
-                      <Text className="text-tertiary font-bold text-lg">
-                        Sign up
+                    <Input
+                      testID="email-input"
+                      accessibilityLabel="Email"
+                      keyboardType="email-address"
+                      textContentType="emailAddress"
+                      autoCapitalize="none"
+                      autoComplete="email"
+                      placeholder="you@example.com"
+                      className="h-12 text-base rounded-lg"
+                      value={email}
+                      onBlur={() => setTouchedEmail(true)}
+                      onChangeText={(v) => {
+                        setEmail(v);
+                        if (touchedEmail) setLocalError(null);
+                      }}
+                      returnKeyType="next"
+                      onSubmitEditing={() => {
+                        // focus password maybe later if we add ref
+                      }}
+                    />
+                    {touchedEmail && !isValidEmail(email) && (
+                      <Text className="mt-1 text-xs text-red-300" testID="email-error">
+                        Enter a valid email address.
                       </Text>
-                    </TouchableOpacity>
+                    )}
                   </View>
 
-                  <Text className="text-white text-center text-lg font-light">
-                    Or continue with
-                  </Text>
-                  <SocialSignIn
-                    onSuccess={(provider: string, data: any) => {
-                      // handle success from provider (e.g., token exchange)
-                      console.log("social success", provider, data);
-                    }}
-                    onError={(provider: string, err: any) =>
-                      console.log("social err", provider, err)
-                    }
-                  />
+                  {/* Password */}
+                  <View>
+                    <View className="flex-row items-center justify-between mb-1">
+                      <Text className="text-xs font-medium text-secondary dark:text-white/80">
+                        Password
+                      </Text>
+                      <Pressable
+                        hitSlop={8}
+                        accessibilityRole="button"
+                        onPress={() => router.push("/(auth)/forgot" as any)}
+                        testID="forgot-password-link"
+                      >
+                        <Text className="text-xs font-semibold text-tertiary dark:text-purple-300">
+                          Forgot?
+                        </Text>
+                      </Pressable>
+                    </View>
+                    <Input
+                      testID="password-input"
+                      accessibilityLabel="Password"
+                      textContentType="password"
+                      autoComplete="password"
+                      placeholder="••••••••"
+                      secureTextEntry
+                      className="h-12 text-base rounded-lg"
+                      value={password}
+                      onBlur={() => setTouchedPassword(true)}
+                      onChangeText={(v) => {
+                        setPassword(v);
+                        if (touchedPassword) setLocalError(null);
+                      }}
+                      returnKeyType="done"
+                      onSubmitEditing={() => handleLogin(email, password)}
+                    />
+                    {touchedPassword && password.trim().length === 0 && (
+                      <Text className="mt-1 text-xs text-red-300" testID="password-error">
+                        Password is required.
+                      </Text>
+                    )}
+                  </View>
+
+                  {/* Sign In */}
+                  <Button
+                    testID="sign-in-button"
+                    disabled={isLoading || !validCredentials(email, password)}
+                    variant={"secondary"}
+                    size="xl"
+                    className="rounded-xl mt-2 flex-row"
+                    onPress={() => handleLogin(email, password)}
+                  >
+                    {isLoading && (
+                      <View className="pointer-events-none animate-spin">
+                        <Icon as={Loader2} className="text-primary-foreground" />
+                      </View>
+                    )}
+                    <Text className="text-base font-semibold text-white dark:text-black">
+                      {isLoading ? "Signing in…" : "Sign In"}
+                    </Text>
+                  </Button>
+
+                  {(loginError || localError) && (
+                    <Text
+                      className="mt-2 text-sm text-red-300 text-center"
+                      testID="form-error"
+                    >
+                      {loginError || localError}
+                    </Text>
+                  )}
+
+                  {failedAttempts > 1 && !isLoading && (
+                    <Text className="mt-1 text-[11px] text-center text-secondary dark:text-white/50" testID="attempts-hint">
+                      {failedAttempts} failed attempts. After 5 tries consider resetting your password.
+                    </Text>
+                  )}
                 </View>
-              </View>
+              </GlassCard>
             </Animated.View>
-          </View>
-        </KeyboardAwareScrollView>
-      </SafeAreaView>
-    </LinearGradient>
+
+            {/* Social + Register */}
+            <Animated.View entering={FadeInDown.delay(260).springify()} className="items-center mt-2">
+              <View className="flex-row items-center justify-center mb-4">
+                <Text className="text-secondary dark:text-white text-base">
+                  New here?{" "}
+                </Text>
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  testID="register-link"
+                  onPress={() => router.push("/(auth)/register")}
+                >
+                  <Text className="text-base font-semibold text-tertiary dark:text-purple-300">
+                    Create account
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <Text className="text-secondary dark:text-white/80 text-sm mb-3">
+                Or continue with
+              </Text>
+              <SocialSignIn
+                onSuccess={(provider: string, data: any) => {
+                  console.log("social success", provider, data);
+                }}
+                onError={(provider: string, err: any) => console.log("social err", provider, err)}
+              />
+            </Animated.View>
+          </Animated.View>
+        </View>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 }
